@@ -26,6 +26,7 @@ public class DefinePath
 {
     public static string path_Stream = Application.streamingAssetsPath + "/attack.unity3d";
     public static string path_ADB =  "Assets/GameData/Prefabs/Attack.prefab";
+    public static string path_Xml = Application.dataPath + "/Scenes/02/test.xml";
 }
 
 public class Common
