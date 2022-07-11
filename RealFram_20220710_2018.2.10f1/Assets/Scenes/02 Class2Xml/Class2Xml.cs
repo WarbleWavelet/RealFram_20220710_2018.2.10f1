@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using FileMode = System.IO.FileMode;
 
-public class Xml2Serilize : MonoBehaviour 
+public class Class2Xml : MonoBehaviour 
 {
 
     void Start()
