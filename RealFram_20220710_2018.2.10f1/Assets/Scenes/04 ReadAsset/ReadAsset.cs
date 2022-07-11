@@ -3,14 +3,14 @@
 	作者：lenovo
     邮箱: 
     日期：2022/7/11 14:55:37
-	功能：
+	功能：读取Asset
 *****************************************************/
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestScriptableObject : MonoBehaviour {
+public class ReadAsset : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () 

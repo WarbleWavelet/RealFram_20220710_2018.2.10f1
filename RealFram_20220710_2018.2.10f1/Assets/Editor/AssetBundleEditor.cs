@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AssetBundleEditor
 {
-    AssetBundleWriter abWriter;
+   static AssetBundleWriter abWriter;
 
     void Start()
     {
@@ -21,19 +21,26 @@ public class AssetBundleEditor
             buildTarget = EditorUserBuildSettings.activeBuildTarget
         };
 
-
     }
 
-    [MenuItem(Constants.MenuItem+"/Build AssetBundles")]//按钮在菜单栏的位置
-    static void BuildAllAssetBundles()
+    [MenuItem(Constants.MenuItem + "/Print ABConfig")]//按钮在菜单栏的位置
+    public static void Build()
     {
-        AssetBundleWriter abWriter = new AssetBundleWriter()
+        ABConfig abConfig = AssetDatabase.LoadAssetAtPath<ABConfig>(DefinePath.ABCONFIGPATH);
+        foreach (var item in abConfig.m_AllPrefabPath)
         {
-            outputPath = Application.streamingAssetsPath,//StreamingAssets
-            buildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression,
-            buildTarget = EditorUserBuildSettings.activeBuildTarget
-        };
-        //
+            Debug.Log(item);
+        }
+        foreach (var item in abConfig.m_AllFileDirAB)
+        {
+            Debug.Log(item.ABName+"_"+item.Path);
+        }
+    }
+
+
+    [MenuItem(Constants.MenuItem+"/Build AssetBundles")]//按钮在菜单栏的位置
+    static void BuildAllAssetBundles()//不能传参
+    {
         if (Directory.Exists(abWriter.outputPath) == false)
         {
             Directory.CreateDirectory(abWriter.outputPath);
