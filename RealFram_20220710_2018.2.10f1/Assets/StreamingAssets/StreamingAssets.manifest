@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 3006134658
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: attack.unity3d
+      Dependencies: {}
