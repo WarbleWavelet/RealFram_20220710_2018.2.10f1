@@ -24,7 +24,7 @@ public class AssetBundleEditor
 
     }
 
-    [MenuItem("AssetBundles/Build AssetBundles")]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem+"/Build AssetBundles")]//按钮在菜单栏的位置
     static void BuildAllAssetBundles()
     {
         AssetBundleWriter abWriter = new AssetBundleWriter()
