@@ -12,21 +12,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
+/// <summary>
+/// AB包配置
+/// </summary>
 [CreateAssetMenu(fileName = "ABConfig", menuName = "Create ABConfig", order = 0)]
 
-public class ABConfig : ScriptableObject
+public class ABCfg : ScriptableObject
 {
 	//名字 唯一性
 	/// <summary>存储prefab的路径</summary>
-	public List<string> m_AllPrefabPath = new List<string>();
+	public List<string> prefabPathLst = new List<string>();
     /// <summary>非prefab的路径</summary>
-    public List<FileDirABName> m_AllFileDirAB = new List<FileDirABName>();
+    public List<AB2Path> folderPathLst = new List<AB2Path>();
 
 
 
     [Serializable]
-	public struct FileDirABName
+	public struct AB2Path
 	{ 
 		public string ABName;
 		public string Path;
