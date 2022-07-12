@@ -18,12 +18,12 @@ public class Class2Bin : MonoBehaviour
 
 	void Start () 
     {
-        TestSerilize testSerilize = new TestSerilize();
+        TestABConfig testSerilize = new TestABConfig();
         testSerilize.Id = 5;
         testSerilize.Name = "二进制测试";
-        testSerilize.List = new List<int>();
-        testSerilize.List.Add(10);
-        testSerilize.List.Add(18);		
+        testSerilize.Lst = new List<int>();
+        testSerilize.Lst.Add(10);
+        testSerilize.Lst.Add(18);		
         //
         BinarySerilize(testSerilize,DefinePath.path_Bin_Write);
         //
@@ -45,7 +45,7 @@ public class Class2Bin : MonoBehaviour
     //    }
     //}
 
-    void BinarySerilize(TestSerilize serilize,string path)
+    void BinarySerilize(TestABConfig serilize,string path)
     {
         FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
         BinaryFormatter bf = new BinaryFormatter();

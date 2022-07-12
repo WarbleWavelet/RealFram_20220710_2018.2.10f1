@@ -19,9 +19,14 @@ public class AssetBundleEditor
     //
     /// <summary> 单个prefab的AB包 </summary>
     static Dictionary<string, List<string>> m_prefabDic = new Dictionary<string, List<string>>();
-
+    /// <summary>被AB标记的</summary>
     static Dictionary<string, string> abMarkDic=new Dictionary<string, string>();
+    /// <summary>帅选出有效路径</summary>
+    static List<string> fliter_pathLst = new List<string>();
+
+    static ABCfg cfg=new ABCfg();
     #endregion
+
 
 
     #region 标记
@@ -32,9 +37,10 @@ public class AssetBundleEditor
         m_prefabDic.Clear();
         m_floderDic.Clear();
         fliter_floderLst.Clear();
-
+        fliter_pathLst.Clear();
+        abMarkDic.Clear();
         //
-        ABCfg cfg = InitCfg();
+        InitCfg();
         InitFloderDic(cfg);
         //
         string[] guidArr = AssetDatabase.FindAssets("t:Prefab", cfg.prefabPathLst.ToArray());
@@ -66,7 +72,7 @@ public class AssetBundleEditor
         {
             AssetDatabase.RemoveAssetBundleName(oldNameArr[i], true);
         }
-
+        
         AssetDatabase.Refresh();
     }
     #endregion
@@ -80,7 +86,7 @@ public class AssetBundleEditor
         //打包
         abWriter = new AssetBundleWriter()
         {
-            outputPath = DefinePath.ABSAVEPATH,//StreamingAssets
+            outputPath = DefinePath.ABSAVEPATH,
             buildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression,
             buildTarget = EditorUserBuildSettings.activeBuildTarget
         };
@@ -117,6 +123,7 @@ public class AssetBundleEditor
                 if (File.Exists(fi.FullName))
                 {
                     File.Delete(fi.FullName);
+                    File.Delete(fi.FullName.Replace("manifest",""));
                 }
             }
         }
@@ -127,7 +134,7 @@ public class AssetBundleEditor
 
 
 
-    #region 保存
+    #region 保存数据
 
 
 
@@ -186,6 +193,28 @@ public class AssetBundleEditor
         ClassToBin(abCfg, DefinePath.ABSAVEPATH_Bin);
     }
 
+   
+    [MenuItem(Constants.MenuItem + "/删Xml Bin", false, 24)]//按钮在菜单栏的位置
+    static void DeleteData()
+    {
+        DirectoryInfo di = new DirectoryInfo(  Application.dataPath );
+        FileInfo[] fiArr = di.GetFiles("*", SearchOption.AllDirectories);
+
+        for (int i = 0; i < fiArr.Length; i++)
+        {
+            FileInfo fi = fiArr[i];
+            if (File.Exists(DefinePath.ABSAVEPATH_XML))
+            {
+                File.Delete(DefinePath.ABSAVEPATH_XML);
+            }
+            if (File.Exists(DefinePath.ABSAVEPATH_Bin))
+            {
+                File.Delete(DefinePath.ABSAVEPATH_Bin);
+            }
+        }
+
+        AssetDatabase.Refresh();
+    }
 
     #endregion
 
@@ -229,8 +258,18 @@ public class AssetBundleEditor
             string[] pathArr = AssetDatabase.GetAssetPathsFromAssetBundle(abNameArr[i]);
             for (int j = 0; j < pathArr.Length; j++)
             {
-                Debug.Log("AB包 \"" + abNameArr[i] + "\" 包含的资源的路径：" + pathArr[j]);
-                abDic.Add(pathArr[j], abNameArr[i]);
+                string path = pathArr[j];
+                if (path.EndsWith(".cs") )
+                {
+                    continue;
+                }
+
+                Debug.Log("AB包 \"" + abNameArr[i] + "\" 包含的资源的路径：" + path);
+                if (ValidPath(path))
+                { 
+                    abDic.Add(path, abNameArr[i]);
+                }
+               
             }
         }
 
@@ -320,17 +359,18 @@ public class AssetBundleEditor
         foreach (var item in cfg.folderPathLst)
         {
             Debug.Log(item.ABName + "_" + item.Path);
-            string key = item.ABName;
-            string value = item.Path;
+            string abName = item.ABName;
+            string path = item.Path;
             //
-            if (m_floderDic.ContainsKey(key))
+            if (m_floderDic.ContainsKey(abName))
             {
                 Debug.LogError("key重复");
             }
             else
             {
-                m_floderDic.Add(key, value);
-                fliter_floderLst.Add(value);
+                m_floderDic.Add(abName, path);
+                fliter_floderLst.Add(path);
+                fliter_pathLst .Add(path);
             }
         }
 
@@ -345,6 +385,8 @@ public class AssetBundleEditor
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             string[] dependArr = AssetDatabase.GetDependencies(path);
             List<string> prefab_dependLst = new List<string>();
+            fliter_pathLst.Add(path);
+
             for (int j = 0; j < dependArr.Length; j++)
             {
                 string dependPath = dependArr[j];
@@ -370,29 +412,14 @@ public class AssetBundleEditor
 
     }
 
-    /// <summary>
-    /// 防止修改时丢失数据
-    /// </summary>
-    /// <param name="abConfig"></param>
-    static ABCfg InitCfg()
-    {
-        ABCfg cfg = AssetDatabase.LoadAssetAtPath<ABCfg>(DefinePath.ABCONFIGPATH);
-        cfg.prefabPathLst.Clear();
-        cfg.folderPathLst.Clear();
 
-        cfg.prefabPathLst.Add("Assets/GameData/Prefabs");
-        cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "sound", Path = "Assets/GameData/Sounds" });
-        cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "shader", Path = "Assets/GameData/Shaders" });
-
-        return cfg;
-    }
 
    static bool ContainPath( string path)
     {
         List<string> lst = fliter_floderLst;
         for (int i = 0; i < lst.Count ; i++)
         {
-            if (lst[i] == path || path.Contains(lst[i]))
+            if (lst[i] == path || ( path.Contains(lst[i])&& path.Replace( lst[i],"")[0]== '/'))//  Test/a  TestTT/a => /a  TT/a
             {
                 return true;
             }
@@ -435,6 +462,46 @@ public class AssetBundleEditor
             buildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression,
             buildTarget = EditorUserBuildSettings.activeBuildTarget
         };
+
+    }
+
+
+    /// <summary>
+    /// 是不是有效路径
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    static bool ValidPath(string path)
+    {
+        foreach (var item in fliter_pathLst)
+        {
+            if (path.Contains(item))
+            {
+                
+                return true ;
+            }
+        }
+
+        return false;
+    }
+
+
+    /// <summary>
+    /// 防止清空有手动写
+    /// </summary>
+
+    static void InitCfg()
+    {
+
+        //以下顺序重要
+        cfg = AssetDatabase.LoadAssetAtPath<ABCfg>(DefinePath.ABCONFIGPATH);
+        cfg.prefabPathLst.Clear();
+        cfg.folderPathLst.Clear();
+        //
+        cfg.prefabPathLst.Add("Assets/GameData/Prefabs");
+        cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "sound", Path = "Assets/GameData/Sounds" });
+        cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "shader", Path = "Assets/GameData/Shaders" });
+        // cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "modle", Path = "Assets/GameData/Modle" });
 
     }
     #endregion

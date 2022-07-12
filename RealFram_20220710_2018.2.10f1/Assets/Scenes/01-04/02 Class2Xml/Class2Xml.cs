@@ -6,7 +6,9 @@ using UnityEditor;
 using UnityEngine;
 using FileMode = System.IO.FileMode;
 
-public class Class2Xml : MonoBehaviour 
+
+
+public class Class2Xml : MonoBehaviour
 {
 
     void Start()
@@ -22,15 +24,15 @@ public class Class2Xml : MonoBehaviour
 
     #region Class2Xml
 
- void SerilizeTest( string path)
+    void SerilizeTest(string path)
     {
-        TestSerilize testSerilize = new TestSerilize();
+        TestABConfig testSerilize = new TestABConfig();
         testSerilize.Id = 1;
         testSerilize.Name = "测试";
-        testSerilize.List = new List<int>();
-        testSerilize.List.Add(2);
-        testSerilize.List.Add(3);
-        XmlSerilize(testSerilize,path);
+        testSerilize.Lst = new List<int>();
+        testSerilize.Lst.Add(2);
+        testSerilize.Lst.Add(3);
+        XmlSerilize(testSerilize, path);
     }
 
     /// <summary>
@@ -38,7 +40,7 @@ public class Class2Xml : MonoBehaviour
     /// </summary>
     /// <param name="testSerilize"></param>
     /// <param name="path"></param>
-    void XmlSerilize(TestSerilize testSerilize,string path)
+    void XmlSerilize(TestABConfig testSerilize, string path)
     {
         FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
         StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8);
@@ -47,18 +49,18 @@ public class Class2Xml : MonoBehaviour
         sw.Close();
         fs.Close();
 
-      //  AssetDatabase.Refresh();
+        //  AssetDatabase.Refresh();
     }
     #endregion
 
 
 
     #region Xml2Class
- void DeSerilizerTest(string path)
+    void DeSerilizerTest(string path)
     {
-        TestSerilize testSerilize = XmlDeSerilize(path);
+        TestABConfig testSerilize = XmlDeSerilize(path);
         Debug.Log(testSerilize.Id + "   " + testSerilize.Name);
-        foreach (int a in testSerilize.List)
+        foreach (int a in testSerilize.Lst)
         {
             Debug.Log(a);
         }
@@ -69,30 +71,32 @@ public class Class2Xml : MonoBehaviour
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    TestSerilize XmlDeSerilize(string path)
+    TestABConfig XmlDeSerilize(string path)
     {
         FileStream fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-        XmlSerializer xs = new XmlSerializer(typeof(TestSerilize));
-        TestSerilize testSerilize = (TestSerilize)xs.Deserialize(fs);
+        XmlSerializer xs = new XmlSerializer(typeof(ABConfig));
+        TestABConfig testSerilize = (TestABConfig)xs.Deserialize(fs);
         fs.Close();
         return testSerilize;
     }
     #endregion
-   
+
 
     #endregion
 
 
 }
 
-
 [System.Serializable]
-public class TestSerilize
+public class TestABConfig
 {
-	[XmlAttribute("Id")]
-	public int Id { get; set; }
-	[XmlAttribute("Name")]
-	public string Name { get; set; }
-	[XmlElement("List")]
-	public List<int> List { get; set; }
+    [XmlAttribute("Id")]
+    public int Id { get; set; }
+    [XmlAttribute("Name")]
+    public string Name { get; set; }
+    [XmlElement("List")]
+    public List<int> Lst { get; set; }
 }
+
+
+

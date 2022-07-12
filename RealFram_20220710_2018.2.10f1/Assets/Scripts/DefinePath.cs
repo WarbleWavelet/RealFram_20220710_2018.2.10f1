@@ -12,6 +12,6 @@ public class DefinePath
     public const string ABCONFIGPATH = "Assets/Editor/ABConfig.asset";
     public static string ABSAVEPATH = Application.streamingAssetsPath;
     public static string ABSAVEPATH_XML = Application.dataPath + "/AssetBundleConfig.xml";
-    public static string ABSAVEPATH_Bin = Application.streamingAssetsPath + "/AssetBundleConfig.bytes";
+    public static string ABSAVEPATH_Bin = Application.dataPath + "/AssetBundleConfig.bytes";
 }
 
