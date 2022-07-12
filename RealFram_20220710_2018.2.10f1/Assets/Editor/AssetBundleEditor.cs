@@ -501,6 +501,7 @@ public class AssetBundleEditor
         cfg.prefabPathLst.Add("Assets/GameData/Prefabs");
         cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "sound", Path = "Assets/GameData/Sounds" });
         cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "shader", Path = "Assets/GameData/Shaders" });
+        cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "assetbundleconfig", Path = "Assets/GameData/Data/ABData" });
         // cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "modle", Path = "Assets/GameData/Modle" });
 
     }

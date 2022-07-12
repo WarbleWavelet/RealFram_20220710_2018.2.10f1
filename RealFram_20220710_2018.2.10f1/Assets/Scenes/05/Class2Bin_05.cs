@@ -6,6 +6,7 @@
 	功能：二进制的序列化与反序列化
 *****************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -16,11 +17,20 @@ using UnityEngine;
 
 public class Class2Bin_05 : MonoBehaviour
 {
-
+    ABConfig cfg=new ABConfig();
     void Start()
     {
+        LoadAB();
 
-        ABConfig cfg = BinaryDeserilize();
+        //
+
+
+
+    }
+
+    private void LoadAB()
+    {
+         cfg = BinaryDeserilize();
         uint crc = CRC32.GetCRC32(DefinePath.path_ADB);
         ABBase abBase = new ABBase();
         //
@@ -42,12 +52,24 @@ public class Class2Bin_05 : MonoBehaviour
         GameObject go = Instantiate(prefab);
         //
         FixShader(go);
-        //
-
-
-
     }
 
+    /// <summary>
+    /// /存储的Cfg
+    /// </summary>
+    /// <returns></returns>
+    ABConfig BinaryDeserilize()
+    {
+        //TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/AssetBundleConfig.bytes");
+        AssetBundle ab=AssetBundle.LoadFromFile(Application.streamingAssetsPath+ "/assetbundleconfig");
+        TextAsset ta = ab.LoadAsset<TextAsset>("AssetBundleConfig");
+        MemoryStream stream = new MemoryStream(ta.bytes);
+        BinaryFormatter bf = new BinaryFormatter();
+        ABConfig cfg = (ABConfig)bf.Deserialize(stream);
+        stream.Close();
+
+        return cfg;
+    }
 
     void FixShader(GameObject go)
     {
@@ -70,21 +92,7 @@ public class Class2Bin_05 : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// /存储的Cfg
-    /// </summary>
-    /// <returns></returns>
-    ABConfig BinaryDeserilize()
-    {
-        TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/AssetBundleConfig.bytes");
-        //   ta = AssetDatabase.LoadAssetAtPath<TextAsset>(Application.streamingAssetsPath + "/AssetBundleConfig.bytes");
-        MemoryStream stream = new MemoryStream(ta.bytes);
-        BinaryFormatter bf = new BinaryFormatter();
-        ABConfig cfg = (ABConfig)bf.Deserialize(stream);
-        stream.Close();
 
-        return cfg;
-    }
 }
 
 
