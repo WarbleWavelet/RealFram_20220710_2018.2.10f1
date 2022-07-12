@@ -27,23 +27,23 @@ public class Class2Bin : MonoBehaviour
         //
         BinarySerilize(testSerilize,DefinePath.path_Bin_Write);
         //
-        StartCoroutine(A());
+        //StartCoroutine(A());
 
 
     }
 
 
    
-    IEnumerator A()
-    {
-        yield return new WaitForSeconds(3f);
-        TestSerilize testSerilize = BinaryDeserilize(DefinePath.path_Bin_Read);
-        Debug.Log(testSerilize.Id + "   " + testSerilize.Name);
-        foreach (int a in testSerilize.List)
-        {
-            Debug.Log(a);
-        }
-    }
+    //IEnumerator A()
+    //{
+    //    yield return new WaitForSeconds(3f);
+    //    TestSerilize testSerilize = BinaryDeserilize(DefinePath.path_Bin_Read);
+    //    Debug.Log(testSerilize.Id + "   " + testSerilize.Name);
+    //    foreach (int a in testSerilize.List)
+    //    {
+    //        Debug.Log(a);
+    //    }
+    //}
 
     void BinarySerilize(TestSerilize serilize,string path)
     {
@@ -52,17 +52,17 @@ public class Class2Bin : MonoBehaviour
         bf.Serialize(fs, serilize);
         fs.Close();
 
-        AssetDatabase.Refresh();
+       // AssetDatabase.Refresh();
     }
 
-    TestSerilize BinaryDeserilize(string path)
-    {
-        TextAsset ta = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(path);
-        MemoryStream stream = new MemoryStream(ta.bytes);
-        BinaryFormatter bf = new BinaryFormatter();
-        TestSerilize testSerilize = (TestSerilize)bf.Deserialize(stream);
-        stream.Close();
+    //TestSerilize BinaryDeserilize(string path)
+    //{
+    //    TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+    //    MemoryStream stream = new MemoryStream(ta.bytes);
+    //    BinaryFormatter bf = new BinaryFormatter();
+    //    TestSerilize testSerilize = (TestSerilize)bf.Deserialize(stream);
+    //    stream.Close();
 
-        return testSerilize;
-    }
+    //    return testSerilize;
+    //}
 }

@@ -8,13 +8,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e87ef39fb67c06459ef48755903ee14, type: 3}
+  m_Script: {fileID: 11500000, guid: f43a2d2400f365b4bb49d76569cbf77c, type: 3}
   m_Name: ABConfig
   m_EditorClassIdentifier: 
-  m_AllPrefabPath:
+  prefabPathLst:
   - Assets/GameData/Prefabs
-  m_AllFileDirAB:
-  - ABName: shade
-    Path: Assets/GameData/Shades
+  folderPathLst:
   - ABName: sound
     Path: Assets/GameData/Sounds
+  - ABName: shader
+    Path: Assets/GameData/Shaders

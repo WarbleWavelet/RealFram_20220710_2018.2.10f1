@@ -11,3 +11,4 @@ public class DefinePath
     //
     public const string ABCONFIGPATH = "Assets/Editor/ABConfig.asset";
 }
+

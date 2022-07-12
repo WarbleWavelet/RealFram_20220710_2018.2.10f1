@@ -10,17 +10,17 @@ public class AssetBundleEditor
     #region 字段 属性 构造
     static AssetBundleWriter abWriter;
     /// <summary><包名,path></summary>
-   static Dictionary<string, string>  m_floderDic= new Dictionary<string, string>();
+    static Dictionary<string, string> m_floderDic = new Dictionary<string, string>();
     /// <summary>m_AllFileAB  过滤表<path></summary>
-   static List<string> fliter_floderLst= new List<string>();
+    static List<string> fliter_floderLst = new List<string>();
     //
     /// <summary> 单个prefab的AB包 </summary>
-    static Dictionary<string, List<string>> m_prefabDic=new Dictionary<string, List<string>>();
+    static Dictionary<string, List<string>> m_prefabDic = new Dictionary<string, List<string>>();
     #endregion
 
 
     #region MenuItem
-   [MenuItem(Constants.MenuItem + "/打包")]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/标记")]//按钮在菜单栏的位置
     public static void Build()
     {
         // Load cfg
@@ -42,18 +42,66 @@ public class AssetBundleEditor
 
         SetABDicName();
 
-        EditorUtility.ClearProgressBar();
+
+        //耗性能，慎用
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        //
+        EditorUtility.ClearProgressBar();//前面几个，后面一个就可以
     }
 
 
+    [MenuItem(Constants.MenuItem + "/清理标记")]//按钮在菜单栏的位置
+    public static void Clear()
+    {
+        string[] oldNameArr = AssetDatabase.GetAllAssetBundleNames();
 
+        for (int i = 0; i < oldNameArr.Length; i++)
+        {
+            AssetDatabase.RemoveAssetBundleName(oldNameArr[i], true);
+        }
 
-
+        AssetDatabase.Refresh();
+    }
     #endregion
 
+    [MenuItem(Constants.MenuItem + "/打包")]//按钮在菜单栏的位置
+    static void GetABName()
+    {
+        string[] abNameArr = AssetDatabase.GetAllAssetBundleNames();
+        Dictionary<string, string> abDic=new Dictionary<string, string>();
+        for (int i = 0; i < abNameArr.Length; i++)
+        {
+            string[] pathArr = AssetDatabase.GetAssetPathsFromAssetBundle(abNameArr[i]);
+            for (int j = 0; j < pathArr.Length; j++)
+            {
+                Debug.Log("AB包 \"" + abNameArr[i] + "\" 包含的资源的路径：" + pathArr[j]);
+                abDic.Add(pathArr[j],abNameArr[i] );
+            }
+        }
+        //打包
+        abWriter = new AssetBundleWriter()
+        {
+            outputPath = Application.streamingAssetsPath,//StreamingAssets
+            buildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression,
+            buildTarget = EditorUserBuildSettings.activeBuildTarget
+        };
+        //
+        if (Directory.Exists(abWriter.outputPath) == false)
+        {
+            Directory.CreateDirectory(abWriter.outputPath);
+        }
+        //目录，模式，平台
+        BuildPipeline.BuildAssetBundles(
+            abWriter.outputPath,
+            abWriter.buildAssetBundleOptions,
+            abWriter.buildTarget
+        );
+        AssetDatabase.Refresh();//有时耗时长，不要到处使用
+    }
 
     #region MenuItem 01
-    [MenuItem(Constants.MenuItem+"/Build AssetBundles")]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/Build AssetBundles")]//按钮在菜单栏的位置
     static void BuildAllAssetBundles()//不能传参
     {
         abWriter = new AssetBundleWriter()
@@ -73,12 +121,15 @@ public class AssetBundleEditor
             abWriter.buildAssetBundleOptions,
             abWriter.buildTarget
         );
-        AssetDatabase.Refresh();
+        AssetDatabase.Refresh();//有时耗时长，不要到处使用
     }
     #endregion
 
 
     #region 辅助
+
+
+
 
     /// <summary>
     /// 设置两个AB包Dic的名字

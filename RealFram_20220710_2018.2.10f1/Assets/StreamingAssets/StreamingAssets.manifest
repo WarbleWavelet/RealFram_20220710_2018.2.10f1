@@ -1,7 +1,13 @@
 ManifestFileVersion: 0
-CRC: 3006134658
+CRC: 36045030
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: attack.unity3d
+      Name: sound
+      Dependencies: {}
+    Info_1:
+      Name: shader
+      Dependencies: {}
+    Info_2:
+      Name: attack
       Dependencies: {}

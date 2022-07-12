@@ -47,7 +47,7 @@ public class Class2Xml : MonoBehaviour
         sw.Close();
         fs.Close();
 
-        AssetDatabase.Refresh();
+      //  AssetDatabase.Refresh();
     }
     #endregion
 

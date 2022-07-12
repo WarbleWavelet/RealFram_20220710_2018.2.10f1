@@ -13,19 +13,19 @@ using UnityEngine;
 public class ReadAsset : MonoBehaviour {
 
 	// Use this for initialization
-	void Start () 
-    {
-        ReadTestAssets(DefinePath.path_04_Asset_Read);
-	}
+	//void Start () 
+ //   {
+ //       ReadTestAssets(DefinePath.path_04_Asset_Read);
+	//}
 
-    void ReadTestAssets(string path)
-    {
-        AssetsSerilize assets = UnityEditor.AssetDatabase.LoadAssetAtPath<AssetsSerilize>(path);
-        Debug.Log(assets.Id);
-        Debug.Log(assets.Name);
-        foreach (string str in assets.TestList)
-        {
-            Debug.Log(str);
-        }
-    }
+ //   void ReadTestAssets(string path)
+ //   {
+ //       AssetsSerilize assets = UnityEditor.AssetDatabase.LoadAssetAtPath<AssetsSerilize>(path);
+ //       Debug.Log(assets.Id);
+ //       Debug.Log(assets.Name);
+ //       foreach (string str in assets.TestList)
+ //       {
+ //           Debug.Log(str);
+ //       }
+ //   }
 }
