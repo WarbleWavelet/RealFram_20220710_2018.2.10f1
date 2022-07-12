@@ -9,6 +9,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 
 
@@ -34,4 +35,43 @@ public class ABCfg : ScriptableObject
 		public string Path;
 	
 	}
+}
+
+/// <summary>
+/// cfg
+/// </summary>
+[Serializable]
+public class ABConfig
+{
+	[XmlElement("ABLst")]
+	
+	public List<ABBase> ABLst { get; set; }
+
+
+}
+
+
+
+/// <summary>
+/// AB
+/// </summary>
+[Serializable]
+public class ABBase
+{
+	[XmlElement("Path")]
+	public string Path { get; set; }
+
+	[XmlElement("Crc")]
+	/// <summary>冗余校验</summary>
+	public uint Crc { get; set; }
+
+	[XmlElement("ABName")]
+	public string ABName { get; set; }
+
+	[XmlElement("ABDependce")]
+	public List<string> ABDependce { get; set; }
+
+	[XmlElement("AssetName")]
+	public string AssetName { get; set; }
+
 }
