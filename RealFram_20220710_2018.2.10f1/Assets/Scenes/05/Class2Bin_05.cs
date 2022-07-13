@@ -61,8 +61,8 @@ public class Class2Bin_05 : MonoBehaviour
     ABConfig BinaryDeserilize()
     {
         //TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/AssetBundleConfig.bytes");
-        AssetBundle ab=AssetBundle.LoadFromFile(Application.streamingAssetsPath+ "/assetbundleconfig");
-        TextAsset ta = ab.LoadAsset<TextAsset>("AssetBundleConfig");
+        AssetBundle ab=AssetBundle.LoadFromFile(DefinePath.ABSAVEPATH_Bin);
+        TextAsset ta = ab.LoadAsset<TextAsset>( Constants.AssetBundleConfig);
         MemoryStream stream = new MemoryStream(ta.bytes);
         BinaryFormatter bf = new BinaryFormatter();
         ABConfig cfg = (ABConfig)bf.Deserialize(stream);

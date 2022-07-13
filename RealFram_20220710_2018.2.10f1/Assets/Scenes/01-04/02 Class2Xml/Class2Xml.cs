@@ -74,7 +74,7 @@ public class Class2Xml : MonoBehaviour
     TestABConfig XmlDeSerilize(string path)
     {
         FileStream fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-        XmlSerializer xs = new XmlSerializer(typeof(ABConfig));
+        XmlSerializer xs = new XmlSerializer(typeof(TestABConfig));
         TestABConfig testSerilize = (TestABConfig)xs.Deserialize(fs);
         fs.Close();
         return testSerilize;
