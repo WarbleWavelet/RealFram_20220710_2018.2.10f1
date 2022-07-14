@@ -8,6 +8,16 @@
     public const string AssetBundleConfig = "assetbundleconfig";
 
 
-    /// <summary>类对象池默认最大 </summary>
-    public const int ClassobjectPool_MAXCNT =500;
+
+
+    #region Mgr
+    /// <summary>类对象池默认最大 Pool_MaxCnt </summary>
+    public const int ClassObjectPool_MAXCNT =500;
+    public const int ClassObjectPool_AsyncLoadResPara_MAXCNT = 50;
+    public const int ClassObjectPool_AsyncLoadResCallBack_MAXCNT = 100;
+
+    /// <summary>卡着异步加载资源的最长时间</summary>
+    public const int MAXASYNCLOADRESTIME = 200000;
+    #endregion
+
 }

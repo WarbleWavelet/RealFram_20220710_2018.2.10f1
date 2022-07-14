@@ -22,7 +22,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
 {
 
 
-	Dictionary<Type,object> m_ClassPoolDic=new   Dictionary<Type,object>();
+	Dictionary<Type,object> m_classPoolDic=new   Dictionary<Type,object>();
 
 
     /// <summary>
@@ -35,10 +35,10 @@ public class ObjectMgr : Singleton<ObjectMgr>
     {
         Type type = typeof(T);
         object obj;
-        if ( m_ClassPoolDic.TryGetValue(type, out obj)==false || obj == null)
+        if ( m_classPoolDic.TryGetValue(type, out obj)==false || obj == null)
         {
             ClassObjectPool<T> pool = new ClassObjectPool<T>(maxCnt);
-            m_ClassPoolDic.Add(type, pool);
+            m_classPoolDic.Add(type, pool);
 
             return pool;
         }
