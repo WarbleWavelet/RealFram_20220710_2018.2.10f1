@@ -52,7 +52,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
             }
             else
             {
-                ResItem mediator = new ResItem
+                ResItem resItem = new ResItem
                 {
                     m_Crc = abBase.Crc,
                     m_AssetBundleName = abBase.ABName,
@@ -60,9 +60,9 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
                     m_AssetBundleDepend = abBase.ABDependce
 
                 };
-                resItemDic.Add(mediator.m_Crc, mediator);
+                resItemDic.Add(resItem.m_Crc, resItem);
 
-                Debug.Log(mediator.ToString());
+                Debug.Log(resItem.ToString());
             }
         }
     }
@@ -77,20 +77,20 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     public ResItem LoadResItem(uint crc)
     {
-        ResItem mediator = null;
-        if (resItemDic.TryGetValue(crc, out mediator) == false || mediator == null)
+        ResItem resItem = null;
+        if (resItemDic.TryGetValue(crc, out resItem) == false || resItem == null)
         {
             return null;
         }
-        if (mediator.m_AssetBundle != null)//已有
+        if (resItem.m_AssetBundle != null)//已有
         {
-            return mediator;
+            return resItem;
         }
         //未有
-        AssetBundle ab = LoadAB(mediator.m_AssetBundleName);
-        LoadDepend(mediator);
+        AssetBundle ab = LoadAB(resItem.m_AssetBundleName);
+        LoadDepend(resItem);
 
-        return mediator;
+        return resItem;
 
 
     }
@@ -110,17 +110,17 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     #region 删
     /// <summary>
-    /// 卸载资源
+    /// 卸载AB包
     /// </summary>
-    /// <param name="mediator"></param>
-    public void ReleaseResItem(ResItem mediator)
+    /// <param name="resItem"></param>
+    public void ReleaseResItem(ResItem resItem)
     {
-        if (mediator == null)
+        if (resItem == null)
         {
             return;
         }
 
-        List<string> dpLst = mediator.m_AssetBundleDepend;
+        List<string> dpLst = resItem.m_AssetBundleDepend;
         if (dpLst != null && dpLst.Count > 0)
         {
             for (int i = 0; i < dpLst.Count; i++)
@@ -205,9 +205,9 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
             }
             //
 
-            if (abItem == null)
+            if (ab == null)
             {
-                Debug.LogErrorFormat("Load ABItem Error：path not exist:{0}", path);
+                Debug.LogErrorFormat("Load ab Error：path not exist:{0}", path);
             }
 
             abItem = abItemPool.Spawn(true);
@@ -276,7 +276,7 @@ public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬
     /// <summary>加载完的AB包</summary>
     public AssetBundle m_AssetBundle = null;
 
-    /// <summary> 资源对象  </summary>
+    /// <summary> 资源对象（prefab,图片，音频）  </summary>
     public Object m_Obj=null;
 
     /// <summary>上次使用时间</summary>

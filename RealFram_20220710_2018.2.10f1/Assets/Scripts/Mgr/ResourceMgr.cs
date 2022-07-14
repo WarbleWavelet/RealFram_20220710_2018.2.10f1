@@ -11,6 +11,10 @@
        5：清空缓存
        6：预加载
        6：为ObjectManager提供的同步异步资源加载
+
+path=>Res
+path=>crc
+Cache
 *****************************************************/
 
 using System;
@@ -37,7 +41,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <param name="path"></param>
     /// <returns></returns>
     #region T
-    public T LoadAsset<T>(string path) where T : UnityEngine.Object
+    public T LoadResource<T>(string path) where T : UnityEngine.Object
     {
         if (string.IsNullOrEmpty(path))
         { 
@@ -45,7 +49,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
 
         uint crc = CRC32.GetCRC32(path);
-        ResItem resItem = GetAsset(crc);
+        ResItem resItem = GetResItem(crc);
         if (resItem != null)
         {
             return resItem as T;
@@ -53,11 +57,20 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
 
         T obj = null;
-#if UNITY_EDITOR//测试从Editor加载
-        if ( loadFromAB == false)
+#if UNITY_EDITOR//测试从Editor加载            
+
+        if (loadFromAB == false)
         {
-            obj=LoadAssetByEditor<T>(path);
-            resItem =  AssetBundleMgr.Instance.GetResItem(crc);
+
+            resItem = AssetBundleMgr.Instance.GetResItem(crc);
+            if (resItem.m_Obj != null)
+            {
+                obj = resItem.m_Obj as T;
+            }
+            else
+            {
+                obj = LoadAssetByEditor<T>(path);
+            }
         }
 #endif
         if (obj == null)
@@ -65,13 +78,20 @@ public class ResourceMgr : Singleton<ResourceMgr>
             resItem = AssetBundleMgr.Instance.LoadResItem(crc);
             if (resItem != null && resItem.m_AssetBundle != null)
             {
-                obj = resItem.m_AssetBundle.LoadAsset<T>( resItem.m_AssetBundleName);
+                if (resItem.m_Obj != null)
+                {
+                    obj = resItem.m_Obj as T;
+                }
+                else
+                { 
+                     obj = resItem.m_AssetBundle.LoadAsset<T>( resItem.m_AssetBundleName);
+                }
             }
         }
 
         CacheResItem(path,ref resItem, crc, obj);
 
-        return null;
+        return obj;
     }
 
 
@@ -91,7 +111,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
 
     #region ResItem
-    ResItem GetAsset(uint crc,int addCnt=1)
+    ResItem GetResItem(uint crc,int addCnt=1)
     { 
         ResItem resItem=null;
         if (RefDic.TryGetValue(crc, out resItem))
@@ -124,6 +144,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
     void CacheResItem(string name, ref ResItem resItem, uint crc, UnityEngine.Object obj, int addRefCnt=1)
     {
+       /// Washout();
         if (resItem == null)
         {
             Debug.LogErrorFormat("Err");
@@ -136,6 +157,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
         resItem = new ResItem
         {
+            m_Obj = obj,//占内存
             m_AssetName = name,
             m_Crc = crc,
             m_LastUseTime = Time.realtimeSinceStartup,
@@ -177,7 +199,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// 回收资源(是否有其他Object在引用)
     /// </summary>
     /// <param name="resItem"></param>
-    /// <param name="destroyCache">是否从不使用的缓存池中清理</param>
+    /// <param name="destroyCache">是否要删除缓存</param>
     protected void DestroyResItem(ResItem resItem, bool destroyCache = false)
     {
         
@@ -186,26 +208,33 @@ public class ResourceMgr : Singleton<ResourceMgr>
             return ;
         }
 
-        //对NoRef
-        if (destroyCache == false)
-        { 
-            noRefLst.AddToHead(resItem);
-            return;
-        }
-
         //对Ref
         if (RefDic.Remove(resItem.m_Crc) == false)
         {
             return;
         }
-        //上层Mgr
-        AssetBundleMgr.Instance.ReleaseResItem(resItem);
 
-        //下层引用
-        if (resItem.m_Obj != null)
+        //对NoRef
+        if (destroyCache == false)
         {
-            resItem.m_Obj = null;
+            noRefLst.AddToHead(resItem);
+           // return;
         }
+        else
+        {
+            #region 最占内存的两个地方
+            //上层Mgr
+            AssetBundleMgr.Instance.ReleaseResItem(resItem);
+
+            //下层引用，对象置空
+            if (resItem.m_Obj != null)
+            {
+                resItem.m_Obj = null;
+            }
+            #endregion
+        }
+
+
 
 
     }
