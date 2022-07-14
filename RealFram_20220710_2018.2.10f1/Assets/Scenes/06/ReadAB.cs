@@ -19,7 +19,7 @@ namespace Demo06
 		// Use this for initialization
 		void Start()
 		{
-			AssetBundleMgr.LoadAB();
+			AssetBundleMgr.Instance.LoadABCfg();
 		}
 
 		// Update is called once per frame

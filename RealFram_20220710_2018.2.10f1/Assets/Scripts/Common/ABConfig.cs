@@ -14,7 +14,7 @@ using System.Xml.Serialization;
 
 
 /// <summary>
-///  List<ABBase>
+/// AB配置类 List<ABBase>
 /// </summary>
 [Serializable]
 public class ABConfig
@@ -29,7 +29,7 @@ public class ABConfig
 
 
 /// <summary>
-/// AB
+/// AB基类
 /// </summary>
 [Serializable]
 public class ABBase
