@@ -34,11 +34,11 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         m_resItemDic.Clear();
         m_cfg = BinaryDeserilize();
     }
-
     /// <summary>
-    /// 加载配置文件
+    ///  加载配置文件
     /// </summary>
-   public  void LoadABCfg()
+    /// <param name="log">打印日志</param>
+    public void LoadABCfg(bool log = true)
     {
         Reset();
         //
@@ -48,7 +48,8 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
             if (m_resItemDic.ContainsKey(abBase.Crc))
             {
-                Debug.LogErrorFormat("Key重复，AB包名 {0},资源名 {1}", abBase.ABName, abBase.AssetName);
+
+                    Debug.LogErrorFormat("Key重复，AB包名 {0},资源名 {1}", abBase.ABName, abBase.AssetName);
             }
             else
             {
@@ -61,8 +62,11 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
                 };
                 m_resItemDic.Add(resItem.m_Crc, resItem);
+                if (log)
+                { 
+                           Debug.Log(resItem.ToString());     
+                }
 
-                Debug.Log(resItem.ToString());
             }
         }
     }
@@ -193,7 +197,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-   public AssetBundle LoadAB(string name)
+    public AssetBundle LoadAB(string name)
     {
         uint crc = CRC32.GetCRC32(name);
         ABItem abItem = null;
@@ -285,29 +289,32 @@ public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬
 
     /// <summary>
     /// 资源对象（prefab,图片，音频，Unity中一切物体继承于UnityEngine.Object） <para /> 
-   ///Unity中一切物体（比如GameObject）继承于UnityEngine.Object，区别于System.object <para /> 
-   ///</summary>
-    public Object m_Obj=null;
+    ///Unity中一切物体（比如GameObject）继承于UnityEngine.Object，区别于System.object <para /> 
+    ///</summary>
+    public Object m_Obj = null;
 
     /// <summary>上次使用时间</summary>
     public float m_LastUseTime = 0.0f;
 
+    /// <summary>跳砖场景时（Clear）需不需要清除</summary> 
+    public bool m_Clear = true;
+
     /// <summary>引用计数</summary>
-     int m_RefCnt=0;
-    public int RefCnt
+    int m_refCnt = 0;
+    public int m_RefCnt
     {
         get
         {
-            return m_RefCnt;
+            return m_refCnt;
         }
 
         set
         {
-            if (m_RefCnt < 0)
+            if (m_refCnt < 0)
             {
-                Debug.LogErrorFormat("RefCnt Err:{0}",m_RefCnt);
+                Debug.LogErrorFormat("RefCnt Err:{0}", m_refCnt);
             }
-            m_RefCnt = value;
+            m_refCnt = value;
         }
     }
     #endregion

@@ -59,6 +59,7 @@ namespace Demo08
 		private void OnApplicationQuit()
 		{
 			Debug.Log("OnApplicationQuit");
+		ResourceMgr.Instance.ClearCache();
 			Resources.UnloadUnusedAssets();
 		}
 #endif
