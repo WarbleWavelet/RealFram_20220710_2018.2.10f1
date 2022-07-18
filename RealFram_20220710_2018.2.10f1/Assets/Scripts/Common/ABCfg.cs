@@ -17,7 +17,7 @@ using System.Xml.Serialization;
 /// AB配置类 List<ABBase>
 /// </summary>
 [Serializable]
-public class ABConfig
+public class ABCfg
 {
 	[XmlElement("ABLst")]
 

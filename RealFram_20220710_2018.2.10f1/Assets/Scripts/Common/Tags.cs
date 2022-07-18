@@ -5,8 +5,11 @@
     日期：2022/7/15 12:57:58
 	功能：
 *****************************************************/
+
+
 public class Tags
 {
     public const string Player = "Player";
     public const string Canvas = "Canvas";
+    public const string RecyclePoolTrans = "RecyclePoolTrans";//ObjectMgr用到
 }

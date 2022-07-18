@@ -22,11 +22,13 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 {
 
 
-    ABConfig m_cfg = new ABConfig();
+    ABCfg m_cfg = new ABCfg();
     /// <summary>资源数据</summary>
     Dictionary<uint, ResItem> m_resItemDic = new Dictionary<uint, ResItem>();
     /// <summary>已加载的AB包</summary> 
     Dictionary<uint, ABItem> m_abItemDic = new Dictionary<uint, ABItem>();
+
+
     ClassObjectPool<ABItem> m_abItemPool = ObjectMgr.Instance.TryGetClassObjectPool<ABItem>(Constants.ClassObjectPool_MAXCNT);
 
     void Reset()
@@ -34,6 +36,9 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         m_resItemDic.Clear();
         m_cfg = BinaryDeserilize();
     }
+
+
+    #region ABCfg
     /// <summary>
     ///  加载配置文件
     /// </summary>
@@ -70,6 +75,97 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
             }
         }
     }
+
+    /// <summary>
+    /// /反序列化存储的Cfg
+    /// </summary>
+    /// <returns></returns>
+    ABCfg BinaryDeserilize()
+    {
+        AssetBundle ab = AssetBundle.LoadFromFile(Application.streamingAssetsPath+ "/assetbundleconfig");//Load AB
+        TextAsset ta = ab.LoadAsset<TextAsset>("Assets/GameData/Data/ABData/AssetBundleConfig.bytes");//load bytes
+        if (ta == null)
+        {
+            Debug.LogErrorFormat(" \"{0}\" is not exist", DefinePath.ABSAVEPATH_Bin);
+
+            return null;
+        }
+
+        MemoryStream stream = new MemoryStream(ta.bytes);
+        BinaryFormatter bf = new BinaryFormatter();
+        ABCfg cfg = (ABCfg)bf.Deserialize(stream);
+        stream.Close();
+
+        return cfg;
+    }
+    #endregion
+
+
+    #region AB ABItem
+ /// <summary>
+    /// 加载AssetBundle
+    /// </summary>
+    /// <param name="ABName"></param>
+    /// <returns></returns>
+    public AssetBundle LoadAB(string ABName)//Dic或Ab包
+    {
+        uint crc = CRC32.GetCRC32(ABName);
+        ABItem abItem = null;
+        if (m_abItemDic.TryGetValue(crc, out abItem) == false)//加载
+        {
+
+            string path = Application.streamingAssetsPath + "/" + ABName;
+            AssetBundle ab = null;
+            if (File.Exists(path))
+            {
+                ab = AssetBundle.LoadFromFile(path);
+            }
+            else
+            {
+                Debug.LogErrorFormat("Load AB Error：path not exist:{0}", path);
+            }
+            //
+
+            if (ab == null)
+            {
+                Debug.LogErrorFormat("Load ab Error：path not exist:{0}", path);
+            }
+
+            abItem = m_abItemPool.Spawn(true);
+            abItem.m_AB = ab;
+            abItem.m_RefCnt++;
+            m_abItemDic.Add(crc, abItem);
+
+        }
+        else
+        {
+            abItem.m_RefCnt++;
+        }
+        return abItem.m_AB;
+    }
+
+
+    /// <summary>
+    /// 卸载资源引用的AB
+    /// </summary>
+    /// <param name="name"></param>
+    public void UnLoadAB(string name)
+    {
+        uint crc = CRC32.GetCRC32(name);
+        ABItem abItem = null;
+        if (m_abItemDic.TryGetValue(crc, out abItem) && abItem != null)//加载
+        {
+            abItem.m_RefCnt--;
+            if (abItem.m_RefCnt <= 0 && abItem.m_AB != null)
+            {
+                abItem.m_AB.Unload(true);//Unloads all assets in the bundle.
+                abItem.Reset();
+                m_abItemPool.Recycle(abItem);
+                m_abItemDic.Remove(crc);
+            }
+        }
+    }
+    #endregion  
 
 
     #region ResItem
@@ -108,136 +204,11 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         LoadDepend(resItem);
 
         return resItem;
-
-
-    }
-
-
-    #endregion
-
-
-
-
-
-    #region 删
-    /// <summary>
-    /// 卸载AB包
-    /// </summary>
-    /// <param name="resItem"></param>
-    public void ReleaseResItem(ResItem resItem)
-    {
-        if (resItem == null)
-        {
-            return;
-        }
-
-        List<string> dpLst = resItem.m_ABDepend;
-        if (dpLst != null && dpLst.Count > 0)
-        {
-            for (int i = 0; i < dpLst.Count; i++)
-            {
-                UnloadAsserBundle(dpLst[i]);
-            }
-
-        }
-    }
-
-    /// <summary>
-    /// 卸载资源引用的AB
-    /// </summary>
-    /// <param name="name"></param>
-    public void UnloadAsserBundle(string name)
-    {
-        uint crc = CRC32.GetCRC32(name);
-        ABItem abItem = null;
-        if (m_abItemDic.TryGetValue(crc, out abItem) && abItem != null)//加载
-        {
-            abItem.m_refCnt--;
-            if (abItem.m_refCnt <= 0 && abItem.m_AB != null)
-            {
-                abItem.m_AB.Unload(true);//Unloads all assets in the bundle.
-                abItem.Reset();
-                m_abItemPool.Recycle(abItem);
-                m_abItemDic.Remove(crc);
-            }
-
-        }
-    }
-
-    #endregion
-
-    #region 辅助
-
-    /// <summary>
-    /// /反序列化存储的Cfg
-    /// </summary>
-    /// <returns></returns>
-    ABConfig BinaryDeserilize()
-    {
-        AssetBundle ab = AssetBundle.LoadFromFile(DefinePath.ABSAVEPATH_Bin);
-        TextAsset ta = ab.LoadAsset<TextAsset>(Constants.AssetBundleConfig);
-        if (ta == null)
-        {
-            Debug.LogErrorFormat(" \"{0}\" is not exist", DefinePath.ABSAVEPATH_Bin);
-
-            return null;
-        }
-
-        MemoryStream stream = new MemoryStream(ta.bytes);
-        BinaryFormatter bf = new BinaryFormatter();
-        ABConfig cfg = (ABConfig)bf.Deserialize(stream);
-        stream.Close();
-
-        return cfg;
     }
 
 
     /// <summary>
-    /// 加载AssetBundle
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    public AssetBundle LoadAB(string name)
-    {
-        uint crc = CRC32.GetCRC32(name);
-        ABItem abItem = null;
-        if (m_abItemDic.TryGetValue(crc, out abItem) == false)//加载
-        {
-
-            string path = Application.streamingAssetsPath + "/" + name;
-            AssetBundle ab = null;
-            if (File.Exists(path))
-            {
-                ab = AssetBundle.LoadFromFile(path);
-            }
-            else
-            {
-                Debug.LogErrorFormat("Load AB Error：path not exist:{0}", path);
-            }
-            //
-
-            if (ab == null)
-            {
-                Debug.LogErrorFormat("Load ab Error：path not exist:{0}", path);
-            }
-
-            abItem = m_abItemPool.Spawn(true);
-            abItem.m_AB = ab;
-            abItem.m_refCnt++;
-            m_abItemDic.Add(crc, abItem);
-
-        }
-        else
-        {
-            abItem.m_refCnt++;
-        }
-        return abItem.m_AB;
-    }
-
-
-
-    /// <summary>
-    /// 加载依赖
+    /// 加载依赖,load依赖AB包
     /// </summary>
     /// <param name="resItem"></param>
     void LoadDepend(ResItem resItem)
@@ -252,17 +223,49 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     }
 
+    /// <summary>
+    /// 卸载AB包
+    /// </summary>
+    /// <param name="resItem"></param>
+    public void ReleaseResItem(ResItem resItem)
+    {
+        if (resItem == null)
+        {
+            return;
+        }
+
+        List<string> lst = resItem.m_ABDepend;
+        if (lst != null && lst.Count > 0)
+        {
+            for (int i = 0; i < lst.Count; i++)
+            {
+                UnLoadAB(lst[i]);
+            }
+
+        }
+    }
+
+
+
     #endregion
-
-
 }
 
 
 
 #region 数据类
+
 /// <summary>
-/// 存储中间类（关键）。对接AB包（ABBase）和UnityEngine.Object(在Unty运行时的使用情况)<para />
-/// using AB==AssetBundle<para />
+/// 存储中间类（关键）。对接AB包（ABBase）和UnityEngine.Object(在Unty运行时的使用情况)  <para />
+/// using AB==AssetBundle  <para />
+/// public uint m_Crc = 0;  <para />
+/// public string m_AssetName = string.Empty;   <para />
+/// public string m_ABName = string.Empty;<para />
+/// public List string m_ABDepend   <para />
+/// public AssetBundle m_AB = null;  <para />
+/// public int m_GUID = 0;  <para />
+/// public Object m_Obj = null;  <para />
+/// public float m_LastUseTime = 0.0f;  <para />
+/// public bool m_JmpClr = true;
 /// </summary>
 public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬盘上的，还没入Cache
 {
@@ -279,13 +282,15 @@ public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬
 
     /// <summary>依赖包</summary>
     public List<string> m_ABDepend = new List<string>();
+
+    /// <summary>加载完的AB包</summary>
+    public AssetBundle m_AB = null;
+
     #endregion
 
     #region UnityEngine.Object
     /// <summary>ResItem唯一标识</summary>
     public int m_GUID = 0;
-    /// <summary>加载完的AB包</summary>
-    public AssetBundle m_AB = null;
 
     /// <summary>
     /// 资源对象（prefab,图片，音频，Unity中一切物体继承于UnityEngine.Object） <para /> 
@@ -293,12 +298,14 @@ public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬
     ///</summary>
     public Object m_Obj = null;
 
-    /// <summary>上次使用时间</summary>
+    /// <summary>上次使用该资源（RefCnt++）时间</summary>
     public float m_LastUseTime = 0.0f;
 
     /// <summary>跳砖场景时（Clear）需不需要清除</summary> 
-    public bool m_Clear = true;
+    public bool m_JmpClr = true;
 
+
+    #region m_RefCnt
     /// <summary>引用计数</summary>
     int m_refCnt = 0;
     public int m_RefCnt
@@ -317,6 +324,8 @@ public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬
             m_refCnt = value;
         }
     }
+    #endregion
+
     #endregion
 
 
@@ -344,12 +353,12 @@ public class ABItem
 {
     public AssetBundle m_AB;
     /// <summary>引用计数</summary> 
-    public int m_refCnt;
+    public int m_RefCnt;
 
     public void Reset()
     {
         m_AB = null;
-        m_refCnt = 0;
+        m_RefCnt = 0;
     }
 }
 #endregion

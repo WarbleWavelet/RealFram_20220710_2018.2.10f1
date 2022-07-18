@@ -1,67 +1,120 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="ABItem&#xD;&#xA;DoubleLinkedListNode&#xD;&#xA;">
+    <Position X="4.688" Y="0.5" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Get得到就Get&#xD;&#xA;Get不到就Load&#xD;&#xA;其中ResIterm要加载依赖AB包">
+    <Position X="7.318" Y="5.812" Height="0.75" Width="1.908" />
+  </Comment>
+  <Comment CommentText="ABCfg = List&lt;ABBase&gt;&#xD;&#xA;ABBase">
+    <Position X="4.75" Y="1.25" Height="0.576" Width="1.832" />
+  </Comment>
+  <Comment CommentText="ABCfgSO">
+    <Position X="4.681" Y="1.855" Height="0.312" Width="1.797" />
+  </Comment>
   <Class Name="ClassObjectPool&lt;T&gt;" Collapsed="true">
-    <Position X="1" Y="2" Width="1.5" />
+    <Position X="2.75" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAEAAEAAAABAACAAAAABAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ClassObjectPool.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ObjectMgr" Collapsed="true">
-    <Position X="1" Y="0.5" Width="1.5" />
+  <Class Name="ObjectMgr">
+    <Position X="0.5" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <HashCode>AAAAEAAAAAABAABIAAAAAAgAAAUAAQIAAAAQAAAgAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ObjectMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="AssetBundleMgr" Collapsed="true">
-    <Position X="3" Y="0.5" Width="1.5" />
+    <Position X="0.5" Y="6" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>EAAAAACAAEAATAACAACAAAEQAAAACAEAAAAAAAAACAA=</HashCode>
+      <HashCode>EAAAAECAAAAARAACAACAAAAWAAACACEAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\AssetBundleMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ResItem" Collapsed="true">
-    <Position X="3" Y="2.75" Width="1.5" />
+  <Class Name="ResItem">
+    <Position X="5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAAAAQAQAEAAEAIAAAAAAIAAAAAAAQBCAAAgAAAA=</HashCode>
+      <HashCode>EgAAAAAAAAQAEAAEAAAACAAAIAAAAAAAABCQEAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\AssetBundleMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ABItem" Collapsed="true">
-    <Position X="3" Y="2" Width="1.5" />
+  <Class Name="ABItem">
+    <Position X="3.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAABAAAAAAAAAAAIAAAAAAAAAAQAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\AssetBundleMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ResourceMgr" Collapsed="true">
-    <Position X="5.25" Y="0.5" Width="1.5" />
+    <Position X="0.5" Y="4" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAAAAAAAgAABQAAAAQIgAEQAAACAAAAA=</HashCode>
+      <HashCode>gQMBAAAQACABAAAMAAAAAABUIAIAQCgAAAAACCQABIA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DoubleLinkedListNode&lt;T&gt;" Collapsed="true">
-    <Position X="5.25" Y="3.75" Width="2.25" />
+    <Position X="3.25" Y="4.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAACAAAAAEAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DoubleLinkedList&lt;T&gt;" Collapsed="true">
-    <Position X="5.25" Y="2.75" Width="2" />
+    <Position X="3.25" Y="4" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>CAAAAQkAAAAAEIEAAAAAAAACAAAAAAAAAAACAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MapLst&lt;T&gt;" Collapsed="true">
-    <Position X="5.25" Y="1.75" Width="1.5" />
+    <Position X="4.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAQMAAAAAAAAAAAAABAQAAACAIAAAAAIAAABQAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="AsyncLoadResPara" Collapsed="true">
+    <Position X="6.5" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAABAAAAIAAAAAgAAAAAAAAAACAAAAACAA=</HashCode>
+      <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AsyncLoadResCallBack" Collapsed="true">
+    <Position X="5.75" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAhAAADQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ResObj">
+    <Position X="2.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EgAAAAAAAAAABACAAAAAAAAAAAAAAIAAAACAAAAAIAA=</HashCode>
+      <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="AsyncLoadResPriority" Collapsed="true">
+    <Position X="8" Y="4.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAQAAAgAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="OnAsyncLoadResFinished" Collapsed="true">
+    <Position X="5.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAACAAAAAAAACAAAACAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
   <Font Name="Microsoft YaHei UI" Size="9" />
 </ClassDiagram>

@@ -30,26 +30,26 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
     #region 字段 属性
     /// <summary>在内存中的资源,没被引用（常用但目前没引用）</summary>
-    protected MapLst<ResItem> m_NoRefLst=new MapLst<ResItem>();
+    protected MapLst<ResItem> m_NoRefResItemLst = new MapLst<ResItem>();
 
     /// <summary>在内存中的资源，被引用</summary>
-    public Dictionary<uint, ResItem> m_RefDic { get; set; } = new Dictionary<uint, ResItem>();
+    public Dictionary<uint, ResItem> m_RefResItemDic { get; set; } = new Dictionary<uint, ResItem>();
 
 
-     bool m_loadFromAB = false;
+    bool m_loadFromAB = false;
 
     #region Async
     /// <summary>某个MonoBehaviour（它要开协程）</summary>
     MonoBehaviour m_startMono;
     /// <summary>异步加载Res的列表</summary>
-     List<AsyncLoadResPara>[] m_asyncLoadingResParaLst=new List<AsyncLoadResPara> [(int)AsyncLoadResPriority.Count];
+    List<AsyncLoadResPara>[] m_asyncLoadingResParaLst = new List<AsyncLoadResPara>[(int)AsyncLoadResPriority.Count];
     /// <summary>正在异步加载的资源</summary>
     Dictionary<uint, AsyncLoadResPara> m_asyncLoadingResParaDic = new Dictionary<uint, AsyncLoadResPara>();
 
     /// <summary>异步对象池</summary>
-    public ClassObjectPool<AsyncLoadResPara> m_AsyncLoadResParaPool=new ClassObjectPool<AsyncLoadResPara>(Constants.ClassObjectPool_AsyncLoadResPara_MAXCNT);
+    public ClassObjectPool<AsyncLoadResPara> m_AsyncLoadResParaPool = new ClassObjectPool<AsyncLoadResPara>(Constants.ClassObjectPool_AsyncLoadResPara_MAXCNT);
 
-    public ClassObjectPool<AsyncLoadResCallBack> m_AsyncLoadResCallBackPool=new ClassObjectPool<AsyncLoadResCallBack>(Constants.ClassObjectPool_AsyncLoadResCallBack_MAXCNT);
+    public ClassObjectPool<AsyncLoadResCallBack> m_AsyncLoadResCallBackPool = new ClassObjectPool<AsyncLoadResCallBack>(Constants.ClassObjectPool_AsyncLoadResCallBack_MAXCNT);
     #endregion
 
 
@@ -73,19 +73,19 @@ public class ResourceMgr : Singleton<ResourceMgr>
     }
 
 
-   /// <summary>
-   /// 异步加载资源
-   /// </summary>
-   /// <returns></returns>
-    IEnumerator AsyncLoadResource( )
+    /// <summary>
+    /// 异步加载资源
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator AsyncLoadResource()
     {
-       List<AsyncLoadResCallBack> cbLst = new List<AsyncLoadResCallBack>();
-       long lastYieldTime=System.DateTime.Now.Ticks;
+        List<AsyncLoadResCallBack> cbLst = new List<AsyncLoadResCallBack>();
+        long lastYieldTime = System.DateTime.Now.Ticks;
         while (true)
         {
             bool haveYield = false;//内层yield后外层不用yield
             //不同优先级的回调列表，High Middle Low
-            for (int i = 0; i < (int)AsyncLoadResPriority.Count ; i++)
+            for (int i = 0; i < (int)AsyncLoadResPriority.Count; i++)
             {
                 List<AsyncLoadResPara> paraLst = m_asyncLoadingResParaLst[i];
                 if (paraLst.Count <= 0)
@@ -111,13 +111,13 @@ public class ResourceMgr : Singleton<ResourceMgr>
                     {
                         obj = LoadAssetByEditor<Object>(para.m_Path);
                     }
-                   
+
                     yield return new WaitForSeconds(0.5f);//模拟异步
 
-                    resItem = AssetBundleMgr.Instance.GetResItem( para.m_Crc);
+                    resItem = AssetBundleMgr.Instance.GetResItem(para.m_Crc);
                     if (resItem == null)
-                    { 
-                        resItem=new ResItem();
+                    {
+                        resItem = new ResItem();
                         resItem.m_Crc = para.m_Crc;
                     }
                 }
@@ -135,22 +135,22 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
                         if (abReq.isDone)
                         {
-                            if (para.m_Sprite==true)// 特殊：Sprite 会不能直接等于 asset
+                            if (para.m_Sprite == true)// 特殊：Sprite 会不能直接等于 asset
                             {
                                 obj = resItem.m_AB.LoadAsset<Sprite>(resItem.m_ABName);
                             }
                             else
-                            { 
+                            {
                                 obj = abReq.asset;
                             }
-                            
+
                         }
-                        lastYieldTime= System.DateTime.Now.Ticks; 
+                        lastYieldTime = System.DateTime.Now.Ticks;
 
                     }
                 }
                 //缓存资源
-                CacheResItem( para.m_Path, ref  resItem, resItem.m_Crc,  obj, cbLst.Count);
+                CacheResItem(para.m_Path, ref resItem, resItem.m_Crc, obj, cbLst.Count);
 
                 // AsyncLoadResCallBack
                 for (int j = 0; j < cbLst.Count; j++)
@@ -169,29 +169,29 @@ public class ResourceMgr : Singleton<ResourceMgr>
                 //AsyncLoadResCallPara
                 obj = null;
                 cbLst.Clear();
-                m_asyncLoadingResParaDic.Remove( para.m_Crc );
+                m_asyncLoadingResParaDic.Remove(para.m_Crc);
 
                 //
                 para.Reset();
                 m_AsyncLoadResParaPool.Recycle(para);
 
                 //防止资源太大，卡点时间
-                if ( System.DateTime.Now.Ticks - lastYieldTime > Constants.MAXASYNCLOADRESTIME)
-                { 
+                if (System.DateTime.Now.Ticks - lastYieldTime > Constants.MAXASYNCLOADRESTIME)
+                {
                     yield return null;
                     lastYieldTime = System.DateTime.Now.Ticks;
-                    haveYield=true;
-                   
+                    haveYield = true;
+
                 }
             }
 
             //卡着加载
-            if (haveYield==false &&System.DateTime.Now.Ticks - lastYieldTime >Constants.MAXASYNCLOADRESTIME)
+            if (haveYield == false && System.DateTime.Now.Ticks - lastYieldTime > Constants.MAXASYNCLOADRESTIME)
             {
                 lastYieldTime = System.DateTime.Now.Ticks; ;
                 yield return null;
             }
-            
+
 
 
         }
@@ -227,15 +227,15 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         AsyncLoadResPara para = null;
         if (m_asyncLoadingResParaDic.TryGetValue(crc, out para) == false || para == null)
-        { 
-            para=m_AsyncLoadResParaPool.Spawn(true);
+        {
+            para = m_AsyncLoadResParaPool.Spawn(true);
             para.m_Crc = crc;
             para.m_Path = path;
-            para.m_Priority=priority;
+            para.m_Priority = priority;
             //
             m_asyncLoadingResParaLst[(int)priority].Add(para);
             m_asyncLoadingResParaDic.Add(crc, para);
-            
+
         }
 
         //回调
@@ -249,23 +249,26 @@ public class ResourceMgr : Singleton<ResourceMgr>
     }
     #endregion
 
-    #region 同步及底层
+
+    #region T
+
     /// <summary>
     /// 基础资源同步加载(不用实例化，Texture等)
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="path"></param>
     /// <returns></returns>
-    #region T
     public T LoadResource<T>(string path) where T : UnityEngine.Object
     {
         if (string.IsNullOrEmpty(path))
-        { 
+        {
             return null;
         }
         //同步加载
         uint crc = CRC32.GetCRC32(path);
         ResItem resItem = GetCacheResItem(crc);
+
+        //
         if (resItem != null)
         {
             return resItem as T;
@@ -299,13 +302,13 @@ public class ResourceMgr : Singleton<ResourceMgr>
                     obj = resItem.m_Obj as T;
                 }
                 else
-                { 
-                     obj = resItem.m_AB.LoadAsset<T>( resItem.m_ABName);
+                {
+                    obj = resItem.m_AB.LoadAsset<T>(resItem.m_AssetName);
                 }
             }
         }
         //缓存
-        CacheResItem(path,ref resItem, crc, obj);
+        CacheResItem(path, ref resItem, crc, obj);
 
 
         return obj;
@@ -328,10 +331,16 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
 
     #region ResItem
-    ResItem GetCacheResItem(uint crc,int addCnt=1)
-    { 
-        ResItem resItem=null;
-        if (m_RefDic.TryGetValue(crc, out resItem))
+    /// <summary>
+    /// 异步、同步、预加载ResItem，获取
+    /// </summary>
+    /// <param name="crc"></param>
+    /// <param name="addCnt"></param>
+    /// <returns></returns>
+    ResItem GetCacheResItem(uint crc, int addCnt = 1)
+    {
+        ResItem resItem = null;
+        if (m_RefResItemDic.TryGetValue(crc, out resItem))
         {
             if (resItem != null)
             {
@@ -340,9 +349,9 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
                 //安全判断，理论进不来
                 if (resItem.m_RefCnt <= 1)
-                { 
-                    m_NoRefLst.Remove(resItem);
-                   // noRefLst.AddToHead(resItem);
+                {
+                    m_NoRefResItemLst.Remove(resItem);
+                    // noRefLst.AddToHead(resItem);
                 }
             }
         }
@@ -359,13 +368,13 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <param name="obj"></param>
     /// <param name="addRefCnt"></param>
 
-    void CacheResItem(string name, ref ResItem resItem, uint crc, UnityEngine.Object obj, int addRefCnt=1)
+    void CacheResItem(string name, ref ResItem resItem, uint crc, UnityEngine.Object obj, int addRefCnt = 1)
     {
-       /// Washout();
+        /// Washout();
         if (resItem == null)
         {
             Debug.LogErrorFormat("Err");
-  
+
         }
 
         if (obj == null)
@@ -378,19 +387,19 @@ public class ResourceMgr : Singleton<ResourceMgr>
             m_AssetName = name,
             m_Crc = crc,
             m_LastUseTime = Time.realtimeSinceStartup,
-            m_GUID=obj.GetInstanceID()
+            m_GUID = obj.GetInstanceID()
         };
         resItem.m_RefCnt += addRefCnt;
 
         //
         ResItem oldResItem = null;
-        if (m_RefDic.TryGetValue(crc, out oldResItem))//Update
+        if (m_RefResItemDic.TryGetValue(crc, out oldResItem))//Update
         {
-            m_RefDic[crc] = resItem;
+            m_RefResItemDic[crc] = resItem;
         }
         else//add
         {
-            m_RefDic.Add(crc, resItem);
+            m_RefResItemDic.Add(crc, resItem);
         }
     }
 
@@ -401,14 +410,14 @@ public class ResourceMgr : Singleton<ResourceMgr>
     {
         float destroyPercent = 0.8f;
 
-        if (m_NoRefLst.Count() <= 0)
+        if (m_NoRefResItemLst.Count() <= 0)
         {
             return;
         }
 
-        ResItem resItem = m_NoRefLst.GetTail();
-        DestroyResItem(resItem,true);
-        m_NoRefLst.Pop();
+        ResItem resItem = m_NoRefResItemLst.GetTail();
+        DestroyResItem(resItem, true);
+        m_NoRefResItemLst.Pop();
 
     }
 
@@ -419,30 +428,32 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <param name="destroyCache">是否要删除缓存</param>
     protected void DestroyResItem(ResItem resItem, bool destroyCache = false)
     {
-        
-        if (resItem == null || resItem.m_RefCnt > 0)
-        { 
-            return ;
-        }
 
-        //对Ref
-        if (m_RefDic.Remove(resItem.m_Crc) == false)
+        if (resItem == null || resItem.m_RefCnt > 0)
         {
             return;
         }
 
+
+
         //对NoRef
         if (destroyCache == false)
         {
-            //m_NoRefLst.AddToHead(resItem);
-           // return;
+            m_NoRefResItemLst.AddToHead(resItem);
+             return;
         }
-        else
+        
+        //对Ref
+        if (m_RefResItemDic.Remove(resItem.m_Crc) == false)
         {
-            #region 最占内存的两个地方
+            return;
+        }
+
+        #region 最占内存的两个地方
+        m_NoRefResItemLst.Remove(resItem);
             //上层Mgr
             AssetBundleMgr.Instance.ReleaseResItem(resItem);
-
+        ObjectMgr.Instance.ClearPoolObject(resItem.m_Crc);
             //下层引用，对象置空
             if (resItem.m_Obj != null)
             {
@@ -453,24 +464,25 @@ public class ResourceMgr : Singleton<ResourceMgr>
 #endif
             }
             #endregion
-        }
+        
     }
 
     /// <summary>
-    /// 不需要实例化的资源的卸载
+    ///不需要实例化的资源的卸载<para />
+    ///遍历方法<para />
     /// </summary>
-    /// <param name="obj"></param>
+    /// <param name="obj">Unity中的Object</param>
     /// <param name="destroyCache"></param>
     /// <returns></returns>
-  public  bool ReleaseResItem(UnityEngine.Object obj, bool destroyCache=false)
+    public bool ReleaseResItem(UnityEngine.Object obj, bool destroyCache = false)
     {
         if (obj != null)
         {
             return false;
         }
 
-        ResItem resItem=null;
-        foreach (ResItem  _resItem in m_RefDic.Values)
+        ResItem resItem = null;
+        foreach (ResItem _resItem in m_RefResItemDic.Values)//耗性能
         {
             if (_resItem.m_GUID == obj.GetInstanceID())
             {
@@ -485,14 +497,15 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
 
         resItem.m_RefCnt--;
-        DestroyResItem( resItem, destroyCache);
+        DestroyResItem(resItem, destroyCache);
 
         return true;
 
     }
 
     /// <summary>
-    /// 不需要实例化的资源的卸载
+    /// 不需要实例化的资源的卸载<para />
+    /// TryGetValue<para />
     /// </summary>
     /// <param name="path"></param>
     /// <param name="destroyCache"></param>
@@ -508,11 +521,11 @@ public class ResourceMgr : Singleton<ResourceMgr>
         uint crc = CRC32.GetCRC32(path);
         ResItem resItem = null;
 
-        if (m_RefDic.TryGetValue(crc, out resItem)==false || resItem==null)
+        if (m_RefResItemDic.TryGetValue(crc, out resItem) == false || resItem == null)
         {
             Debug.LogErrorFormat("资源不存在，或被多次清空");
         }
-      
+
 
         resItem.m_RefCnt--;
         DestroyResItem(resItem, destroyCache);
@@ -524,7 +537,150 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
 
     #endregion
+
+
+    #region ResObj
+    /// <summary>
+    /// 同步加载资源，给ObjectMgr用的
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="resObj"></param>
+    /// <returns></returns>
+    public ResObj LoadResObj(string path, ResObj resObj)
+    {
+        if (resObj == null)
+        {
+            return null;
+        }
+
+        uint crc= (resObj.m_Crc==0) ? CRC32.GetCRC32(path) : resObj.m_Crc;
+
+        ResItem resItem = GetCacheResItem(crc);
+
+
+        //Get得到就Get
+        if (resItem != null)
+        {
+            resObj.m_ResItem = resItem;
+            return resObj;
+        }
+
+        //Get不到就到下一层Get
+        Object obj = null;
+#if UNITY_EDITOR//测试从Editor加载            
+
+        if (m_loadFromAB == false)
+        {
+
+            resItem = AssetBundleMgr.Instance.GetResItem(crc);
+            obj = LoadAssetByEditor<Object>(path);
+            
+        }
+#endif
+        //Get不到就Load
+        if (obj == null)
+        {
+            resItem = AssetBundleMgr.Instance.LoadResItem(crc);
+            if (resItem != null && resItem.m_AB != null)
+            {
+                if (resItem.m_Obj != null)
+                {
+                    obj = resItem.m_Obj as Object;
+                }
+                else
+                {
+                    obj = resItem.m_AB.LoadAsset<Object>(resItem.m_AssetName);
+                }
+            }
+        }
+        //缓存
+        CacheResItem(path, ref resItem, crc, obj);
+        resObj.m_ResItem = resItem;
+        resItem.m_JmpClr = resObj.m_JmpClr;
+
+
+        return resObj;
+    }
+
+    public bool ReleaseResObject(ResObj resObj, bool destroyCache)
+    {
+        if (resObj == null) 
+        {
+            return false;
+        }
+
+        //  crc => resItem
+        uint crc = resObj.m_Crc;
+        ResItem resItem = null;
+
+        if (m_RefResItemDic.TryGetValue(crc, out resItem) == false || resItem == null)
+        {
+            Debug.LogErrorFormat("资源不存在，或被多次清空");
+        }
+
+        GameObject.Destroy(resObj.m_Go); ;
+        resItem.m_RefCnt--;
+        DestroyResItem(resItem, destroyCache);
+
+        return true;
+    }
+
+
+    #region RefCnt
+  public int AddResItemRefCnt( uint crc, int cnt=1  )
+    { 
+        ResItem resItem= null;
+        if ( m_RefResItemDic.TryGetValue( crc, out resItem) ==false || resItem==null)
+        {
+            return 0;
+        }
+
+        resItem.m_RefCnt += cnt;
+        resItem.m_LastUseTime = DateTime.Now.Ticks;
+
+        return resItem.m_RefCnt;
+    }
+
+    public int AddResItemRefCnt(ResObj resObj, int cnt = 1)
+    {
+        if (resObj == null)
+        {
+            return 0;
+        }
+        return AddResItemRefCnt( resObj.m_Crc, cnt);
+    }
+
+    public int SubResItemRefCnt(uint crc, int cnt = 1)
+    {
+        ResItem resItem = null;
+        if (m_RefResItemDic.TryGetValue(crc, out resItem) == false || resItem == null)
+        {
+            return 0;
+        }
+
+        resItem.m_RefCnt -= cnt;
+
+        return resItem.m_RefCnt;
+    }
+
+    public int SubResItemRefCnt(ResObj resObj, int cnt = 1)
+    {
+        if (resObj == null)
+        {
+            return 0;
+        }
+        return SubResItemRefCnt(resObj.m_Crc, cnt);
+    }
     #endregion
+  
+    #endregion
+
+
+
+
+
+
+
 
     /// <summary>
     /// 比如跳转场景时，清内存
@@ -538,9 +694,9 @@ public class ResourceMgr : Singleton<ResourceMgr>
         //    m_NoRefLst.Pop();
         //}
         List<ResItem> lst = new List<ResItem>();
-        foreach (ResItem resItem in m_RefDic.Values)
+        foreach (ResItem resItem in m_RefResItemDic.Values)
         {
-            if (  true==resItem.m_Clear)
+            if (  true==resItem.m_JmpClr)
             { 
                  lst.Add(resItem);
             }
@@ -605,7 +761,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         //缓存
         CacheResItem(path, ref resItem, crc, obj);
         // 预加载后面要用，不清存
-        resItem.m_Clear = false;
+        resItem.m_JmpClr = false;
         //ReleaseResItem(obj, false);//每次写在持有对象累
         ReleaseResItem(path, false);
     }
@@ -789,7 +945,10 @@ public class DoubleLinkedList<T> where T : class, new()
 #endregion
 
 
-
+/// <summary>
+/// 管理双链表和节点
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class MapLst<T> where T : class, new()
 {
     DoubleLinkedList<T> lst = new DoubleLinkedList<T>();
@@ -921,7 +1080,6 @@ public class MapLst<T> where T : class, new()
     }
     #endregion
 
-   
 }
 
 
@@ -978,3 +1136,40 @@ public class AsyncLoadResCallBack
     }
 }
 #endregion
+
+
+
+
+/// <summary>
+///ResItem=>ResObj（过度类） =>GameObject <para />
+/// public uint m_Crc = 0 <para />
+/// public bool m_JmpClr = true <para />
+/// public GameObject m_Go = null//m_ResItem.m_Obj实例出来的 <para />
+/// public ResItem m_ResItem = null <para />
+///  public bool m_Released=false; <para />
+/// public int m_GUID = 0
+/// </summary>
+public class ResObj
+{
+    public uint m_Crc = 0;
+    /// <summary>跳场景清除</summary>
+    public bool m_JmpClr = true;
+
+    //
+    /// <summary>实例出的Go</summary>
+    public GameObject m_Go = null;//m_ResItem.m_Obj实例出来的
+    public ResItem m_ResItem=null;
+    public int m_GUID=0;
+    public bool m_Released=false;//防止多次Release
+
+
+    public void Reset()
+    {
+        m_Crc = 0;
+        m_Go = null;
+        m_JmpClr = true;
+        m_GUID = 0;
+        m_ResItem = null;
+        m_Released = false;
+    }
+}

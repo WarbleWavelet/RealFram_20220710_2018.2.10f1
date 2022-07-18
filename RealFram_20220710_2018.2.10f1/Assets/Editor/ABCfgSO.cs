@@ -14,11 +14,11 @@ using UnityEngine;
 
 
 /// <summary>
-/// AB包配置
+/// AB包配置 : ScriptableObject
 /// </summary>
 [CreateAssetMenu(fileName = "ABConfig", menuName = "Create ABConfig", order = 0)]
 
-public class ABCfg : ScriptableObject
+public class ABCfgSO : ScriptableObject
 {
 	//名字 唯一性
 	/// <summary>存储prefab的路径</summary>

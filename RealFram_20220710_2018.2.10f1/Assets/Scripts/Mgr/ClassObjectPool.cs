@@ -31,7 +31,7 @@ public class ClassObjectPool<T> where T : class, new() //一种类，可以实�
     /// </summary>
     /// <param name="CreatePoolEmpty"></param>
     /// <returns></returns>
-    public T Spawn(bool CreatePoolEmpty)
+    public T Spawn(bool CreatePoolEmpty=true)
     {
         if (m_Pool.Count > 0)
         {

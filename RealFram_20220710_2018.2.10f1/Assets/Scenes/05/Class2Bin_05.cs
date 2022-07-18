@@ -17,7 +17,7 @@ using UnityEngine;
 
 public class Class2Bin_05 : MonoBehaviour
 {
-    ABConfig cfg=new ABConfig();
+    ABCfg cfg=new ABCfg();
     void Start()
     {
         LoadAB();
@@ -58,14 +58,14 @@ public class Class2Bin_05 : MonoBehaviour
     /// /存储的Cfg
     /// </summary>
     /// <returns></returns>
-    ABConfig BinaryDeserilize()
+    ABCfg BinaryDeserilize()
     {
         //TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/AssetBundleConfig.bytes");
         AssetBundle ab=AssetBundle.LoadFromFile(DefinePath.ABSAVEPATH_Bin);
         TextAsset ta = ab.LoadAsset<TextAsset>( Constants.AssetBundleConfig);
         MemoryStream stream = new MemoryStream(ta.bytes);
         BinaryFormatter bf = new BinaryFormatter();
-        ABConfig cfg = (ABConfig)bf.Deserialize(stream);
+        ABCfg cfg = (ABCfg)bf.Deserialize(stream);
         stream.Close();
 
         return cfg;

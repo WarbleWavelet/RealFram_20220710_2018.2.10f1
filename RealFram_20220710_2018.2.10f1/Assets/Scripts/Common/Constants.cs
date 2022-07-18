@@ -15,9 +15,14 @@
     public const int ClassObjectPool_MAXCNT =500;
     public const int ClassObjectPool_AsyncLoadResPara_MAXCNT = 50;
     public const int ClassObjectPool_AsyncLoadResCallBack_MAXCNT = 100;
+    public const int ClassObjectPool_RESOBJ_MAXCNT = 1000;
 
     /// <summary>卡着异步加载资源的最长时间</summary>
     public const int MAXASYNCLOADRESTIME = 200000;
+
+    public const string FixPre="";
+    public const string FixSur_ResObject_m_Go="(Recycle)";
+    public const string FixSur_InstaniateGameObject="(Clone)";
     #endregion
 
 }

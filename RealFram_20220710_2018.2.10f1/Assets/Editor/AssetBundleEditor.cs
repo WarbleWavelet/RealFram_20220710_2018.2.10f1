@@ -24,26 +24,54 @@ public class AssetBundleEditor
     /// <summary>帅选出有效路径</summary>
     static List<string> fliter_pathLst = new List<string>();
 
-    static ABCfg cfg=new ABCfg();
+    static ABCfgSO cfgSO;
+    #endregion
+
+
+    #region ABCfgSO
+    [MenuItem(Constants.MenuItem + "/Init ABCfgSO", false, -20)]//按钮在菜单栏的位置
+    public static void InitABCfgSO()
+    {
+        cfgSO = InitCfgSO(DefinePath.ABCONFIGPATH);
+        AssetDatabase.Refresh();
+    }
+    [MenuItem(Constants.MenuItem + "/Clear ABCfgSO", false, -19)]//按钮在菜单栏的位置
+    public static void ClearABCfgSO()
+    {
+        cfgSO = ClearCfgSO(DefinePath.ABCONFIGPATH);
+        AssetDatabase.Refresh();
+    }
+
+    [MenuItem(Constants.MenuItem + "/Add ABCfgPath", false, -18)]//按钮在菜单栏的位置
+    public static void AddABCfgPath()
+    {
+        cfgSO = AddABCfgPath(DefinePath.ABCONFIGPATH);
+        AssetDatabase.Refresh();
+    }
     #endregion
 
 
 
     #region 标记
-    [MenuItem(Constants.MenuItem + "/标记",false,1)]//按钮在菜单栏的位置
+
+
+
+
+    [MenuItem(Constants.MenuItem + "/标记并初始内存",false,1)]//按钮在菜单栏的位置
     public static void MarkAB()
     {
         // Load cfg
-        m_prefabDic.Clear();
         m_floderDic.Clear();
         fliter_floderLst.Clear();
         fliter_pathLst.Clear();
+        //
+        m_prefabDic.Clear();
         abMarkDic.Clear();
         //
-        InitCfg();
-        InitFloderDic(cfg);
+
+        InitFloderDic(cfgSO);
         //
-        string[] guidArr = AssetDatabase.FindAssets("t:Prefab", cfg.prefabPathLst.ToArray());
+        string[] guidArr = AssetDatabase.FindAssets("t:Prefab", cfgSO.prefabPathLst.ToArray());
         for (int i = 0; i < guidArr.Length; i++)
         {
             string path = AssetDatabase.GUIDToAssetPath(guidArr[i]);
@@ -134,7 +162,7 @@ public class AssetBundleEditor
 
 
 
-    #region 保存数据
+    #region 生成Xml Bin
 
 
 
@@ -146,7 +174,7 @@ public class AssetBundleEditor
     static void WriteData()
     {
 
-       ABConfig abCfg=new ABConfig();
+       ABCfg abCfg=new ABCfg();
         abCfg.ABLst = new List<ABBase>();
 
         foreach (var item in abMarkDic)
@@ -354,9 +382,9 @@ public class AssetBundleEditor
 
     }
 
-    static void InitFloderDic(ABCfg cfg)
+    static void InitFloderDic(ABCfgSO cfgSO)
     {
-        foreach (var item in cfg.folderPathLst)
+        foreach (var item in cfgSO.folderPathLst)
         {
             Debug.Log(item.ABName + "_" + item.Path);
             string abName = item.ABName;
@@ -487,23 +515,45 @@ public class AssetBundleEditor
 
 
     /// <summary>
+    /// 初始化那个SO的数据
     /// 防止清空有手动写
     /// </summary>
 
-    static void InitCfg()
+    static  ABCfgSO InitCfgSO(string path)
     {
-
+        ABCfgSO cfgSO=new ABCfgSO();    
         //以下顺序重要
-        cfg = AssetDatabase.LoadAssetAtPath<ABCfg>(DefinePath.ABCONFIGPATH);
-        cfg.prefabPathLst.Clear();
-        cfg.folderPathLst.Clear();
-        //
-        cfg.prefabPathLst.Add("Assets/GameData/Prefabs");
-        cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "sound", Path = "Assets/GameData/Sounds" });
-        cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "shader", Path = "Assets/GameData/Shaders" });
-        cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "assetbundleconfig", Path = "Assets/GameData/Data/ABData" });
+        cfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(path);
+        cfgSO.prefabPathLst.Clear();
+        cfgSO.folderPathLst.Clear();
+        //贴标签
+        cfgSO.prefabPathLst.Add("Assets/GameData/Prefabs");
+        cfgSO.folderPathLst.Add(new ABCfgSO.AB2Path { ABName = "sound", Path = "Assets/GameData/Sounds" });
+        cfgSO.folderPathLst.Add(new ABCfgSO.AB2Path { ABName = "shader", Path = "Assets/GameData/Shaders" });
         // cfg.folderPathLst.Add(new ABCfg.AB2Path { ABName = "modle", Path = "Assets/GameData/Modle" });
+        return cfgSO;
+    }
 
+
+    static ABCfgSO AddABCfgPath(string path)
+    {
+        ABCfgSO cfgSO = new ABCfgSO();
+        //以下顺序重要
+        cfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(path);
+        //贴标签
+        cfgSO.folderPathLst.Add(new ABCfgSO.AB2Path { ABName = "assetbundleconfig", Path = "Assets/GameData/Data/ABData" });
+        return cfgSO;
+    }
+
+    static ABCfgSO ClearCfgSO(string path)
+    {
+        ABCfgSO cfgSO = new ABCfgSO();
+        //以下顺序重要
+        cfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(path);
+        cfgSO.prefabPathLst.Clear();
+        cfgSO.folderPathLst.Clear();
+
+        return cfgSO;
     }
     #endregion
 
