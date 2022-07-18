@@ -189,9 +189,11 @@ Shader "Custom/benghuai"
 			};
 
 
+
 			v2f vert (appdata v)
 			{
-				v2f o;
+				v2f o;				
+				UNITY_INITIALIZE_OUTPUT(v2f, o);
 				float4 worldPos = UnityObjectToClipPos(v.vertex);
 				o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 				o.vertex = worldPos;

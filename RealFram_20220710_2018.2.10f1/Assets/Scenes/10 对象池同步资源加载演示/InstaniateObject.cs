@@ -28,7 +28,8 @@ namespace Demo10
 		void Awake()
 		{
 			//GameObject.DontDestroyOnLoad(gameObject);
-			AssetBundleMgr.Instance.LoadABCfg(false);
+			bool log = false;
+			AssetBundleMgr.Instance.LoadABCfg(log);
 			ObjectMgr.Instance.InitMgr(RecyclePoolTrans, transform);
 		}
 
@@ -41,6 +42,7 @@ namespace Demo10
 		void Yang()
 		{
 			go = ObjectMgr.Instance.InstantiateObject(path, true);
+			FixShader(go);
 		}
 
 		void Yin()
@@ -100,6 +102,26 @@ namespace Demo10
 #endif	
 	}
 
+
+	void FixShader(GameObject go)
+	{
+		MeshRenderer[] mr = go.GetComponentsInChildren<MeshRenderer>();
+		List<Material> lst = new List<Material>();
+		for (int i = 0; i < mr.Length; i++)
+		{
+			lst.AddRange(mr[i].materials);
+		}
+		SkinnedMeshRenderer[] smr = go.GetComponentsInChildren<SkinnedMeshRenderer>();
+		for (int i = 0; i < smr.Length; i++)
+		{
+			lst.AddRange(smr[i].materials);
+		}
+
+		for (int i = 0; i < lst.Count; i++)
+		{
+			lst[i].shader = Shader.Find("Custom/benghuai");
+		}
+	}
 	}
 
 }

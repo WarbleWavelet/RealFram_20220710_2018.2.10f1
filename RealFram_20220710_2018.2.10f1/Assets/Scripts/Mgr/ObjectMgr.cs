@@ -306,4 +306,10 @@ public class ObjectMgr : Singleton<ObjectMgr>
     #endregion
 
 
+
+    #region 异步资源加载
+
+    #endregion
+
+
 }

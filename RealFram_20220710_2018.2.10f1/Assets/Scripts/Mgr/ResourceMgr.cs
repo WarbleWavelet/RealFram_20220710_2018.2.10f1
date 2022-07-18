@@ -35,8 +35,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <summary>在内存中的资源，被引用</summary>
     public Dictionary<uint, ResItem> m_RefResItemDic { get; set; } = new Dictionary<uint, ResItem>();
 
-
-    bool m_loadFromAB = false;
+    /// <summary>从哪里加载：AB包 、 Editor</summary>
+    bool m_loadFromAB = true;
 
     #region Async
     /// <summary>某个MonoBehaviour（它要开协程）</summary>
@@ -340,10 +340,9 @@ public class ResourceMgr : Singleton<ResourceMgr>
     ResItem GetCacheResItem(uint crc, int addCnt = 1)
     {
         ResItem resItem = null;
-        if (m_RefResItemDic.TryGetValue(crc, out resItem))
+        if (m_RefResItemDic.TryGetValue(crc, out resItem)==true && resItem != null)
         {
-            if (resItem != null)
-            {
+
                 resItem.m_RefCnt += addCnt;
                 resItem.m_LastUseTime = Time.realtimeSinceStartup;
 
@@ -353,7 +352,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
                     m_NoRefResItemLst.Remove(resItem);
                     // noRefLst.AddToHead(resItem);
                 }
-            }
+            
         }
 
         return resItem;

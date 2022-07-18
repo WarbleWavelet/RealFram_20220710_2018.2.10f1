@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Avatar_Kiana_C2_Texture_Hair_Color_Common
   m_Shader: {fileID: 4800000, guid: 8e30aa86d091059498df8e8f8f6b0723, type: 3}
@@ -19,6 +19,10 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BurnMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -69,6 +73,7 @@ Material:
     m_Floats:
     - _BloomFactor: 0
     - _BumpScale: 1
+    - _BurnAmount: 0
     - _Cutoff: 0.5
     - _DarkenInnerLine: 0.165
     - _DetailNormalMapScale: 1
@@ -79,11 +84,14 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
+    - _LineWidth: 0.1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Outline: 0.0041
     - _Parallax: 0.02
+    - _RimPower: 0.3
+    - _RimRange: 0
     - _SecondShadow: 0.2
     - _ShadowContrast: 0
     - _Shininess: 0.496
@@ -95,6 +103,8 @@ Material:
     - _UsingDitherAlpha: 1
     - _ZWrite: 1
     m_Colors:
+    - _BurnFirstColor: {r: 0.8, g: 0, b: 0, a: 1}
+    - _BurnSecondColor: {r: 1, g: 0.2, b: 0.2, a: 1}
     - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _FirstShadowColor: {r: 0.75, g: 0.75, b: 0.75, a: 1}
@@ -102,4 +112,6 @@ Material:
     - _MainColor: {r: 0.9117647, g: 0.9117647, b: 0.9117647, a: 0}
     - _OutColor: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondShadowColor: {r: 0.5735294, g: 0.5735294, b: 0.5735294, a: 1}
+    - _XRayColor: {r: 0, g: 0.5, b: 1, a: 1}

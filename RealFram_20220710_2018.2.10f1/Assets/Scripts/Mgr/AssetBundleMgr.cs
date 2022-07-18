@@ -200,7 +200,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
             return resItem;
         }
         //未有
-        AssetBundle ab = LoadAB(resItem.m_ABName);
+        resItem.m_AB = LoadAB(resItem.m_ABName);
         LoadDepend(resItem);
 
         return resItem;
