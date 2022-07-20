@@ -19,10 +19,10 @@
       <FileName>Assets\Scripts\Mgr\ClassObjectPool.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ObjectMgr">
+  <Class Name="ObjectMgr" Collapsed="true">
     <Position X="0.5" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAEAAAAAABAABIAAAAAAgAAAUAAQIAAAAQAAAgAAA=</HashCode>
+      <HashCode>AAABEAAIAAAAgABIAAAAAAgIAAUBQQIAAAEAAAAgAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ObjectMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -32,14 +32,14 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>EAAAAECAAAAARAACAACAAAAWAAACACEAAAAAAAAAAAA=</HashCode>
+      <HashCode>EAAAAECAAAAARAgCAACAAAAGAAACACECAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\AssetBundleMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ResItem">
     <Position X="5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EgAAAAAAAAQAEAAEAAAACAAAIAAAAAAAABCQEAAAAAA=</HashCode>
+      <HashCode>AgAAAAAAAAQAEAAEAAAAGAAAIAAAAAAAABCQEAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\AssetBundleMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -56,7 +56,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>gQMBAAAQACABAAAMAAAAAABUIAIAQCgAAAAACCQABIA=</HashCode>
+      <HashCode>gQEBAQAQASABAAAMAACAAABEAAIgQAgACACgCCQBgIA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -84,21 +84,21 @@
   <Class Name="AsyncLoadResPara" Collapsed="true">
     <Position X="6.5" Y="3.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAQAAAABAAAAIAAAAAgAAAAAAAAAACAAAAACAA=</HashCode>
+      <HashCode>AAAAAAAQAAAABAAAAIAAAAAgAAAAAAAAAACAEAAACAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="AsyncLoadResCallBack" Collapsed="true">
+  <Class Name="AsyncTotalCallBack" Collapsed="true">
     <Position X="5.75" Y="4" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAhAAADQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AACAAAAAAAAAJAAADQAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ResObj">
+  <Class Name="ResObj" Collapsed="true">
     <Position X="2.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EgAAAAAAAAAABACAAAAAAAAAAAAAAIAAAACAAAAAIAA=</HashCode>
+      <HashCode>EgAAAAAAAAAABACADQAAAAAAAAAAAIAAAACAIAAAIAQ=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -109,7 +109,7 @@
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Delegate Name="OnAsyncLoadResFinished" Collapsed="true">
+  <Delegate Name="OnAsyncObject" Collapsed="true">
     <Position X="5.75" Y="4.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAAACAAAAAAAACAAAACAAABAAAAAAAAAAAAAA=</HashCode>

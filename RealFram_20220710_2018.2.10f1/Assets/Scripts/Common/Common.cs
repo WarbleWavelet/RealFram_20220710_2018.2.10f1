@@ -9,4 +9,14 @@
 
         return _name;
     }
+
+
+    /// <summary>异步的Guid，为了可以取消该异步</summary> 
+    static long  m_asyncGuid=0;
+    /// <summary>异步的Guid，为了可以取消该异步</summary>
+    public static long CreateGuid()
+    {
+        return m_asyncGuid++;
+    }
+
 }

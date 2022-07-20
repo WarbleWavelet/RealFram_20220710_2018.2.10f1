@@ -29,7 +29,7 @@ namespace Demo08
 
 			audioSource = GetComponent<AudioSource>();
 			string path = "Assets/GameData/Sounds/senlin.mp3";
-			 ResourceMgr.Instance.AsyncLoadResource(path, Callback, AsyncLoadResPriority.Middle);
+			 ResourceMgr.Instance.AsyncLoadObject(path, Callback, AsyncLoadResPriority.Middle);
 
 		}
 
@@ -41,7 +41,7 @@ namespace Demo08
 				
 				audioSource.Stop();
 				AudioClip clip = audioSource.clip;
-				ResourceMgr.Instance.ReleaseResItem(clip, true);
+				ResourceMgr.Instance.UnloadResItemByObject(clip, true);
 				audioSource.clip = null;
 				clip = null;
 				
@@ -59,7 +59,7 @@ namespace Demo08
 		private void OnApplicationQuit()
 		{
 			Debug.Log("OnApplicationQuit");
-		ResourceMgr.Instance.ClearCache();
+		ResourceMgr.Instance.ClearAllResItem();
 			Resources.UnloadUnusedAssets();
 		}
 #endif

@@ -12,9 +12,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Demo10
+namespace Demo11
 {
-	public class InstaniateObject : MonoBehaviour
+	public class AsyncInstaniateObject : MonoBehaviour
 	{
 
 		public	string path = "";
@@ -30,6 +30,8 @@ namespace Demo10
 			//GameObject.DontDestroyOnLoad(gameObject);
 			bool log = false;
 			AssetBundleMgr.Instance.LoadABCfg(log);
+			ResourceMgr.Instance.InitCoroutine(this);
+
 			ObjectMgr.Instance.InitMgr(RecyclePoolTrans, transform);
 		}
 
@@ -41,10 +43,16 @@ namespace Demo10
 
 		void Yang()
 		{
-			go = ObjectMgr.Instance.InstantiateObject(path, true);
+			bool setScene=true;
+			bool jmpClr=true;
+			ObjectMgr.Instance.AsyncInstaniateGameObject(path, CallBack ,AsyncLoadResPriority.Middle, setScene);
+			
+		}
+		void CallBack(string path, UnityEngine.Object obj, object para1 = null, object para2 = null, object para3 = null)
+		{ 
+			go= obj as GameObject;
 			FixShader(go);
 		}
-
 		void Yin()
 		{
   			ObjectMgr.Instance.UnloadGameObject(go);
@@ -54,12 +62,18 @@ namespace Demo10
 		}
 		void Yin1()
 		{
-		
-			ObjectMgr.Instance.UnloadGameObject(go,0, true);
+		ObjectMgr.Instance.UnloadGameObject(go,0, true);
 			go = null;
 		}
 
+		void Refresh()
+		{
 
+#if UNITY_EDITOR//这样写才对，不能括外面
+			ResourceMgr.Instance.ClearAllResItem();
+			Resources.UnloadUnusedAssets();
+#endif
+		}
 
 
 
@@ -95,12 +109,7 @@ namespace Demo10
 		}
 
 
-	void Refresh()
-	{
-#if UNITY_EDITOR//这样写才对，不能括外面
-			Resources.UnloadUnusedAssets();	
-#endif	
-	}
+
 
 
 	void FixShader(GameObject go)

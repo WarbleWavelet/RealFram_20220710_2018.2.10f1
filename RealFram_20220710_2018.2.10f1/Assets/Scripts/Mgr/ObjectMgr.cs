@@ -20,95 +20,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectMgr : Singleton<ObjectMgr> 
+public class ObjectMgr : Singleton<ObjectMgr>
 {
-    /// <summary>
-    /// 类对象池
-    /// </summary>
-	Dictionary<Type,object> m_classPoolDic=new   Dictionary<Type,object>();
 
+    #region 字段 属性
+    /// <summary> 类对象池  </summary>
+    Dictionary<Type, object> m_classPoolDic = new Dictionary<Type, object>();
+
+
+
+
+    /// <summary>一种可能有多个</summary> 
+    Dictionary<uint, List<ResObj>> m_resObjPoolDic = new Dictionary<uint, List<ResObj>>();
+
+    /// <summary>m_ResObjPoolDic拿不到就Spawn</summary>
+    ClassObjectPool<ResObj> m_resObjPool = new ClassObjectPool<ResObj>(Constants.ClassObjectPool_RESOBJ_MAXCNT);
+
+    /// <summary> InstaniateID, ResObject 所有实例的Object</summary> 
+    Dictionary<int, ResObj> m_resObjDic = new Dictionary<int, ResObj>();
+
+    /// <summary>正在异步加载中的数据</summary> 
+    Dictionary<long, ResObj> m_asyncResObjDic = new Dictionary<long, ResObj>();
+    #region Trans
     /// <summary>父节点</summary> 
     public Transform m_RecyclePoolTrans;
     /// <summary>场景节点，DontDestroyOnLoad(gameObject);</summary>
     public Transform m_SceneTrans;
-    
-
-    /// <summary>一种可能有多个</summary> 
-    Dictionary<uint, List<ResObj>> m_ResObjPoolDic=new Dictionary<uint, List<ResObj>>();
-
-    /// <summary>m_ResObjPoolDic拿不到就Spawn</summary>
-    ClassObjectPool<ResObj> m_ResObjPool=new ClassObjectPool<ResObj>(Constants.ClassObjectPool_RESOBJ_MAXCNT);
-
-    /// <summary> InstaniateID, ResObject 所有实例的Object</summary> 
-    Dictionary<int, ResObj> m_ResObjDic=new Dictionary<int, ResObj>();
-
-
-
-
-
-
-
-
-    #region ClassObjectPool
-   /// <summary>
-    /// 创建类对象池
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="maxCnt"></param>
-    /// <returns></returns>
-    public ClassObjectPool<T> TryGetClassObjectPool<T>(int maxCnt) where T : class, new()
-    {
-        Type type = typeof(T);
-        object obj;
-        if ( m_classPoolDic.TryGetValue(type, out obj)==false || obj == null)//没Pool
-        {
-            ClassObjectPool<T> pool = new ClassObjectPool<T>(maxCnt);
-            m_classPoolDic.Add(type, pool);
-
-            return pool;
-        }
-        else//有Pool
-        {
-            return obj as ClassObjectPool<T>;
-        }
-
-        
-    }
-
-
-    /// <summary>
-    /// 清除某个资源在对象池中所有的对象
-    /// </summary>
-    /// <param name="crc"></param>
-    public void ClearPoolObject(uint crc)
-    {
-        List<ResObj> lst = null;
-        if ( m_ResObjPoolDic.TryGetValue(crc, out lst)==false || lst == null)
-        { 
-              return;      
-        }
-
-
-        for (int i = lst.Count - 1; i >= 0; i--)
-        {
-            ResObj resObj = lst[i];
-            if (resObj.m_JmpClr)
-            {
-                lst.Remove(resObj);
-                int _key = resObj.m_Go.GetInstanceID();
-                GameObject.Destroy(resObj.m_Go);
-                resObj.Reset();
-               m_ResObjDic.Remove(_key);
-                m_ResObjPool.Recycle(resObj);
-            }
-        }
-
-        if (lst.Count <= 0)
-        {
-            m_ResObjPoolDic.Remove(crc);
-        }
-    }
     #endregion
+    #endregion
+
+
+    #region 生命
     /// <summary>
     /// 
     /// </summary>
@@ -119,11 +61,20 @@ public class ObjectMgr : Singleton<ObjectMgr>
         m_RecyclePoolTrans = recyclePoolTrans;
         m_SceneTrans = sceneTrans;
     }
+    #endregion
 
 
 
-
-    #region ResObj Object
+    #region GameObject
+    /// <summary>
+    /// ObjectMgr中创建的，有户籍？
+    /// </summary>
+    /// <param name="go"></param>
+    /// <returns></returns>
+    public bool IsCreateByObjectMgr(GameObject go)
+    {
+        return m_resObjDic[go.GetInstanceID()] != null;
+    }
 
     /// <summary>
     /// 实例
@@ -133,81 +84,100 @@ public class ObjectMgr : Singleton<ObjectMgr>
     /// <param name="jmpClr">跳转场景就清空></param>
     public GameObject InstantiateObject(string path, bool setScene = false, bool jmpClr = true)
     {
-        uint crc = CRC32.GetCRC32(path);  
+        uint crc = CRC32.GetCRC32(path);
         //Pool有
-        ResObj resObj =GetResObj(crc);
-        ResItem resItem = AssetBundleMgr.Instance.GetResItem(crc);
+        ResObj resObj = SyncGetResObj(crc);
         //Pool没有
         if (resObj == null)
         {
-            resObj = m_ResObjPool.Spawn(true);
+            resObj = SpawnResObj(true);
             resObj.m_Crc = crc;
             resObj.m_JmpClr = jmpClr;
             //ResouceManager提供加载方法
-            resObj = ResourceMgr.Instance.LoadResObj(path, resObj);
+            resObj = ResourceMgr.Instance.SyncLoadResObj(path, resObj);
             if (resObj.m_ResItem.m_Obj != null)
-            { 
-                    resObj.m_Go = GameObject.Instantiate(resObj.m_ResItem.m_Obj) as GameObject;    
+            {
+                resObj.m_Go = GameObject.Instantiate(resObj.m_ResItem.m_Obj) as GameObject;
             }
+
         }
 
         //父节点
         if (setScene)
         {
-            resObj.m_Go.transform.SetParent(m_SceneTrans,false);
+            resObj.m_Go.transform.SetParent(m_SceneTrans, false);
         }
 
         //保存
         int key = resObj.m_Go.GetInstanceID();
-        if (m_ResObjDic.ContainsKey( key ) == false)
+        if (m_resObjDic.ContainsKey(key) == false)
         {
-            m_ResObjDic.Add(key, resObj);
+            m_resObjDic.Add(key, resObj);
         }
 
-        return  resObj.m_Go;
+        return resObj.m_Go;
     }
-
 
     /// <summary>
-    /// 同步加载
+    /// Async实例对象
     /// </summary>
+    /// <param name="path"></param>
+    /// <param name="cbInstaniate">完成时回调</param>
+    /// <param name="priority">加载优先级</param>
+    /// <param name="setSence">射到场景</param>
+    /// <param name="jmpClr">转场景清楚</param>
+    /// <param name="para1"></param>
+    /// <param name="para2"></param>
+    /// <param name="para3"></param>
     /// <param name="crc"></param>
-    /// <returns></returns>
-    ResObj GetResObj(uint crc)
+    public long AsyncInstaniateGameObject(string path,
+        OnAsyncObject cbInstaniate,
+        AsyncLoadResPriority priority,
+        bool setSence = false,
+        bool jmpClr = true,
+        object para1 = null,
+        object para2 = null,
+        object para3 = null)
     {
-       //Get lst
-        List<ResObj> lst=null;
-        if (m_ResObjPoolDic.TryGetValue(crc, out lst)==false || lst==null || lst.Count<=0)
+        if (string.IsNullOrEmpty(path))
         {
-            return null;
+            return 0;
         }
 
+        uint crc = CRC32.GetCRC32(path);
+        ResObj resObj = SyncGetResObj(crc);//ResCnt有Add函数
 
-        ResourceMgr.Instance.AddResItemRefCnt( crc );
-         ResObj resObj = lst[0];
-        lst.RemoveAt(0);
-        GameObject go = resObj.m_Go;
-  
-
-        //处理命名
-        if (System.Object.ReferenceEquals(go, null) == false)
+        if (resObj != null)//get不到就spawn
         {
-            resObj.m_Released = false; 
-            if (go.name.EndsWith(Constants.FixSur_ResObject_m_Go) == true)//刚拿出来
+            if (setSence)
             {
-
-#if UNITY_EDITOR
-                go.name.Replace( Constants.FixSur_ResObject_m_Go, "");//到Editor
-#endif
-
-
+                resObj.m_Go.transform.SetParent(m_SceneTrans);
             }
+
+            if (cbInstaniate != null)
+            {
+                cbInstaniate(path, resObj.m_Go, para1, para2, para3);//返回给Mono的GameObject
+            }
+            return resObj.m_GUID;
         }
+        long asyncGUID = Common.CreateGuid();
+        resObj = SpawnResObj(true);
+        resObj.m_Crc = crc;
+        resObj.m_SetSceneParent = setSence;
+        resObj.m_JmpClr = jmpClr;
+        resObj.m_CBInstaniate = cbInstaniate;
 
+        resObj.m_Para1 = para1;
+        resObj.m_Para2 = para2;
+        resObj.m_Para3 = para3;
 
-        return resObj;
+        ResourceMgr.Instance.AsyncLoadResObj(path, resObj, OnLoadResObjFinished, priority);
 
+        return asyncGUID;
     }
+    //
+
+
 
 
     /// <summary>
@@ -217,19 +187,31 @@ public class ObjectMgr : Singleton<ObjectMgr>
     /// <param name="maxCacheCnt">如果要缓存，个数</param>
     /// <param name="destroyCache"> =>resItem  =>AB包资源及其依赖</param>
     /// <param name="recycleParent">比如UI，读取慢，就false，不放回去</param>
-    public void ReleaseObject(GameObject go, int maxCacheCnt = -1, bool destroyCache = false, bool recycleParent = true)
+    public void UnloadGameObject(GameObject go, int maxCacheCnt = -1, bool destroyCache = false, bool recycleParent = true)
     {
         if (go == null)
-        { 
+        {
             return;
         }
 
         //go =>resobj
         int key = go.GetInstanceID();
         ResObj resObj = null;
-        if (m_ResObjDic.TryGetValue( key, out resObj) == false 
-            || resObj == null 
-            || resObj.m_Released == true)
+
+        //分开写，定位Err
+        if (m_resObjDic.TryGetValue(key, out resObj) == false)
+        {
+            Debug.LogErrorFormat("Err");
+            return;
+        }
+
+        if (resObj == null)
+        {
+            Debug.LogErrorFormat("Err");
+            return;
+        }
+
+        if (resObj.m_Released == true)
         {
             Debug.LogErrorFormat("Err");
             return;
@@ -246,19 +228,19 @@ public class ObjectMgr : Singleton<ObjectMgr>
 #endif
 
         //
-        List<ResObj> lst=null;
+        List<ResObj> lst = null;
         if (maxCacheCnt == 0)//不缓存
         {
-            ReleaseAndRecycleResObj(key, destroyCache, resObj);
+            UnloadResObj(key, destroyCache, resObj);
         }
         else//缓存
         {
-            if (m_ResObjPoolDic.TryGetValue(resObj.m_Crc, out lst) == false || lst == null)//缓存过
+            if (m_resObjPoolDic.TryGetValue(resObj.m_Crc, out lst) == false || lst == null)//缓存过
             {
-                lst=new List<ResObj>();
-            
-                m_ResObjPoolDic.Add( resObj.m_Crc, lst);
-                    
+                lst = new List<ResObj>();
+
+                m_resObjPoolDic.Add(resObj.m_Crc, lst);
+
             }
 
             if (resObj.m_Go != null)//没缓存过
@@ -284,11 +266,21 @@ public class ObjectMgr : Singleton<ObjectMgr>
             {
 
                 //回收
-                ReleaseAndRecycleResObj( key,  destroyCache,  resObj);
+                UnloadResObj(key, destroyCache, resObj);
             }
         }
     }
 
+
+
+    #endregion
+
+    #region ResObj
+    /// <summary>对应的ResObj是不是在异步加载中</summary>
+    public bool IsAsyncResObj(long guid)
+    {
+        return m_asyncResObjDic[guid] != null;
+    }
 
     /// <summary>
     /// 完全清空
@@ -296,20 +288,229 @@ public class ObjectMgr : Singleton<ObjectMgr>
     /// <param name="key"></param>
     /// <param name="destroyCache"></param>
     /// <param name="resObj"></param>
-    void ReleaseAndRecycleResObj(int key,bool destroyCache,ResObj resObj)
+    void UnloadResObj(int key, bool destroyCache, ResObj resObj)
     {
-        m_ResObjDic.Remove(key);
-        ResourceMgr.Instance.ReleaseResObject(resObj, destroyCache);
+        m_resObjDic.Remove(key);
+        ResourceMgr.Instance.UnloadResObj(resObj, destroyCache);
         resObj.Reset();
-        m_ResObjPool.Recycle(resObj);
+        m_resObjPool.Recycle(resObj);
+
+    }
+
+    /// <summary>
+    /// 同步加载
+    /// </summary>
+    /// <param name="crc"></param>
+    /// <returns></returns>
+    ResObj SyncGetResObj(uint crc)
+    {
+        //Get lst
+        List<ResObj> lst = null;
+        if (m_resObjPoolDic.TryGetValue(crc, out lst) == false || lst == null || lst.Count <= 0)
+        {
+            return null;
+        }
+
+
+        ResourceMgr.Instance.AddResItemRefCnt(crc);
+        //Get ResObgj From lst
+        ResObj resObj = lst[0];
+        lst.RemoveAt(0);
+        GameObject go = resObj.m_Go;
+
+
+        //处理命名
+        if (System.Object.ReferenceEquals(go, null) == false)
+        {
+            resObj.m_Released = false;
+            if (go.name.EndsWith(Constants.FixSur_ResObject_m_Go) == true)//刚拿出来
+            {
+
+#if UNITY_EDITOR
+                go.name.Replace(Constants.FixSur_ResObject_m_Go, "");//到Editor
+#endif
+
+
+            }
+        }
+
+
+        return resObj;
+
+    }
+
+    /// <summary>
+    /// Get不要就Spawn
+    /// </summary>
+    /// <param name="createEmptyPool"></param>
+    /// <returns></returns>
+    ResObj SpawnResObj(bool createEmptyPool = true)
+    {
+        return m_resObjPool.Spawn(createEmptyPool);
+    }
+
+    /// <summary>
+    /// Mgr级取消异步
+    /// </summary>
+    /// <param name="resObj_m_GUID"></param>
+    void AsyncCheckCancelLoadResObj(int resObj_m_GUID)
+    {
+        ResObj resObj = null;
+        if (m_asyncResObjDic.TryGetValue(resObj_m_GUID, out resObj) == true
+            && ResourceMgr.Instance.AsyncCheckCancelLoadResObj(resObj) == true)
+        {
+            m_asyncResObjDic.Remove(resObj.m_GUID);
+            resObj.Reset();
+            m_resObjPool.Recycle(resObj);
+        }
+    }
+
+    void OnLoadResObjFinished(string path, ResObj resObj, object para1 = null, object para2 = null, object para3 = null)
+    {
+        if (resObj == null)
+        {
+            return;
+        }
+
+        if (resObj.m_ResItem.m_Obj == null)
+        {
+#if UNITY_EDITOR
+            Debug.LogError("Err");
+#endif
+        }
+        else
+        {
+            resObj.m_Go = GameObject.Instantiate(resObj.m_ResItem.m_Obj) as GameObject;
+            resObj.m_GUID = resObj.m_Go.GetInstanceID();
+        }
+
+        AsyncCheckCancelLoadResObj(resObj.m_GUID);
+
+
+        //父节点
+        if (resObj.m_Go != null && resObj.m_SetSceneParent == true && m_SceneTrans != null)
+        {
+            resObj.m_Go.transform.SetParent(m_SceneTrans);
+        }
+
+        //存入m_ResObjDic
+        if (resObj.m_CBInstaniate != null)
+        {
+            int key = resObj.m_GUID;
+            if (m_resObjDic.ContainsKey(key) == false)
+            {
+                m_resObjDic.Add(key, resObj);
+            }
+
+            resObj.m_CBInstaniate(path, resObj.m_Go, resObj.m_Para1, resObj.m_Para2, resObj.m_Para3);
+        }
     }
     #endregion
 
 
+    #region ClassObjectPool
 
-    #region 异步资源加载
+    void ClearClassObjectPool()
+    {
+        List<uint> crcLst=new List<uint>();
 
+        //删ResObj
+        foreach (var item in m_resObjPoolDic)
+        {
+            uint crc = item.Key;
+            List<ResObj> lst = item.Value;
+            for (int i = lst.Count - 1; i <= 0; i--)
+            { 
+                ResObj resObj = lst[i];
+                if (System.Object.ReferenceEquals(resObj.m_Go, null) == false && resObj.m_JmpClr == true)
+                {
+                    GameObject.Destroy(resObj.m_Go);
+                    m_resObjDic.Remove(resObj.m_Go.GetInstanceID());
+
+                    resObj.Reset(); 
+                    m_resObjPool.Recycle(resObj);
+                }
+             }
+
+            if (lst.Count <= 0)
+            {
+                crcLst.Add(crc);
+            }
+        }
+
+        //删Pool
+        for (int i = 0; i < crcLst.Count; i++)
+        {
+            uint crc=crcLst[i];
+            if (m_resObjPoolDic.ContainsKey(crc) == true)
+            { 
+                m_resObjPoolDic.Remove(crc);
+            }
+        }
+        crcLst.Clear();
+    }
+
+
+    /// <summary>
+    /// 创建类对象池
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="maxCnt"></param>
+    /// <returns></returns>
+    public ClassObjectPool<T> GetOrNewClassObjectPool<T>(int maxCnt) where T : class, new()
+    {
+        Type type = typeof(T);
+        object obj;
+        if ( m_classPoolDic.TryGetValue(type, out obj)==false || obj == null)//没Pool
+        {
+            ClassObjectPool<T> pool = new ClassObjectPool<T>(maxCnt);
+            m_classPoolDic.Add(type, pool);
+
+            return pool;
+        }
+        else//有Pool
+        {
+            return obj as ClassObjectPool<T>;
+        }
+
+        
+    }
+
+
+    /// <summary>
+    /// 清除某个资源在对象池中所有的对象
+    /// </summary>
+    /// <param name="crc"></param>
+    public void ClearAllObjectsInPool(uint crc)
+    {
+        List<ResObj> lst = null;
+        if ( m_resObjPoolDic.TryGetValue(crc, out lst)==false || lst == null)
+        { 
+              return;      
+        }
+
+
+        for (int i = lst.Count - 1; i >= 0; i--)
+        {
+            ResObj resObj = lst[i];
+            if (resObj.m_JmpClr)
+            {
+                lst.Remove(resObj);
+                m_resObjDic.Remove(resObj.m_Go.GetInstanceID());
+                GameObject.Destroy(resObj.m_Go);              
+                //
+                resObj.Reset();
+                m_resObjPool.Recycle(resObj);
+            }
+        }
+
+        if (lst.Count <= 0)
+        {
+            m_resObjPoolDic.Remove(crc);
+        }
+    }
     #endregion
+
 
 
 }

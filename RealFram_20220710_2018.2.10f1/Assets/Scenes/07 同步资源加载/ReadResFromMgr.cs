@@ -36,7 +36,7 @@ public class ReadResFromMgr : MonoBehaviour {
 			audioSource.Stop();
 			AudioClip clip = audioSource.clip;
 			audioSource.clip = null;
-			ResourceMgr.Instance.ReleaseResItem( clip,true);
+			ResourceMgr.Instance.UnloadResItemByObject( clip,true);
 		}
 	}
 }

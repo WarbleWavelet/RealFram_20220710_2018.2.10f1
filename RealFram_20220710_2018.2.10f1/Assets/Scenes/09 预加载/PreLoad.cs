@@ -36,7 +36,7 @@ namespace Demo09
 			//
 			if (usePreLoad)
 			{ 
-				ResourceMgr.Instance.PreLoadRes(path) ;			
+				ResourceMgr.Instance.PreLoadObject(path) ;			
 			}
 
 		}
@@ -56,7 +56,7 @@ namespace Demo09
 
 		void StopAndRelease()
 		{
-			ResourceMgr.Instance.ReleaseResItem(clip, true);
+			ResourceMgr.Instance.UnloadResItemByObject(clip, true);
 			audioSource.clip=null;//防止miss情况
 			clip = null;
 		}
@@ -65,7 +65,7 @@ namespace Demo09
 		private void OnApplicationQuit()
 		{
 			Debug.Log("OnApplicationQuit");
-			ResourceMgr.Instance.ClearCache();
+			ResourceMgr.Instance.ClearAllResItem();
 
 #if UNITY_EDITOR//这样写才对，不能括外面
 			Resources.UnloadUnusedAssets();

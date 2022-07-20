@@ -87,6 +87,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4056888531765470}
   - component: {fileID: 95882031909727284}
+  - component: {fileID: 114715359625442998}
   m_Layer: 0
   m_Name: Attack
   m_TagString: Untagged
@@ -382,6 +383,50 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114715359625442998
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1873677753604896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 121eb9f9ba237ea48b6aea8f5dafe555, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GameObejct: {fileID: 1873677753604896}
+  m_Rigidbody: {fileID: 0}
+  m_Collider: {fileID: 0}
+  m_AlllPoints:
+  - {fileID: 4056888531765470}
+  - {fileID: 4928139388033376}
+  - {fileID: 4595260302002808}
+  - {fileID: 4842614134339016}
+  - {fileID: 4214438000855072}
+  - {fileID: 4658257817215938}
+  m_AlllPoints_ChildCount: 050000000000000000000000000000000000000000000000
+  m_AlllPoints_Active: 010101010101
+  m_Position:
+  - {x: 0, y: 0, z: 0}
+  - {x: -0.00007890473, y: -0.012334824, z: -0.012802602}
+  - {x: -2.5894177, y: 15.203817, z: -1.5728939}
+  - {x: -0.00007890473, y: -0.012334824, z: -0.012802602}
+  - {x: -0, y: 0, z: -0.000000029802322}
+  - {x: -1.325592, y: 0, z: -0.000000029802322}
+  m_Rotation:
+  - {x: 0, y: 0, z: 0, w: 1}
+  - {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  - {x: 0.5595559, y: -0.55855083, z: 0.42740768, w: -0.4384527}
+  - {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  - {x: -0.7071068, y: -1.7319123e-16, z: 0, w: 0.7071068}
+  - {x: -0.7071068, y: -1.7319123e-16, z: 0, w: 0.7071068}
+  m_Scale:
+  - {x: 1, y: 1, z: 1}
+  - {x: 2.6343741, y: 2.6343741, z: 2.6343741}
+  - {x: 1, y: 1.0000002, z: 1}
+  - {x: 2.6343741, y: 2.6343741, z: 2.6343741}
+  - {x: 1, y: 1, z: 1}
+  - {x: 1, y: 1, z: 1}
 --- !u!137 &137972908092315426
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
