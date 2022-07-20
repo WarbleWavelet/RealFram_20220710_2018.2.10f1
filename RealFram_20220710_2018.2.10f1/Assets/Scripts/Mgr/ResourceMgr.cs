@@ -1288,7 +1288,7 @@ public class ResObj
     /// <summary>实例出的Go</summary>
     public GameObject m_Go = null;//m_ResItem.m_Obj实例出来的
     public ResItem m_ResItem=null;
-    public int m_GUID=0;
+    public int m_GUID=0;//后面Ocean几乎没用到，用m_Go.GetInstanceID()
     public bool m_Released=false;//防止多次Release
     /// <summary>设置到场景中的某个节点下</summary>
     public bool m_SetSceneParent=false;
@@ -1298,7 +1298,8 @@ public class ResObj
     public object m_Para1 =null;
     public object m_Para2 =null;
     public object m_Para3 =null;
-
+    /// <summary>离线数据，加载时用到</summary>
+    public OfflineData m_OfflineData = null;
 
     public void Reset()
     {

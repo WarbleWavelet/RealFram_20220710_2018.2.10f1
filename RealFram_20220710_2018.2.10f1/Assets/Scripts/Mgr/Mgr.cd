@@ -22,7 +22,7 @@
   <Class Name="ObjectMgr" Collapsed="true">
     <Position X="0.5" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAABEAAIAAAAgABIAAAAAAgIAAUBQQIAAAEAAAAgAAA=</HashCode>
+      <HashCode>AAABkAAIAAAAgEAIAAAEAAgAAAUBARIIGBEAAAAgAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ObjectMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -32,14 +32,14 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>EAAAAECAAAAARAgCAACAAAAGAAACACECAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAECAAAAARAgCQACAAAAGAAASACEAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\AssetBundleMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ResItem">
     <Position X="5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgAAAAAAAAQAEAAEAAAAGAAAIAAAAAAAABCQEAAAAAA=</HashCode>
+      <HashCode>AgAAAAAAAAQAEAAEAAAAGAAAIAAAAAAAQBCQEAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\AssetBundleMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -56,7 +56,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>gQEBAQAQASABAAAMAACAAABEAAIgQAgACACgCCQBgIA=</HashCode>
+      <HashCode>gAEBAQAQgaAAAAAMABCEAABEAAAoQAgACAAAACQBgIA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -84,7 +84,7 @@
   <Class Name="AsyncLoadResPara" Collapsed="true">
     <Position X="6.5" Y="3.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAQAAAABAAAAIAAAAAgAAAAAAAAAACAEAAACAA=</HashCode>
+      <HashCode>AAAAAAAQAAAABAAAAIAAAAAgAAAAAAAAAACAAAAACAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -100,6 +100,13 @@
     <TypeIdentifier>
       <HashCode>EgAAAAAAAAAABACADQAAAAAAAAAAAIAAAACAIAAAIAQ=</HashCode>
       <FileName>Assets\Scripts\Mgr\ResourceMgr.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SaveMgr">
+    <Position X="0.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Mgr\SaveMgr.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Enum Name="AsyncLoadResPriority" Collapsed="true">

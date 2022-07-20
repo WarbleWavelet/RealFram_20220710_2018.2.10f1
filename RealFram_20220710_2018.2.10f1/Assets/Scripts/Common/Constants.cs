@@ -26,3 +26,18 @@
     #endregion
 
 }
+
+
+
+
+public   class  Constans_OfflineData
+{ 
+        
+       public const string m_Type = "t:prefab";
+       public const string m_Path = "Assets/GameData/OfflineData/UIOfflineData";
+}public   class  Constans_ParticleOfflineData
+{ 
+        
+       public const string m_Type = "t:prefab";
+       public const string m_Path = "Assets/GameData/OfflineData/ParticleOfflineData";
+}

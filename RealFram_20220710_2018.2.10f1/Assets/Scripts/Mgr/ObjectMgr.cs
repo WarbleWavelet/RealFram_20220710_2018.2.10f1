@@ -86,7 +86,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
     {
         uint crc = CRC32.GetCRC32(path);
         //Pool有
-        ResObj resObj = SyncGetResObj(crc);
+        ResObj resObj = GetResObjSynv(crc);
         //Pool没有
         if (resObj == null)
         {
@@ -97,7 +97,9 @@ public class ObjectMgr : Singleton<ObjectMgr>
             resObj = ResourceMgr.Instance.SyncLoadResObj(path, resObj);
             if (resObj.m_ResItem.m_Obj != null)
             {
-                resObj.m_Go = GameObject.Instantiate(resObj.m_ResItem.m_Obj) as GameObject;
+                GameObject go = resObj.m_ResItem.m_Obj as GameObject;
+                resObj.m_Go = GameObject.Instantiate(go) as GameObject;
+                resObj.m_OfflineData = go.GetComponent<OfflineData>();
             }
 
         }
@@ -145,7 +147,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
         }
 
         uint crc = CRC32.GetCRC32(path);
-        ResObj resObj = SyncGetResObj(crc);//ResCnt有Add函数
+        ResObj resObj = GetResObjSynv(crc);//ResCnt有Add函数
 
         if (resObj != null)//get不到就spawn
         {
@@ -302,7 +304,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
     /// </summary>
     /// <param name="crc"></param>
     /// <returns></returns>
-    ResObj SyncGetResObj(uint crc)
+    ResObj GetResObjSynv(uint crc)
     {
         //Get lst
         List<ResObj> lst = null;
@@ -331,6 +333,11 @@ public class ObjectMgr : Singleton<ObjectMgr>
 #endif
 
 
+            }
+            //
+            if (System.Object.ReferenceEquals(resObj.m_OfflineData, null) == false)
+            { 
+                resObj.m_OfflineData.Reset();
             }
         }
 
@@ -390,7 +397,9 @@ public class ObjectMgr : Singleton<ObjectMgr>
         //父节点
         if (resObj.m_Go != null && resObj.m_SetSceneParent == true && m_SceneTrans != null)
         {
-            resObj.m_Go.transform.SetParent(m_SceneTrans);
+            GameObject go = resObj.m_Go as GameObject;
+            go.transform.SetParent(m_SceneTrans);
+            resObj.m_OfflineData = go.GetComponent<OfflineData>();
         }
 
         //存入m_ResObjDic
@@ -512,5 +521,22 @@ public class ObjectMgr : Singleton<ObjectMgr>
     #endregion
 
 
+    #region Offlinedata
+    public OfflineData GetOfflineData(GameObject go)
+    {
+        OfflineData data = null;
+        ResObj resObj = null;
+        if (m_resObjDic.TryGetValue(go.GetInstanceID(), out resObj) == true && resObj != null )
+        {
+            data = resObj.m_OfflineData;
+        }
+        return data;
+    }
+
+    public OfflineData GetOfflineData(ResObj resObj)
+    {
+        return GetOfflineData( resObj.m_Go);
+    }
+    #endregion
 
 }

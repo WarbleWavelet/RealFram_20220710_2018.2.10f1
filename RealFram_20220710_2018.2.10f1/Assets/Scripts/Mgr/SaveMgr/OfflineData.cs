@@ -41,17 +41,21 @@ public class OfflineData : MonoBehaviour
 				t.localScale=m_Scale[i]   ;
 
 				//删除超出数量
-				int childCnt = m_GameObejct.transform.childCount;
+				int childCnt = t.childCount;
 				if (childCnt > m_AlllPoints_ChildCount[i])
 				{ 
 				
 					for (int j= m_AlllPoints_ChildCount[i]; j <childCnt ;j++)
 					{
-						Transform _t = t.GetChild(j);
-						if (ObjectMgr.Instance.IsCreateByObjectMgr(_t.gameObject) == true)
+						if (t != null && t.GetChild(j) != null)
 						{ 
-							GameObject.Destroy(_t.gameObject); }
+							Transform _t = t.GetChild(j);
+							if (ObjectMgr.Instance.IsCreateByObjectMgr(_t.gameObject) == true)
+							{ 
+								GameObject.Destroy(_t.gameObject); }
+							}						
 						}
+
 					}			
 				}
 
@@ -64,7 +68,7 @@ public class OfflineData : MonoBehaviour
 	{
 		m_GameObejct = gameObject;
 		bool findUnAcive = true;
-		m_Collider = m_GameObejct.GetComponentInChildren<Collider>(findUnAcive);
+		m_Collider = m_GameObejct.GetComponentInChildren<Collider>(findUnAcive);//比较费时
 		m_Rigidbody = m_GameObejct.GetComponentInChildren<Rigidbody>(findUnAcive);
 		//
 		m_AlllPoints = m_GameObejct.GetComponentsInChildren<Transform>(findUnAcive);
