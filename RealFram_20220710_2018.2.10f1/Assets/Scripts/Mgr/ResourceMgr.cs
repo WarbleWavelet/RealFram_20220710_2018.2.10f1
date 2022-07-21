@@ -60,7 +60,10 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
     #endregion
 
-
+    public void LoadFromAB(bool state = true)
+    { 
+    m_loadFromAB=state;
+    }
 
     #region 生命
     /// <summary>
@@ -173,7 +176,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <param name="path"></param>
     /// <param name="resObj"></param>
     /// <returns></returns>
-    public ResObj SyncLoadResObj(string path, ResObj resObj)
+    public ResObj LoadResObjSync(string path, ResObj resObj)
     {
         if (resObj == null)
         {
@@ -199,9 +202,21 @@ public class ResourceMgr : Singleton<ResourceMgr>
         if (m_loadFromAB == false)
         {
 
-            resItem = AssetBundleMgr.Instance.GetResItem(crc);
+            resItem = AssetBundleMgr.Instance.GetResItem(crc);//迷惑m_loadFromAB == false为什么还使用AssetBundleMgr
+            if (resItem != null && resItem.m_Obj != null)
+            {
+                obj = resItem.m_Obj as Object;
+            }
+            else
+            {
+                if (resItem == null)
+                {
+                    resItem = new ResItem();
+                    resItem.m_Crc = crc;
+                }
+            }
             obj = LoadAssetByEditor<Object>(path);
-            
+
         }
 #endif
         //Get不到就Load
@@ -221,9 +236,11 @@ public class ResourceMgr : Singleton<ResourceMgr>
             }
         }
         //缓存
+
         CacheResItem(path, ref resItem, crc, obj);
         resObj.m_ResItem = resItem;
         resItem.m_JmpClr = resObj.m_JmpClr;
+
 
         return resObj;
     }
@@ -327,13 +344,19 @@ public class ResourceMgr : Singleton<ResourceMgr>
          Washout();
         if (resItem == null)
         {
-            Debug.LogErrorFormat("Err");
+
+            UnityEngine.Debug.LogError(this.GetType().ToString() + "." + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
+
+
+            return;
 
         }
 
         if (obj == null)
         {
-            Debug.LogErrorFormat("Err");
+            UnityEngine.Debug.LogError(this.GetType().ToString() + "." + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
+
+     return ;
         }
 
         resItem.m_Obj = obj;

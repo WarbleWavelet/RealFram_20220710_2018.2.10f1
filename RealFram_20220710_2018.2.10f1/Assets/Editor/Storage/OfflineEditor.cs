@@ -33,7 +33,10 @@ public class OfflineEditor
        EditorUtility.ClearProgressBar();
 
     }
-    [MenuItem(Constants.MenuItem + "/Create UIOfflineData", false, 101)]
+
+
+    #region UIOfflineData
+  [MenuItem(Constants.MenuItem + "/Create UIOfflineData", false, 101)]
     static void AssetsCreateUIOfflineData()
     {
         GameObject[] goArr = Selection.gameObjects;
@@ -55,8 +58,7 @@ public class OfflineEditor
     [MenuItem(Constants.MenuItem + "/Create All UIOfflineData", false, 102)]
     static void AssetsCreateAllUIOfflineData()
     {
-
-        string[] guidArr = AssetDatabase.FindAssets(Constans_OfflineData.m_Type, new string[] { Constans_OfflineData.m_Path });
+        string[] guidArr = AssetDatabase.FindAssets(Constans_UIOfflineData.m_Type, new string[] { Constans_UIOfflineData.m_Path });
         for (int i = 0; i < guidArr.Length; i++)
         {
             string path = AssetDatabase.GUIDToAssetPath(guidArr[i]);
@@ -105,8 +107,13 @@ public class OfflineEditor
 
     }
 
+    #endregion
 
-    [MenuItem(Constants.MenuItem + "/Create All ParticleOfflineData", false, 104)]
+
+
+
+    #region ParticleOfflineData
+ [MenuItem(Constants.MenuItem + "/Create All ParticleOfflineData", false, 104)]
     static void AssetsCreateAllParticleOfflineData()
     {
 
@@ -133,6 +140,8 @@ public class OfflineEditor
         EditorUtility.ClearProgressBar();
 
     }
+    #endregion
+   
 
     #region 辅助
     /// <summary>

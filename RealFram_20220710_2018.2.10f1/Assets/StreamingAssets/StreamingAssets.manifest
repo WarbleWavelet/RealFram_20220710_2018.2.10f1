@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 2709153457
+CRC: 948618993
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -15,3 +15,6 @@ AssetBundleManifest:
       Name: attack
       Dependencies:
         Dependency_0: shader
+    Info_4:
+      Name: menupanel
+      Dependencies: {}

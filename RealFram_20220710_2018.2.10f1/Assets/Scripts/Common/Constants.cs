@@ -35,7 +35,17 @@ public   class  Constans_OfflineData
         
        public const string m_Type = "t:prefab";
        public const string m_Path = "Assets/GameData/OfflineData/UIOfflineData";
-}public   class  Constans_ParticleOfflineData
+
+
+}public   class  Constans_UIOfflineData
+{ 
+        
+       public const string m_Type = "t:prefab";
+       public const string m_Path = "Assets/GameData/Prefabs/UGUI/Panel";
+}
+
+
+public   class  Constans_ParticleOfflineData
 { 
         
        public const string m_Type = "t:prefab";

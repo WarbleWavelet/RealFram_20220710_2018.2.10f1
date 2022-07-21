@@ -86,7 +86,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
     {
         uint crc = CRC32.GetCRC32(path);
         //Pool有
-        ResObj resObj = GetResObjSynv(crc);
+        ResObj resObj = GetResObjSync(crc);
         //Pool没有
         if (resObj == null)
         {
@@ -94,8 +94,9 @@ public class ObjectMgr : Singleton<ObjectMgr>
             resObj.m_Crc = crc;
             resObj.m_JmpClr = jmpClr;
             //ResouceManager提供加载方法
-            resObj = ResourceMgr.Instance.SyncLoadResObj(path, resObj);
-            if (resObj.m_ResItem.m_Obj != null)
+            resObj = ResourceMgr.Instance.LoadResObjSync(path, resObj);
+
+            if (resObj.m_ResItem !=null && resObj.m_ResItem.m_Obj != null)
             {
                 GameObject go = resObj.m_ResItem.m_Obj as GameObject;
                 resObj.m_Go = GameObject.Instantiate(go) as GameObject;
@@ -147,7 +148,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
         }
 
         uint crc = CRC32.GetCRC32(path);
-        ResObj resObj = GetResObjSynv(crc);//ResCnt有Add函数
+        ResObj resObj = GetResObjSync(crc);//ResCnt有Add函数
 
         if (resObj != null)//get不到就spawn
         {
@@ -304,7 +305,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
     /// </summary>
     /// <param name="crc"></param>
     /// <returns></returns>
-    ResObj GetResObjSynv(uint crc)
+    ResObj GetResObjSync(uint crc)
     {
         //Get lst
         List<ResObj> lst = null;

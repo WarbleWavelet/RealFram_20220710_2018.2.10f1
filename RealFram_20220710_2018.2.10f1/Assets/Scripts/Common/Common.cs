@@ -19,4 +19,10 @@
         return m_asyncGuid++;
     }
 
+    public static void Log( object obj)
+    {
+        UnityEngine.Debug.Log(obj.GetType().ToString() + "." + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
+
+    }
+
 }

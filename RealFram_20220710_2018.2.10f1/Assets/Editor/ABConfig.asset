@@ -11,8 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42bb9f07c0f354d41b619361e2e0f394, type: 3}
   m_Name: ABConfig
   m_EditorClassIdentifier: 
-  prefabPathLst:
-  - Assets/GameData/Prefabs
+  prefabPathLst: []
   folderPathLst:
   - ABName: sound
     Path: Assets/GameData/Sounds

@@ -25,24 +25,27 @@ public class AssetBundleEditor
     static List<string> fliter_pathLst = new List<string>();
 
     static ABCfgSO cfgSO;
+
     #endregion
 
 
     #region ABCfgSO
-    [MenuItem(Constants.MenuItem + "/Init ABCfgSO", false, -20)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/添加标记数据（除了配置表）", false, 1)]//按钮在菜单栏的位置
     public static void InitABCfgSO()
     {
         cfgSO = InitCfgSO(DefinePath.ABCONFIGPATH);
         AssetDatabase.Refresh();
     }
-    [MenuItem(Constants.MenuItem + "/Clear ABCfgSO", false, -19)]//按钮在菜单栏的位置
+
+
+    [MenuItem(Constants.MenuItem + "/Clear ABCfgSO", false, 3)]//按钮在菜单栏的位置
     public static void ClearABCfgSO()
     {
         cfgSO = ClearCfgSO(DefinePath.ABCONFIGPATH);
         AssetDatabase.Refresh();
     }
 
-    [MenuItem(Constants.MenuItem + "/Add ABCfgPath", false, -18)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/添加标记数据（配置表）", false, 2)]//按钮在菜单栏的位置
     public static void AddABCfgPath()
     {
         cfgSO = AddABCfgPath(DefinePath.ABCONFIGPATH);
@@ -57,7 +60,7 @@ public class AssetBundleEditor
 
 
 
-    [MenuItem(Constants.MenuItem + "/标记并初始内存",false,1)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/标记并初始内存",false,21)]//按钮在菜单栏的位置
     public static void MarkAB()
     {
         // Load cfg
@@ -91,7 +94,7 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(Constants.MenuItem + "/清理标记", false,2)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/清理标记", false,22)]//按钮在菜单栏的位置
     public static void Unmark()
     {
         string[] oldNameArr = AssetDatabase.GetAllAssetBundleNames();
@@ -108,7 +111,7 @@ public class AssetBundleEditor
 
 
     #region 打包 删包
-    [MenuItem(Constants.MenuItem + "/打包", false,21)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/打包", false,41)]//按钮在菜单栏的位置
     static void BuildAB()
     {
         //打包
@@ -133,7 +136,7 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(Constants.MenuItem + "/删包", false,22)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/删包", false,42)]//按钮在菜单栏的位置
     static void DeleteAB()
     {
         DirectoryInfo di = new DirectoryInfo(DefinePath.ABSAVEPATH);
@@ -170,7 +173,7 @@ public class AssetBundleEditor
     /// <path,ABName>
     /// </summary>
     /// <param name="dic"></param>
-    [MenuItem(Constants.MenuItem+"/生成Xml Bin", false,23)]
+    [MenuItem(Constants.MenuItem+"/生成Xml Bin", false,61)]
     static void WriteData()
     {
 
@@ -222,7 +225,7 @@ public class AssetBundleEditor
     }
 
    
-    [MenuItem(Constants.MenuItem + "/删Xml Bin", false, 24)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/删Xml Bin", false, 62)]//按钮在菜单栏的位置
     static void DeleteData()
     {
         DirectoryInfo di = new DirectoryInfo(  Application.dataPath );
@@ -247,7 +250,7 @@ public class AssetBundleEditor
     #endregion
 
     #region MenuItem 01
-    [MenuItem(Constants.MenuItem + "/Build AssetBundles")]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/Build AssetBundles",false,999)]//按钮在菜单栏的位置
     static void BuildAllAssetBundles()//不能传参
     {
         abWriter = new AssetBundleWriter()
@@ -524,8 +527,6 @@ public class AssetBundleEditor
         ABCfgSO cfgSO=new ABCfgSO();    
         //以下顺序重要
         cfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(path);
-        cfgSO.prefabPathLst.Clear();
-        cfgSO.folderPathLst.Clear();
         //贴标签
         cfgSO.prefabPathLst.Add("Assets/GameData/Prefabs");
         cfgSO.folderPathLst.Add(new ABCfgSO.AB2Path { ABName = "sound", Path = "Assets/GameData/Sounds" });
