@@ -24,10 +24,13 @@ public class Window
     public string m_Name { get; set; }
 
     //所有的Button
+
     protected List<Button> m_btnLst = new List<Button>();
+    protected List<Slider> m_sliderLst = new List<Slider>();
+    protected List<Image> m_imgLst = new List<Image>();
 
     //所有Toggle
-    protected List<Toggle> m_toggleDic = new List<Toggle>();
+    protected List<Toggle> m_toggleLst = new List<Toggle>();
 
 
 
@@ -38,22 +41,22 @@ public class Window
 
 
     #region 生命
-    public virtual void Awake(params object[] paralist) { }
+    public virtual void OnAwake(params object[] paralist) { }
 
     /// <summary>窗口显示</summary>
-    public virtual void Start(params object[] paralist) { }
+    public virtual void OnShow(params object[] paralist) { }
     /// <summary>隐藏</summary>
     public virtual void Disable() { }
 
-    public virtual void Update() { }
+    public virtual void OnUpdate() { }
     /// <summary>关闭</summary> 
     public virtual void Close()
     {
         RemoveAllButtonListener();
         RemoveAllToggleListener();
         m_btnLst.Clear();
-        m_toggleDic.Clear();
-
+        m_imgLst.Clear();
+        m_sliderLst.Clear();
     }
     #endregion
 
@@ -71,6 +74,27 @@ public class Window
 
 
     #region Sprite
+
+
+
+    public void ChangeImageFillAmount(Image imgFg, Text txtPrg,Image imgHandler, float prg)
+    {
+        if (imgFg == null)
+            return ;
+
+
+        if (m_imgLst.Contains(imgFg)==false)
+        {
+            m_imgLst.Add(imgFg);
+
+        }
+            imgFg.fillAmount = prg;
+            txtPrg.text = prg.ToString("0.00");
+            imgHandler.GetComponent<RectTransform>().localPosition += new Vector3((1600f * prg), 0f, 0f);
+        
+
+        return;
+    }
  /// <summary>
     /// 同步替换图片
     /// </summary>
@@ -175,9 +199,6 @@ public class Window
         }
     }
 
-
-
-
     /// <summary>
     /// 播放button声音
     /// </summary>
@@ -194,7 +215,7 @@ public class Window
     /// </summary>
     public void RemoveAllToggleListener()
     {
-        foreach (Toggle toggle in m_toggleDic)
+        foreach (Toggle toggle in m_toggleLst)
         {
             toggle.onValueChanged.RemoveAllListeners();
         }
@@ -209,9 +230,9 @@ public class Window
     {
         if (toggle != null)
         {
-            if (!m_toggleDic.Contains(toggle))
+            if (!m_toggleLst.Contains(toggle))
             {
-                m_toggleDic.Add(toggle);
+                m_toggleLst.Add(toggle);
             }
             toggle.onValueChanged.RemoveAllListeners();
             toggle.onValueChanged.AddListener(action);

@@ -53,3 +53,13 @@ public class ABBase
 }
 
 
+[System.Serializable]
+public class XmlCfg
+{
+	[XmlAttribute("Id")]
+	public int Id { get; set; }
+	[XmlAttribute("Name")]
+	public string Name { get; set; }
+	[XmlElement("List")]
+	public List<int> Lst { get; set; }
+}

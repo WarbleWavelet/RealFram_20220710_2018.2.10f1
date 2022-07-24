@@ -1,0 +1,11 @@
+{
+    "name": "Demo13",
+    "references": [
+        "Common",
+        "Manager"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

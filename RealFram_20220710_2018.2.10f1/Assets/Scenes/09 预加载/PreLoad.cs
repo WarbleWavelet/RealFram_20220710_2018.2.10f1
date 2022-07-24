@@ -25,7 +25,7 @@ namespace Demo09
 		AudioClip clip;
 		void Awake()
 		{
-			AssetBundleMgr.Instance.LoadABCfg(false);
+			AssetBundleMgr.Instance.InitMgr(false);
 		}
 
 		void Start()

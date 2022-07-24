@@ -29,8 +29,8 @@ namespace Demo11
 		{
 			//GameObject.DontDestroyOnLoad(gameObject);
 			bool log = false;
-			AssetBundleMgr.Instance.LoadABCfg(log);
-			ResourceMgr.Instance.InitCoroutine(this);
+			AssetBundleMgr.Instance.InitMgr(log);
+			ResourceMgr.Instance.InitMgr(this);
 
 			ObjectMgr.Instance.InitMgr(RecyclePoolTrans, transform);
 		}
@@ -51,7 +51,7 @@ namespace Demo11
 		void CallBack(string path, UnityEngine.Object obj, object para1 = null, object para2 = null, object para3 = null)
 		{ 
 			go= obj as GameObject;
-			FixShader(go);
+			Common.FixShader(go);
 		}
 		void Yin()
 		{
@@ -112,25 +112,6 @@ namespace Demo11
 
 
 
-	void FixShader(GameObject go)
-	{
-		MeshRenderer[] mr = go.GetComponentsInChildren<MeshRenderer>();
-		List<Material> lst = new List<Material>();
-		for (int i = 0; i < mr.Length; i++)
-		{
-			lst.AddRange(mr[i].materials);
-		}
-		SkinnedMeshRenderer[] smr = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-		for (int i = 0; i < smr.Length; i++)
-		{
-			lst.AddRange(smr[i].materials);
-		}
-
-		for (int i = 0; i < lst.Count; i++)
-		{
-			lst[i].shader = Shader.Find("Custom/benghuai");
-		}
-	}
 	}
 
 }

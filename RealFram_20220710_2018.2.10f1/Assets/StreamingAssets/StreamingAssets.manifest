@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 948618993
+CRC: 610983750
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -16,5 +16,8 @@ AssetBundleManifest:
       Dependencies:
         Dependency_0: shader
     Info_4:
+      Name: loadpanel
+      Dependencies: {}
+    Info_5:
       Name: menupanel
       Dependencies: {}

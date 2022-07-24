@@ -13,6 +13,8 @@ using UnityEngine;
 
 public class OfflineEditor 
 {
+
+
     //放在文件夹Editor下。相邻超过10为一组有分割线
     [MenuItem(Constants.MenuItem+ "/Create OfflineData", false, 100)]
     static void AssetsCreateOfflineData()

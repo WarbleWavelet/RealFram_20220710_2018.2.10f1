@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Demo13.GameStart" Collapsed="true">
+    <Position X="0.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAgAEA=</HashCode>
+      <FileName>Assets\Scenes\13 UIMgr\GameStart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Demo13.MenuWnd" Collapsed="true">
+    <Position X="3" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAICAAACAAAAAAAAAAAAABAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scenes\13 UIMgr\MenuWnd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Demo13.MenuPanel" Collapsed="true">
+    <Position X="3" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAIAAAAAAAAAAAAAAAQAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scenes\13 UIMgr\MenuPanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

@@ -60,9 +60,9 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
     #endregion
 
-    public void LoadFromAB(bool state = true)
+    public void SetLoadFromAB(bool state = true)
     { 
-    m_loadFromAB=state;
+        m_loadFromAB=state;
     }
 
     #region 生命
@@ -70,7 +70,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// 开始协程的条件，传入自身this
     /// </summary>
     /// <param name="mono"></param>
-    public void InitCoroutine(MonoBehaviour mono)
+    public void InitMgr(MonoBehaviour mono)
     {
 
         for (int i = 0; i < (int)AsyncLoadResPriority.Count; i++)
@@ -188,15 +188,15 @@ public class ResourceMgr : Singleton<ResourceMgr>
         ResItem resItem = GetResItem(crc);
 
 
-        //Get得到就Get
-        if (resItem != null)
+   
+        if (resItem != null)     //Get得到就Get
         {
             resObj.m_ResItem = resItem;
             return resObj;
         }
 
-        //Get不到就到下一层Get
-        Object obj = null;
+      
+        Object obj = null;  //Get不到就到下一层Get
 #if UNITY_EDITOR//测试从Editor加载            
 
         if (m_loadFromAB == false)
@@ -215,12 +215,12 @@ public class ResourceMgr : Singleton<ResourceMgr>
                     resItem.m_Crc = crc;
                 }
             }
-            obj = LoadAssetByEditor<Object>(path);
+            obj = LoadObjectByEditor<Object>(path);
 
         }
 #endif
-        //Get不到就Load
-        if (obj == null)
+       
+        if (obj == null) //Get不到就Load
         {
             resItem = AssetBundleMgr.Instance.LoadResItem(crc);
             if (resItem != null && resItem.m_AB != null)
@@ -234,10 +234,18 @@ public class ResourceMgr : Singleton<ResourceMgr>
                     obj = resItem.m_AB.LoadAsset<Object>(resItem.m_AssetName);
                 }
             }
-        }
-        //缓存
+            else
+            {
+                resItem = new ResItem
+                {
+                    m_Crc = crc,
 
-        CacheResItem(path, ref resItem, crc, obj);
+                };
+            }
+        }
+   
+
+        CacheResItem(path, ref resItem, crc, obj);     //缓存
         resObj.m_ResItem = resItem;
         resItem.m_JmpClr = resObj.m_JmpClr;
 
@@ -252,8 +260,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
             return false;
         }
 
-        //  crc => resItem
-        uint crc = resObj.m_Crc;
+   
+        uint crc = resObj.m_Crc;     //  crc => resItem
         ResItem resItem = null;
 
         if (m_RefResItemDic.TryGetValue(crc, out resItem) == false || resItem == null)
@@ -277,6 +285,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
 
     #region ResItem
+
+    /// <summary>
     /// <summary>
     /// 比如跳转场景时，清内存
     /// </summary>
@@ -622,22 +632,31 @@ public class ResourceMgr : Singleton<ResourceMgr>
         while (true)
         {
             bool haveYield = false;//内层yield后外层不用yield
-            //不同优先级的回调列表，High Middle Low
-            for (int i = 0; i < (int)AsyncLoadResPriority.Count; i++)
+           
+            for (int i = 0; i < (int)AsyncLoadResPriority.Count; i++) //不同优先级的回调列表，High Middle Low
             {
+                if (m_asyncLoadResParaLst[(int)AsyncLoadResPriority.High].Count > 0)
+                {
+                    i = (int)AsyncLoadResPriority.High;
+                }
+                else if (m_asyncLoadResParaLst[(int)AsyncLoadResPriority.Middle].Count > 0)
+                {
+                    i = (int)AsyncLoadResPriority.Middle;
+                }
+
                 List<AsyncLoadResPara> paraLst = m_asyncLoadResParaLst[i];
                 if (paraLst.Count <= 0)
                 {
                     continue;//继续空跑
                 }
 
-                //Get cbLst
-                AsyncLoadResPara para = paraLst[0];//要加载的Item
+
+                AsyncLoadResPara para = paraLst[0];//Get cbLst 要加载的Item
                 paraLst.RemoveAt(0);
                 cbLst = para.m_CbLst;
 
-                //obj => resItem
-                Object obj = null;
+            
+                Object obj = null;    //obj => resItem
                 ResItem resItem = null;
 
                 if (m_loadFromAB == false)
@@ -645,17 +664,17 @@ public class ResourceMgr : Singleton<ResourceMgr>
 #if UNITY_EDITOR
                     if (para.m_Sprite == true)// 特殊：Sprite 会不能直接等于 asset
                     {
-                        obj = LoadAssetByEditor<Sprite>(para.m_Path);
+                        obj = LoadObjectByEditor<Sprite>(para.m_Path);
                     }
                     else
                     {
-                        obj = LoadAssetByEditor<Object>(para.m_Path);
+                        obj = LoadObjectByEditor<Object>(para.m_Path);
                     }
 
                     yield return new WaitForSeconds(0.5f);//模拟异步
 
                     resItem = AssetBundleMgr.Instance.GetResItem(para.m_Crc);
-                    if (resItem == null)
+                    if (resItem == null)//保护处理
                     {
                         resItem = new ResItem();
                         resItem.m_Crc = para.m_Crc;
@@ -663,8 +682,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
 #endif
                 }
 
-                //m_loadFromAB==true
-                if (null == obj)
+             
+                if (null == obj)   //m_loadFromAB==true
                 {
                     resItem = AssetBundleMgr.Instance.LoadResItem(para.m_Crc);
 
@@ -783,7 +802,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
             }
             else
             {
-                obj = LoadAssetByEditor<T>(path);
+                obj = LoadObjectByEditor<T>(path);
             }
         }
 #endif
@@ -817,7 +836,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <typeparam name="T"></typeparam>
     /// <param name="path"></param>
     /// <returns></returns>
-    T LoadAssetByEditor<T>(string path) where T : UnityEngine.Object
+    T LoadObjectByEditor<T>(string path) where T : UnityEngine.Object
     {
         return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
     }
@@ -854,7 +873,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
             }
             else
             {
-                obj = LoadAssetByEditor<Object>(path);
+                obj = LoadObjectByEditor<Object>(path);
             }
         }
 #endif

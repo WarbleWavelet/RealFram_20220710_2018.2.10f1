@@ -17,7 +17,7 @@ public class ReadResFromMgr : MonoBehaviour {
 
     void Awake()
     {
-		AssetBundleMgr.Instance.LoadABCfg();
+		AssetBundleMgr.Instance.InitMgr();
     }
 	// Use this for initialization
 	void Start () 

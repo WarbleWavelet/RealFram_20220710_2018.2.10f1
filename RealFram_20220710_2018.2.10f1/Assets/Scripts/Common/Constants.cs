@@ -1,11 +1,9 @@
 ﻿public class Constants
 {
-    public const float offset = 10f;
+    public const float Demo01_Offset = 10f;
     public const string MenuItem = "MyTools";
-    public const string MenuAsset = "MyTools";
+    public const string MenuAsset = "MyAssets";
    
-    //public const string AssetBundleConfig = "AssetBundleConfig"; // 系统自动转小写
-    public const string AssetBundleConfig = "assetbundleconfig";
 
 
 
@@ -26,8 +24,24 @@
     #endregion
 
 }
+public class Constants_Demo13
+{
+
+    public const string PanelPath = "Assets/GameData/Prefabs/UGUI/Panel/Demo13/";
+    public const string MenuPanel = PanelPath + "MenuPanel.prefab";
+}
+
+public class Constants_Demo14
+{
+    public const string Scene_Menu = "Menu14";
+    public const string Scene_Start = "Start14";
+    public const string Scene_Empty = "Empty14";
+    public const string PanelPath = "Assets/GameData/Prefabs/UGUI/Panel/Demo14/";
+    public const string LoadPanel = PanelPath + "LoadPanel.prefab";
+    public const string MenuPanel = PanelPath + "MenuPanel.prefab";
 
 
+}
 
 
 public   class  Constans_OfflineData

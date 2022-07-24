@@ -29,7 +29,7 @@ namespace Demo10
 		{
 			//GameObject.DontDestroyOnLoad(gameObject);
 			bool log = false;
-			AssetBundleMgr.Instance.LoadABCfg(log);
+			AssetBundleMgr.Instance.InitMgr(log);
 			ObjectMgr.Instance.InitMgr(RecyclePoolTrans, transform);
 		}
 

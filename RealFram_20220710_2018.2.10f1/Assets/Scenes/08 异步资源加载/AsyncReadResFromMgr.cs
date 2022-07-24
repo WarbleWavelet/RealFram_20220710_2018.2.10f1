@@ -20,8 +20,8 @@ namespace Demo08
 
 		void Awake()
 		{
-			AssetBundleMgr.Instance.LoadABCfg();
-			ResourceMgr.Instance.InitCoroutine(this);
+			AssetBundleMgr.Instance.InitMgr();
+			ResourceMgr.Instance.InitMgr(this);
 		}
 
 		void Start()

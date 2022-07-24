@@ -220,8 +220,8 @@ public class AssetBundleEditor
             abCfg.ABLst.Add(abBase);
         }
 
-        ClassToXml(abCfg, DefinePath.ABSAVEPATH_XML);
-        ClassToBin(abCfg, DefinePath.ABSAVEPATH_Bin);
+        ClassToXml(abCfg, DefinePath.Demo05_AB_Xml);
+        ClassToBin(abCfg, DefinePath.Demo05_Bytes_Cfg);
     }
 
    
@@ -234,13 +234,13 @@ public class AssetBundleEditor
         for (int i = 0; i < fiArr.Length; i++)
         {
             FileInfo fi = fiArr[i];
-            if (File.Exists(DefinePath.ABSAVEPATH_XML))
+            if (File.Exists(DefinePath.Demo05_AB_Xml))
             {
-                File.Delete(DefinePath.ABSAVEPATH_XML);
+                File.Delete(DefinePath.Demo05_AB_Xml);
             }
-            if (File.Exists(DefinePath.ABSAVEPATH_Bin))
+            if (File.Exists(DefinePath.Demo05_Bytes_Cfg))
             {
-                File.Delete(DefinePath.ABSAVEPATH_Bin);
+                File.Delete(DefinePath.Demo05_Bytes_Cfg);
             }
         }
 

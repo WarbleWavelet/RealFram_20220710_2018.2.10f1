@@ -44,10 +44,10 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     #region ABCfg
     /// <summary>
-    ///  加载配置文件
+    ///  加载配置文件LoadABCfg
     /// </summary>
     /// <param name="log">打印日志</param>
-    public void LoadABCfg(bool log = true)
+    public void InitMgr(bool log = true)
     {
         Reset();
         //
@@ -91,7 +91,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         TextAsset ta = ab.LoadAsset<TextAsset>("Assets/GameData/Data/ABData/AssetBundleConfig.bytes");//load bytes
         if (ta == null)
         {
-            Debug.LogErrorFormat(" \"{0}\" is not exist", DefinePath.ABSAVEPATH_Bin);
+            Debug.LogErrorFormat(" \"{0}\" is not exist", DefinePath.Demo05_Bytes_Cfg);
 
             return null;
         }

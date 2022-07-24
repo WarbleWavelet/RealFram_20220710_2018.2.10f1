@@ -15,7 +15,7 @@ using UnityEngine.EventSystems;
 public class UIMgr : Singleton<UIMgr> {
 
 
-    #region 字数
+    #region 字属
     //UI节点
     public RectTransform m_UiRoot;
     //窗口节点
@@ -25,9 +25,9 @@ public class UIMgr : Singleton<UIMgr> {
     //EventSystem节点
     private EventSystem m_eventSystem;
     //屏幕的宽高比
-    private float m_CanvasRate = 0;
+    private float m_canvasRate = 0;
 
-    private string m_uiPrefabPath = "Assets/GameData/Prefabs/UGUI/Panel/";
+    private string m_uiPrefabPath = "";
     //注册的字典
     private Dictionary<string, System.Type> m_registerDic = new Dictionary<string, System.Type>();
 
@@ -48,39 +48,32 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="uiRoot">UI父节点</param>
     /// <param name="wndRoot">窗口父节点</param>
     /// <param name="uiCamera">UI摄像机</param>
-    public void Init(RectTransform uiRoot, RectTransform wndRoot, Camera uiCamera, EventSystem eventSystem)
+    public void InitMgr(RectTransform uiRoot, RectTransform wndRoot, Camera uiCamera, EventSystem eventSystem)
     {
         m_UiRoot = uiRoot;
         m_wndRoot = wndRoot;
         m_uiCamera = uiCamera;
         m_eventSystem = eventSystem;
-        m_CanvasRate = Screen.height / (m_uiCamera.orthographicSize * 2);
+        m_canvasRate = Screen.height / (m_uiCamera.orthographicSize * 2);
     }
 
     /// <summary>
     /// 窗口的更新
     /// </summary>
-    public void Update()
+    public void OnUpdate()
     {
         for (int i = 0; i < m_wndLst.Count; i++)
         {
             if (m_wndLst[i] != null)
             {
-                m_wndLst[i].Update();
+                m_wndLst[i].OnUpdate();
             }
         }
     }
     #endregion
 
 
-    /// <summary>
-    /// 设置所有节目UI路径
-    /// </summary>
-    /// <param name="path"></param>
-    public void SetUIPrefabPath(string path)
-    {
-        m_uiPrefabPath = path;
-    }
+
 
     /// <summary>
     /// 显示或者隐藏所有Wnd
@@ -164,15 +157,16 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="para2"></param>
     /// <param name="para3"></param>
     /// <returns></returns>
-    public Window OpenWnd(string wndName, bool isTop = true, params object[] paralist)
+    public Window OpenWnd(string panelFullPath,  bool isTop = true, params object[] paralist)
     {
+        string wndName = Common.TrimName(panelFullPath, TrimNameType.Slash);
         Window wnd = GetWnd<Window>(wndName);
-        if (wnd == null)
+        if ( null == wnd )
         {
-            System.Type tp = null;
-            if ( m_registerDic.TryGetValue(wndName, out tp) ==true )
+            System.Type type = null;
+            if ( m_registerDic.TryGetValue(wndName, out type) ==true )
             {
-                wnd = System.Activator.CreateInstance(tp) as Window;
+                wnd = System.Activator.CreateInstance(type) as Window;
             }
             else
             {
@@ -180,14 +174,14 @@ public class UIMgr : Singleton<UIMgr> {
                 return null;
             }
 
-            GameObject go = ObjectMgr.Instance.InstantiateObject(m_uiPrefabPath + wndName, true, false);
-            if (go == null)
+            GameObject go = ObjectMgr.Instance.InstantiateObject(panelFullPath , false, false);
+            if ( null == go)
             {
                 Debug.Log("创建窗口Prefab失败：" + wndName);
                 return null;
             }
 
-            if (!m_wndDic.ContainsKey(wndName))
+            if (m_wndDic.ContainsKey(wndName)==false)
             {
                 m_wndLst.Add(wnd);
                 m_wndDic.Add(wndName, wnd);
@@ -196,7 +190,7 @@ public class UIMgr : Singleton<UIMgr> {
             wnd.m_GameObject = go;
             wnd.m_Transform = go.transform;
             wnd.m_Name = wndName;
-            wnd.Awake(paralist);
+            wnd.OnAwake(paralist);
             go.transform.SetParent(m_wndRoot, false);
 
             if (isTop)
@@ -204,7 +198,7 @@ public class UIMgr : Singleton<UIMgr> {
                 SetWndTop(go);
             }
 
-            wnd.Start(paralist);
+            wnd.OnShow(paralist);
         }
         else
         {
@@ -230,6 +224,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// </summary>
     public void OpenOnlyOneWnd(string name, bool isTop = true, params object[] paralist)
     {
+        name = Common.TrimName(name, TrimNameType.Slash);
         CloseAllWnd();
         OpenWnd(name, isTop, paralist);
     }
@@ -240,6 +235,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="destory"></param>
     public void CloseWnd(string name, bool destory = false)
     {
+        name = Common.TrimName(name, TrimNameType.Slash);
         Window wnd = GetWnd<Window>(name);
         CloseWnd(wnd, destory);
     }
@@ -295,6 +291,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="name"></param>
     public void HideWnd(string name)
     {
+        name = Common.TrimName(name, TrimNameType.Slash);
         Window wnd = GetWnd<Window>(name);
         HideWnd(wnd);
     }
@@ -320,6 +317,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="paralist"></param>
     public void ShowWnd(string name, bool bTop = true, params object[] paralist)
     {
+        name = Common.TrimName(name, TrimNameType.Slash);
         Window wnd = GetWnd<Window>(name);
         ShowWnd(wnd, bTop, paralist);
     }
@@ -335,11 +333,16 @@ public class UIMgr : Singleton<UIMgr> {
         {
             if (wnd.m_GameObject != null && !wnd.m_GameObject.activeSelf) wnd.m_GameObject.SetActive(true);
             if (bTop) wnd.m_Transform.SetAsLastSibling();
-            wnd.Start(paralist);
+            wnd.OnShow(paralist);
         }
     }
     #endregion
-   
+
+
+    #region Slider
+
+    #endregion
+
 }
 public enum UIMsgID
 {

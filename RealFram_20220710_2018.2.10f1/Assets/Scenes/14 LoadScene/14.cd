@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Demo14.GameStart">
+    <Position X="0.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAABAAACAAAAAAAACAAAAAAAEAAYAAAAAAAAAgAEA=</HashCode>
+      <FileName>Assets\Scenes\14 UIMgr 1\GameStart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Demo14.LoadPanel">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scenes\14 UIMgr 1\LoadPanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Demo14.LoadWnd">
+    <Position X="6.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAQAUAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Assets\Scenes\14 UIMgr 1\LoadWnd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Demo14.MenuPanel">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAIAAAAAAAAAAAAAAAQAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scenes\14 UIMgr 1\MenuPanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Demo14.MenuWnd">
+    <Position X="8.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAICAAACAAAAAAAAAAAAABAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scenes\14 UIMgr 1\MenuWnd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

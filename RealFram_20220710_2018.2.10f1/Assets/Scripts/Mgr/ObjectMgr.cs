@@ -31,7 +31,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
 
 
     /// <summary>一种可能有多个</summary> 
-    Dictionary<uint, List<ResObj>> m_resObjPoolDic = new Dictionary<uint, List<ResObj>>();
+    Dictionary<uint, List<ResObj>> m_resObjLstDic = new Dictionary<uint, List<ResObj>>();
 
     /// <summary>m_ResObjPoolDic拿不到就Spawn</summary>
     ClassObjectPool<ResObj> m_resObjPool = new ClassObjectPool<ResObj>(Constants.ClassObjectPool_RESOBJ_MAXCNT);
@@ -96,7 +96,8 @@ public class ObjectMgr : Singleton<ObjectMgr>
             //ResouceManager提供加载方法
             resObj = ResourceMgr.Instance.LoadResObjSync(path, resObj);
 
-            if (resObj.m_ResItem !=null && resObj.m_ResItem.m_Obj != null)
+            //if (resObj.m_ResItem !=null && resObj.m_ResItem.m_Obj != null)
+            if ( resObj.m_ResItem.m_Obj != null)
             {
                 GameObject go = resObj.m_ResItem.m_Obj as GameObject;
                 resObj.m_Go = GameObject.Instantiate(go) as GameObject;
@@ -133,6 +134,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
     /// <param name="para2"></param>
     /// <param name="para3"></param>
     /// <param name="crc"></param>
+    /// 
     public long AsyncInstaniateGameObject(string path,
         OnAsyncObject cbInstaniate,
         AsyncLoadResPriority priority,
@@ -238,11 +240,11 @@ public class ObjectMgr : Singleton<ObjectMgr>
         }
         else//缓存
         {
-            if (m_resObjPoolDic.TryGetValue(resObj.m_Crc, out lst) == false || lst == null)//缓存过
+            if (m_resObjLstDic.TryGetValue(resObj.m_Crc, out lst) == false || lst == null)//缓存过
             {
                 lst = new List<ResObj>();
 
-                m_resObjPoolDic.Add(resObj.m_Crc, lst);
+                m_resObjLstDic.Add(resObj.m_Crc, lst);
 
             }
 
@@ -309,7 +311,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
     {
         //Get lst
         List<ResObj> lst = null;
-        if (m_resObjPoolDic.TryGetValue(crc, out lst) == false || lst == null || lst.Count <= 0)
+        if (m_resObjLstDic.TryGetValue(crc, out lst) == false || lst == null || lst.Count <= 0)
         {
             return null;
         }
@@ -420,25 +422,31 @@ public class ObjectMgr : Singleton<ObjectMgr>
 
     #region ClassObjectPool
 
-    void ClearClassObjectPool()
+
+    /// <summary>
+    ///  删m_resObjLstDic
+    /// </summary>
+    public void ClearCache()
     {
         List<uint> crcLst=new List<uint>();
 
-        //删ResObj
-        foreach (var item in m_resObjPoolDic)
+       
+        foreach (var item in m_resObjLstDic) //删ResObj
         {
             uint crc = item.Key;
             List<ResObj> lst = item.Value;
-            for (int i = lst.Count - 1; i <= 0; i--)
+            for (int i = lst.Count - 1; i >= 0; i--)
             { 
                 ResObj resObj = lst[i];
-                if (System.Object.ReferenceEquals(resObj.m_Go, null) == false && resObj.m_JmpClr == true)
+                if (System.Object.ReferenceEquals(resObj.m_Go, null) == false && resObj.m_JmpClr == true) //删Go和resObj
                 {
-                    GameObject.Destroy(resObj.m_Go);
+                   
                     m_resObjDic.Remove(resObj.m_Go.GetInstanceID());
+                    GameObject.Destroy(resObj.m_Go);
 
                     resObj.Reset(); 
                     m_resObjPool.Recycle(resObj);
+                    lst.Remove(resObj);
                 }
              }
 
@@ -448,13 +456,13 @@ public class ObjectMgr : Singleton<ObjectMgr>
             }
         }
 
-        //删Pool
-        for (int i = 0; i < crcLst.Count; i++)
+       
+        for (int i = 0; i < crcLst.Count; i++)  //删Pool
         {
             uint crc=crcLst[i];
-            if (m_resObjPoolDic.ContainsKey(crc) == true)
+            if (m_resObjLstDic.ContainsKey(crc) == true)
             { 
-                m_resObjPoolDic.Remove(crc);
+                m_resObjLstDic.Remove(crc);
             }
         }
         crcLst.Clear();
@@ -494,7 +502,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
     public void ClearAllObjectsInPool(uint crc)
     {
         List<ResObj> lst = null;
-        if ( m_resObjPoolDic.TryGetValue(crc, out lst)==false || lst == null)
+        if ( m_resObjLstDic.TryGetValue(crc, out lst)==false || lst == null)
         { 
               return;      
         }
@@ -516,7 +524,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
 
         if (lst.Count <= 0)
         {
-            m_resObjPoolDic.Remove(crc);
+            m_resObjLstDic.Remove(crc);
         }
     }
     #endregion
