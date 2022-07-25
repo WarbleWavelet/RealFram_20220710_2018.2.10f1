@@ -31,10 +31,10 @@ namespace Demo14
             AddButtonClickListener(m_MenuPanel.m_BtnLoad, OnBtnLoadClick);
             AddButtonClickListener(m_MenuPanel.m_BtnExit, OnBtnExitClick);
 
-
+                  //Rtest 预加载
             m_audioSource = m_MenuPanel.m_AudioSource;
-            m_audioClip = ResourceMgr.Instance.LoadResource<AudioClip>(Constants_Demo14.MP3_SenLin);
-            Common.PlayBGMusic(m_audioSource, m_audioClip);
+            //m_audioClip = ResourceMgr.Instance.LoadResource<AudioClip>(Constants_Demo14.MP3_SenLin);
+            //Common.PlayBGMusic(m_audioSource, m_audioClip);
 
             m_MenuPanel.m_BtnStopAndUnload.onClick.AddListener(() => {
                 m_audioSource.Stop();

@@ -60,7 +60,7 @@ namespace Demo14
 
 
 
-			BindBtn(btnLoadScene, () =>
+			Common.BindBtn(btnLoadScene, () =>
 			{
 				SceneMgr.Instance.LoadScene(Constants_Demo14.Prefab_LoadPanel, Constants_Demo14.Scene_Menu);
 				btnLoadScene.interactable = false;
@@ -70,53 +70,55 @@ namespace Demo14
 
             #region 测试实例
              GameObject go = null;
-			BindBtn(btnInstaniate, () =>
+			Common.BindBtn(btnInstaniate, () =>
 			{
 				go = ObjectMgr.Instance.InstantiateObject(Constants_Demo14.Prefab_Attack, true, true);
 			});
 
 
-			BindBtn(btnUnload, () =>
+			Common.BindBtn(btnUnload, () =>
 			{
 				ObjectMgr.Instance.UnloadGameObject(go);
 				go = null; //引用置空
 
-			});	
+			});
             #endregion
 
-  
-			BindBtn(btnPreload, () =>
+
+
+            #region 预加载
+             Common.BindBtn(btnPreload, () =>
 			{
 				ObjectMgr.Instance.PreloadGameObject(Constants_Demo14.Prefab_Attack,100);
 
 
 			});				
-			BindBtn(btnPreloadResObj, () =>
+			Common.BindBtn(btnPreloadResObj, () =>
 			{
 				ResourceMgr.Instance.PreLoadObject(Constants_Demo14.MP3_SenLin);
 
 
 			});
+            #endregion
+
 
             #region mp3等，在切换场景后要用，MenuWnd
-
-            #endregion
-            btnPlay.interactable = false;
-			BindBtn(btnPlay, () =>
+			Common.BindBtn(btnPlay, () =>
 			{
 				 clip = ResourceMgr.Instance.LoadResource<AudioClip>(Constants_Demo14.MP3_SenLin);
-				 source=GetComponent<AudioSource>();
-				Common.PlayBGMusic( source,clip );
 
 			});
-			btnUnloadResource.interactable = false;
-			BindBtn(btnUnloadResource, () =>
+			Common.BindBtn(btnUnloadResource, () =>
 			{
-				ResourceMgr.Instance.UnloadResItemByObject(clip,true );
-				source.clip = null;
-				clip = null;	//删引用
+				if (ResourceMgr.Instance.UnloadResItemByObject(clip, false) == true) //false，来测试切换场景
+				{ 
+					clip = null;	//删引用				
+				}
+
 
 			});
+            #endregion
+
 		}
 
 
@@ -134,14 +136,7 @@ namespace Demo14
 
 
         #region 辅助
-		void BindBtn(Button btn, Action action)
-		{
-			btn.onClick.AddListener(() =>
-			{
-				action();
-			
-			});
-		}
+
 
 
         void InitMgr()

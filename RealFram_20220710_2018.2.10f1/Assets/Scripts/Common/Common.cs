@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Common
 {
@@ -81,6 +83,16 @@ public class Common
         source.clip = clip;
         source.Play();
 
+    }
+
+
+   public static void BindBtn(Button btn, Action action)
+    {
+        btn.onClick.AddListener(() =>
+        {
+            action();
+
+        });
     }
 }
 
