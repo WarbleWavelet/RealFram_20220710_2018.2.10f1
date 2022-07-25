@@ -16,23 +16,22 @@ using UnityEngine.UI;
 
 namespace Demo14
 {
-    public class MenuWnd: Window
+    public class MenuWnd : Window
     {
 
         public MenuPanel m_MenuPanel;
-        AudioSource m_audioSource; 
-        AudioClip m_audioClip; 
+        AudioSource m_audioSource;
+        AudioClip m_audioClip;
         public override void OnShow(params object[] paralist)
         {
 
 
-            m_MenuPanel= m_GameObject.GetComponent<MenuPanel>();
+            m_MenuPanel = m_GameObject.GetComponent<MenuPanel>();
             AddButtonClickListener(m_MenuPanel.m_BtnStart, OnBtnStartClick);
             AddButtonClickListener(m_MenuPanel.m_BtnLoad, OnBtnLoadClick);
             AddButtonClickListener(m_MenuPanel.m_BtnExit, OnBtnExitClick);
-
-                  //Rtest 预加载
-            m_audioSource = m_MenuPanel.m_AudioSource;
+            BindUI();
+            //使用预加载的不可实例资源         
             //m_audioClip = ResourceMgr.Instance.LoadResource<AudioClip>(Constants_Demo14.MP3_SenLin);
             //Common.PlayBGMusic(m_audioSource, m_audioClip);
 
@@ -44,9 +43,17 @@ namespace Demo14
                 m_audioClip = null;    //删引用
             });
 
+            //使用预加载的可实例资源
+            GameObject go = ObjectMgr.Instance.InstantiateObject(Constants_Demo14.Prefab_Attack, true);
+            //ObjectMgr.Instance.UnloadGameObject(go);
+            ObjectMgr.Instance.UnloadGameObject(go, 0, true);
+
 
         }
-
+        void BindUI()
+        {
+            m_audioSource = m_MenuPanel.m_AudioSource;
+        }
 
         void OnBtnStartClick()
         {

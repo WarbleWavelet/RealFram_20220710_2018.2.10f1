@@ -33,7 +33,7 @@ public class UIMgr : Singleton<UIMgr> {
 
 
     //所有打开的窗口
-    private Dictionary<string, Window> m_wndDic = new Dictionary<string, Window>();
+    public Dictionary<string, Window> m_wndDic = new Dictionary<string, Window>();
     //打开的窗口列表
     private List<Window> m_wndLst = new List<Window>();
     #endregion

@@ -89,7 +89,7 @@ namespace Demo14
             #region 预加载
              Common.BindBtn(btnPreload, () =>
 			{
-				ObjectMgr.Instance.PreloadGameObject(Constants_Demo14.Prefab_Attack,100);
+				ObjectMgr.Instance.PreloadGameObject(Constants_Demo14.Prefab_Attack,5);
 
 
 			});				
@@ -121,11 +121,30 @@ namespace Demo14
 
 		}
 
+		void B(Action curSceneAction, Action tarSceneAction)
+		{
+			curSceneAction();
+			SceneMgr.Instance.LoadScene(Constants_Demo14.Prefab_LoadPanel, Constants_Demo14.Scene_Menu);
+			MenuWnd menuWnd =  UIMgr.Instance.GetWnd<MenuWnd>(Common.TrimName(Constants_Demo14.Prefab_MenuPanel, TrimNameType.Slash));
+			menuWnd.OnShow(tarSceneAction);
+		}
+		void A()
+		{
+
+			B(() => {
+				ObjectMgr.Instance.PreloadGameObject(Constants_Demo14.Prefab_Attack, 5);
+			},
+			() => {
+				//使用预加载的可实例资源
+				GameObject go = ObjectMgr.Instance.InstantiateObject(Constants_Demo14.Prefab_Attack, true);
+				ObjectMgr.Instance.UnloadGameObject(go);
+			});
 
 
+		}
 
 
-        void Update()
+		void Update()
         {
 			UIMgr.Instance.OnUpdate();
 
