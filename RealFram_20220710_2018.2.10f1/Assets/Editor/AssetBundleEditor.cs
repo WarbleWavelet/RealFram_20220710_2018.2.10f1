@@ -371,8 +371,19 @@ public class AssetBundleEditor
             Debug.LogError("路径" + path + "下资源" + abName + "为空");
         }
         else
-        { 
-            ai.assetBundleName = abName;
+        {
+
+            //if (ai.assetPath.EndsWith(".cs") )   //挂载的脚本打包会报错
+            //{
+            //    int a = 1;
+
+            //}
+
+                 ai.assetBundleName = abName;     //AB包的名字  
+            
+            
+
+
         }
     }
 

@@ -399,8 +399,9 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
 
         ResItem resItem = m_NoRefResItemLst.GetTail();
-        UnloadResItem(resItem, true);
         m_NoRefResItemLst.Pop();
+        UnloadResItem(resItem, true);
+
 
     }
 
@@ -1323,7 +1324,7 @@ public class AsyncTotalCallBack
 public class ResObj
 {
     public uint m_Crc = 0;
-    /// <summary>跳场景清除</summary>
+    /// <summary>进入回收池后，跳场景时清除</summary>
     public bool m_JmpClr = true;
 
     //

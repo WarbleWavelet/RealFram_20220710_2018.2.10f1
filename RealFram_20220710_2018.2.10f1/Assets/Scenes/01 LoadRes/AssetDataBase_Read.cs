@@ -10,9 +10,14 @@ namespace Demo01
     {
         void Start()
         {
+
+#if UNITY_EDITOR
             Object obj = AssetDatabase.LoadAssetAtPath<Object>(DefinePath.Demo01_Prefab_Attack);
             GameObject go = GameObject.Instantiate(obj) as GameObject;
             go.transform.position = Vector3.right * Constants.Demo01_Offset;
+#endif
+
+
 
         }
 

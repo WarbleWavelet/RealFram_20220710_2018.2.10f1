@@ -62,6 +62,10 @@ public class UIMgr : Singleton<UIMgr> {
     /// </summary>
     public void OnUpdate()
     {
+        if (m_wndLst == null || m_wndLst.Count <= 0)
+        {
+            return;
+        }
         for (int i = 0; i < m_wndLst.Count; i++)
         {
             if (m_wndLst[i] != null)

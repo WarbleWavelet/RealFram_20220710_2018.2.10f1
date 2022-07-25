@@ -8,6 +8,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,13 +25,18 @@ namespace Demo04
 
         void Read()
         {
-            AssetsSerilize assets = UnityEditor.AssetDatabase.LoadAssetAtPath<AssetsSerilize>(DefinePath.Demo04_Asset);
+
+#if UNITY_EDITOR
+              AssetsSerilize assets = AssetDatabase.LoadAssetAtPath<AssetsSerilize>(DefinePath.Demo04_Asset);
             Debug.Log(assets.Id);
             Debug.Log(assets.Name);
             foreach (string str in assets.TestList)
             {
                 Debug.Log(str);
             }
+#endif
+
+
         }
     }
 

@@ -29,7 +29,7 @@ public class Constants_Demo13
 {
 
     private const string PanelPath = "Assets/GameData/Prefabs/UGUI/Panel/Demo13/";
-    public const string MenuPanel = PanelPath + "MenuPanel.prefab";
+    public const string MenuPanel = PanelPath + "Demo13MenuPanel.prefab";
 }
 
 public class Constants_Demo14
@@ -39,8 +39,8 @@ public class Constants_Demo14
     public const string Scene_Empty = "Empty14";
     //
     private const string PanelPath = "Assets/GameData/Prefabs/UGUI/Panel/Demo14/";
-    public const string Prefab_LoadPanel = PanelPath + "LoadPanel.prefab";
-    public const string Prefab_MenuPanel = PanelPath + "MenuPanel.prefab";
+    public const string Prefab_LoadPanel = PanelPath + "Demo14LoadPanel.prefab";
+    public const string Prefab_MenuPanel = PanelPath + "Demo14MenuPanel.prefab";
     public const string Prefab_Attack = "Assets/GameData/Prefabs/Attack.prefab";
     public const string MP3_SenLin = "Assets/GameData/Sounds/senlin.mp3";
 }

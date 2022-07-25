@@ -96,14 +96,20 @@ namespace Demo14
 				ResourceMgr.Instance.PreLoadObject(Constants_Demo14.MP3_SenLin);
 
 
-			});				
+			});
+
+            #region mp3等，在切换场景后要用，MenuWnd
+
+            #endregion
+            btnPlay.interactable = false;
 			BindBtn(btnPlay, () =>
 			{
 				 clip = ResourceMgr.Instance.LoadResource<AudioClip>(Constants_Demo14.MP3_SenLin);
 				 source=GetComponent<AudioSource>();
 				Common.PlayBGMusic( source,clip );
 
-			});	  			
+			});
+			btnUnloadResource.interactable = false;
 			BindBtn(btnUnloadResource, () =>
 			{
 				ResourceMgr.Instance.UnloadResItemByObject(clip,true );

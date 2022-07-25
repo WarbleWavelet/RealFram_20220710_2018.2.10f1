@@ -21,6 +21,8 @@ namespace Demo14
         public Button m_BtnStart;
         public Button m_BtnLoad;
         public Button m_BtnExit;
+        public Button m_BtnStopAndUnload;
+        public AudioSource m_AudioSource;
 
         void Start()
         {

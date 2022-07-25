@@ -24,8 +24,10 @@ namespace Demo03
         void Start()
         {
 
+
             btn1.onClick.AddListener(A);
             btn2.onClick.AddListener(B);
+
 
 
         }
@@ -47,10 +49,14 @@ namespace Demo03
         {
             XmlCfg cfg = BinaryDeserilize(DefinePath.Demo03_ReadBytes);
             Debug.Log(cfg.Id + "   " + cfg.Name);
-            foreach (int a in cfg.Lst)
-            {
-                Debug.Log(a);
+            if (cfg != null)
+            { 
+                foreach (int a in cfg.Lst)
+                {
+                    Debug.Log(a);
+                }            
             }
+
         }
 
 
@@ -61,18 +67,28 @@ namespace Demo03
             bf.Serialize(fs, serilize);
             fs.Close();
 
-            AssetDatabase.Refresh();
+#if UNITY_EDITOR
+             AssetDatabase.Refresh();
+#endif
+
+
         }
 
         XmlCfg BinaryDeserilize(string path)
         {
+            XmlCfg cfg = null;
+#if UNITY_EDITOR
             TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
             MemoryStream stream = new MemoryStream(ta.bytes);
             BinaryFormatter bf = new BinaryFormatter();
-            XmlCfg cfg = (XmlCfg)bf.Deserialize(stream);
+             cfg = (XmlCfg)bf.Deserialize(stream);
             stream.Close();
 
-            return cfg;
+            
+         
+#endif
+
+                 return cfg;
         }
     }
 

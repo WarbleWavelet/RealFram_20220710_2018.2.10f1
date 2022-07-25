@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 114730238721863212}
   - component: {fileID: 114235675087569226}
   m_Layer: 5
-  m_Name: LoadPanel
+  m_Name: Demo14LoadPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
