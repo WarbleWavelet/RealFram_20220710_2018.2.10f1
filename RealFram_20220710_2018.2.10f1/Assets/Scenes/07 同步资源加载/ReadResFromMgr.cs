@@ -9,7 +9,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+namespace Demo07
+{ 
 public class ReadResFromMgr : MonoBehaviour {
 
 
@@ -40,3 +41,6 @@ public class ReadResFromMgr : MonoBehaviour {
 		}
 	}
 }
+
+}
+

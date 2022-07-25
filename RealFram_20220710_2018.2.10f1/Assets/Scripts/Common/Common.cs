@@ -50,7 +50,11 @@ public class Common
 
     }
 
-   public static void FixShader(GameObject go)
+    /// <summary>
+    /// AB加载，实例时Shader丢失，修复该问题
+    /// </summary>
+    /// <param name="go"></param>
+   public static void FixShader(GameObject go, string shaderName)
     {
         MeshRenderer[] mr = go.GetComponentsInChildren<MeshRenderer>();
         List<Material> lst = new List<Material>();
@@ -66,8 +70,17 @@ public class Common
 
         for (int i = 0; i < lst.Count; i++)
         {
-            lst[i].shader = Shader.Find("Custom/benghuai");
+            lst[i].shader = Shader.Find(shaderName);
         }
+    }
+
+    public static void PlayBGMusic(AudioSource source, AudioClip clip)
+
+    { 
+
+        source.clip = clip;
+        source.Play();
+
     }
 }
 

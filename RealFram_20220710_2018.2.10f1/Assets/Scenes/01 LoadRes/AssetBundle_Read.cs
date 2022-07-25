@@ -13,7 +13,7 @@ namespace Demo01
             GameObject go = GameObject.Instantiate( obj ) as GameObject;
             go.transform.position = Vector3.left * Constants.Demo01_Offset;
 
-            Common.FixShader( go );
+            Common.FixShader( go, Constants.Shader_BengHuai);
         }
 
         Object LoadObjectFromAB(string path)

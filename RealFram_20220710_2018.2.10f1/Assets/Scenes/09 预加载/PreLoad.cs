@@ -18,7 +18,6 @@ namespace Demo09
 	{
 		public bool usePreLoad=true;
 		 AudioSource audioSource;
-	public	string path = "";
 
 		public Button btnPlay;
 		public Button btnRelease;
@@ -31,12 +30,11 @@ namespace Demo09
 		void Start()
 		{
 			BindUI();
-			path = "Assets/GameData/Sounds/senlin.mp3";
 			clip = null;
 			//
 			if (usePreLoad)
 			{ 
-				ResourceMgr.Instance.PreLoadObject(path) ;			
+				ResourceMgr.Instance.PreLoadObject(DefinePath.Demo09_MP3_SenLin) ;			
 			}
 
 		}
@@ -46,7 +44,7 @@ namespace Demo09
 			if (clip == null)
 			{
 				long lastTime = DateTime.Now.Ticks;
-				clip = ResourceMgr.Instance.LoadResource<AudioClip>(path);
+				clip = ResourceMgr.Instance.LoadResource<AudioClip>(DefinePath.Demo09_MP3_SenLin);
 				Debug.LogFormat("预加载：{0}，加载时间：{1}",usePreLoad, (DateTime.Now.Ticks - lastTime));
 			}
 

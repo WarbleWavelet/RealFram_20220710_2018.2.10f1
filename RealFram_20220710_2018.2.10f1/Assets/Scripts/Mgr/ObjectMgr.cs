@@ -76,6 +76,26 @@ public class ObjectMgr : Singleton<ObjectMgr>
         return m_resObjDic[go.GetInstanceID()] != null;
     }
 
+
+    public void PreloadGameObject(string path, int cnt = 1, bool jmpClr = false)
+    {
+        List<GameObject> tmpGoLst = new List<GameObject>();
+        for (int i = 0; i < cnt; i++)  //加载
+        {
+            GameObject go = InstantiateObject(path, false,  jmpClr);
+            tmpGoLst.Add(go);
+        }
+
+        for (int i = 0; i < cnt; i++)  //回收
+        {
+            GameObject go = tmpGoLst[i];
+            UnloadGameObject(go);
+            go = null;
+        }
+
+        tmpGoLst.Clear();
+    }
+
     /// <summary>
     /// 实例
     /// </summary>
@@ -218,7 +238,7 @@ public class ObjectMgr : Singleton<ObjectMgr>
 
         if (resObj.m_Released == true)
         {
-            Debug.LogErrorFormat("Err");
+            Debug.LogErrorFormat("销无可销");
             return;
         }
 

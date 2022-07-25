@@ -38,7 +38,6 @@ namespace Demo14
 
         public override void OnUpdate()
         {
-           UnityEngine.Debug.Log(SceneMgr.Instance.m_CurPrg);
             //
             if (m_LoadPanel == null)
             { 
@@ -59,12 +58,12 @@ namespace Demo14
         {
             if (m_CurSceneName == Constants_Demo14.Scene_Menu)
             {
-                UIMgr.Instance.OpenWnd(Constants_Demo14.MenuPanel);
+                UIMgr.Instance.OpenWnd(Constants_Demo14.Prefab_MenuPanel);
                //UIMgr.Instance.OpenWnd(uiPrefab, true, sceneName);
 
             } 
             
-            UIMgr.Instance.CloseWnd(Constants_Demo14.LoadPanel);//加载完成
+            UIMgr.Instance.CloseWnd(Constants_Demo14.Prefab_LoadPanel);//加载完成
     }
     }
 

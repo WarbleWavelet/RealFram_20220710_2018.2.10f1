@@ -3,12 +3,13 @@
     public const float Demo01_Offset = 10f;
     public const string MenuItem = "MyTools";
     public const string MenuAsset = "MyAssets";
-   
+    public const string Shader_BengHuai = "Custom/benghuai";
 
 
 
 
-    #region Mgr
+
+    #region Mgr      
     /// <summary>类对象池默认最大 Pool_MaxCnt </summary>
     public const int ClassObjectPool_MAXCNT =500;
     public const int ClassObjectPool_AsyncLoadResPara_MAXCNT = 50;
@@ -27,7 +28,7 @@
 public class Constants_Demo13
 {
 
-    public const string PanelPath = "Assets/GameData/Prefabs/UGUI/Panel/Demo13/";
+    private const string PanelPath = "Assets/GameData/Prefabs/UGUI/Panel/Demo13/";
     public const string MenuPanel = PanelPath + "MenuPanel.prefab";
 }
 
@@ -36,11 +37,12 @@ public class Constants_Demo14
     public const string Scene_Menu = "Menu14";
     public const string Scene_Start = "Start14";
     public const string Scene_Empty = "Empty14";
-    public const string PanelPath = "Assets/GameData/Prefabs/UGUI/Panel/Demo14/";
-    public const string LoadPanel = PanelPath + "LoadPanel.prefab";
-    public const string MenuPanel = PanelPath + "MenuPanel.prefab";
-
-
+    //
+    private const string PanelPath = "Assets/GameData/Prefabs/UGUI/Panel/Demo14/";
+    public const string Prefab_LoadPanel = PanelPath + "LoadPanel.prefab";
+    public const string Prefab_MenuPanel = PanelPath + "MenuPanel.prefab";
+    public const string Prefab_Attack = "Assets/GameData/Prefabs/Attack.prefab";
+    public const string MP3_SenLin = "Assets/GameData/Sounds/senlin.mp3";
 }
 
 

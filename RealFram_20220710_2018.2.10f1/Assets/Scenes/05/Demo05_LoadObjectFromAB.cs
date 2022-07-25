@@ -27,10 +27,10 @@ namespace Demo05
             btn1.onClick.AddListener(() =>
             {
                 ABCfg cfg = BinaryDeserilize<ABCfg>( DefinePath.Demo05_Bytes_Cfg );
-                Object obj = LoadObjectFromAB( cfg, DefinePath.Demo04_Attack_Prefab, "Attack"  );
+                Object obj = LoadObjectFromAB( cfg, DefinePath.Demo04_Prefab_Attack, "Attack"  );
 
                 GameObject go = Instantiate(obj) as GameObject;
-                Common.FixShader(go);
+                Common.FixShader(go, Constants.Shader_BengHuai);
             });
 
         }

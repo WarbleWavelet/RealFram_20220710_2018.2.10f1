@@ -10,7 +10,7 @@ namespace Demo01
     {
         void Start()
         {
-            Object obj = AssetDatabase.LoadAssetAtPath<Object>(DefinePath.Demo01_Attack_Prefab);
+            Object obj = AssetDatabase.LoadAssetAtPath<Object>(DefinePath.Demo01_Prefab_Attack);
             GameObject go = GameObject.Instantiate(obj) as GameObject;
             go.transform.position = Vector3.right * Constants.Demo01_Offset;
 

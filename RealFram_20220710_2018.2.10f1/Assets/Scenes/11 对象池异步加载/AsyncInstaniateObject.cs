@@ -51,7 +51,7 @@ namespace Demo11
 		void CallBack(string path, UnityEngine.Object obj, object para1 = null, object para2 = null, object para3 = null)
 		{ 
 			go= obj as GameObject;
-			Common.FixShader(go);
+			Common.FixShader(go, Constants.Shader_BengHuai);
 		}
 		void Yin()
 		{

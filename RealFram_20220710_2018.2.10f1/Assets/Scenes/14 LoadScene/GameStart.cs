@@ -22,45 +22,95 @@ namespace Demo14
 		public	Transform m_RecyclePoolTrans;
 		public	Transform m_SceneTrans;
 
-		public Button btn3;
+		public Button btnLoadScene;
 		public Toggle toggle;
-
+		//
+		public Button btnInstaniate;
+		public Button btnUnload;
+		public Button btnUnloadResource;//不能实例的Object
+		public Button btnPreload;
+		public Button btnPreloadResObj;
+		public Button btnPlay;
+		AudioClip clip;
+		AudioSource source;
 		#region 生命
 		void Awake()
 		{
-
-         
-
-
-
             GameObject.DontDestroyOnLoad(gameObject);
 
 			InitMgr();
-			RegisterUI();	
-
+			RegisterUI();
+			BindUI();
 			//
-			toggle.onValueChanged.AddListener((bool state) => {
+
+
+
+		}
+
+		void BindUI()
+        {
+
+            #region Mgr中资源的加载方式、切场景
+             toggle.onValueChanged.AddListener((bool state) =>
+			{
 				toggle.GetComponentInChildren<Text>().text = state == true ? "LoadFromAB" : "LoadFromEditor";
 				ResourceMgr.Instance.SetLoadFromAB(state);
-
-				toggle.interactable = false;
 			});
 
 
 
 
-			btn3.onClick.AddListener(() => { 
-
-				//UIMgr.Instance.OpenWnd(Constants_Demo14.Prefab_Menu);
-				//UIMgr.Instance.OpenWnd(Constants_Demo14.Prefab_Load,true, Constants_Demo14.Scene_Menu);//tarSceneName=Constants_Demo14.Scene_Empty
-				//SceneMgr.Instance.LoadScene(Constants_Demo14.Scene_Menu);//会让Unity卡死
-				//SceneMgr.Instance.LoadScene(Constants_Demo14.Scene_Menu);
-				//SceneMgr.Instance.LoadScene(Constants_Demo14.LoadPanel, Constants_Demo14.Scene_Menu );
-				SceneMgr.Instance.LoadScene(Constants_Demo14.LoadPanel, Constants_Demo14.Scene_Menu); 
-				btn3.interactable = false;
+			BindBtn(btnLoadScene, () =>
+			{
+				SceneMgr.Instance.LoadScene(Constants_Demo14.Prefab_LoadPanel, Constants_Demo14.Scene_Menu);
+				btnLoadScene.interactable = false;
 			});
-																							  
+            #endregion
 
+
+            #region 测试实例
+             GameObject go = null;
+			BindBtn(btnInstaniate, () =>
+			{
+				go = ObjectMgr.Instance.InstantiateObject(Constants_Demo14.Prefab_Attack, true, true);
+			});
+
+
+			BindBtn(btnUnload, () =>
+			{
+				ObjectMgr.Instance.UnloadGameObject(go);
+				go = null; //引用置空
+
+			});	
+            #endregion
+
+  
+			BindBtn(btnPreload, () =>
+			{
+				ObjectMgr.Instance.PreloadGameObject(Constants_Demo14.Prefab_Attack,100);
+
+
+			});				
+			BindBtn(btnPreloadResObj, () =>
+			{
+				ResourceMgr.Instance.PreLoadObject(Constants_Demo14.MP3_SenLin);
+
+
+			});				
+			BindBtn(btnPlay, () =>
+			{
+				 clip = ResourceMgr.Instance.LoadResource<AudioClip>(Constants_Demo14.MP3_SenLin);
+				 source=GetComponent<AudioSource>();
+				Common.PlayBGMusic( source,clip );
+
+			});	  			
+			BindBtn(btnUnloadResource, () =>
+			{
+				ResourceMgr.Instance.UnloadResItemByObject(clip,true );
+				source.clip = null;
+				clip = null;	//删引用
+
+			});
 		}
 
 
@@ -78,6 +128,16 @@ namespace Demo14
 
 
         #region 辅助
+		void BindBtn(Button btn, Action action)
+		{
+			btn.onClick.AddListener(() =>
+			{
+				action();
+			
+			});
+		}
+
+
         void InitMgr()
 		{
 			AssetBundleMgr.Instance.InitMgr(false);
@@ -96,8 +156,8 @@ namespace Demo14
 
 		void RegisterUI()
 		{
-			UIMgr.Instance.Register<MenuWnd>(Common.TrimName(Constants_Demo14.MenuPanel, TrimNameType.Slash));
-			UIMgr.Instance.Register<LoadWnd>(Common.TrimName(Constants_Demo14.LoadPanel, TrimNameType.Slash));
+			UIMgr.Instance.Register<MenuWnd>(Common.TrimName(Constants_Demo14.Prefab_MenuPanel, TrimNameType.Slash));
+			UIMgr.Instance.Register<LoadWnd>(Common.TrimName(Constants_Demo14.Prefab_LoadPanel, TrimNameType.Slash));
 		}
         #endregion
 

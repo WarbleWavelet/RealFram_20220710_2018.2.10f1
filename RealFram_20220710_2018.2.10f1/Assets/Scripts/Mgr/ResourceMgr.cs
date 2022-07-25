@@ -771,7 +771,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="path"></param>
-    /// <returns></returns>
+    /// <returns>resItem.mObj</returns>
     public T LoadResource<T>(string path) where T : UnityEngine.Object
     {
         if (string.IsNullOrEmpty(path))
@@ -785,9 +785,9 @@ public class ResourceMgr : Singleton<ResourceMgr>
         //
         if (resItem != null)
         {
-            return resItem as T;
-        }
+            return resItem.m_Obj as T;
 
+        }
 
         T obj = null;
 #if UNITY_EDITOR//测试从Editor加载            
