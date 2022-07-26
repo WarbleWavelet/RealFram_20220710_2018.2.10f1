@@ -391,18 +391,31 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// </summary>
     void Washout()
     {
+        //游戏内存/设备总内存=60%                              
         //float destroyPercent = 0.8f;
 
-        if (m_NoRefResItemLst.Count() <= 0)
+        //if (m_NoRefResItemLst.Count() <= 0)
+        //{
+        //    return;
+        //}
+
+        //ResItem resItem = m_NoRefResItemLst.GetTail();
+        //m_NoRefResItemLst.Pop();
+        //UnloadResItem(resItem, true);
+        WashOutByCount();
+
+    }
+
+    void WashOutByCount()
+    {
+        while (m_NoRefResItemLst.Count() >= Constants.MaxCacheCnt+1)
         {
-            return;
+            for (int i = 0; i < Constants.MaxCacheCnt/2; i++)
+            {
+                ResItem resItem = m_NoRefResItemLst.GetTail();
+                UnloadResItem(resItem, true);
+            }
         }
-
-        ResItem resItem = m_NoRefResItemLst.GetTail();
-        m_NoRefResItemLst.Pop();
-        UnloadResItem(resItem, true);
-
-
     }
 
     /// <summary>
@@ -1128,12 +1141,12 @@ public class MapLst<T> where T : class, new()
     public void AddToHead(T node)
     {
         DoubleLinkedListNode<T> _node = null;
-        if (DLLNDic.TryGetValue(node, out _node) && _node != null)
+        if (DLLNDic.TryGetValue(node, out _node) && _node != null) //不包含直接到到前面
         {
             lst.AddToHead(node);
             return;
         }
-        else
+        else 
         {
             lst.AddToHead(node);
             DLLNDic.Add(node, lst.Head);

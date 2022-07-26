@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 222231606217592828}
   - component: {fileID: 114531041996928368}
   m_Layer: 5
-  m_Name: Bg
+  m_Name: bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -191,7 +191,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 224869481529121406}
-  - component: {fileID: 114484144715345540}
   - component: {fileID: 114641490638120744}
   - component: {fileID: 82793522015459702}
   m_Layer: 5
@@ -405,22 +404,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114484144715345540
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1980007235400728}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18ef95fc2ce57bb4c9c081fc6c4af294, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BtnStart: {fileID: 114954812304952072}
-  m_BtnLoad: {fileID: 114355199958711534}
-  m_BtnExit: {fileID: 114118634091065812}
-  m_BtnStopAndUnload: {fileID: 114633103938527010}
-  m_AudioSource: {fileID: 82793522015459702}
 --- !u!114 &114497602441791714
 MonoBehaviour:
   m_ObjectHideFlags: 1

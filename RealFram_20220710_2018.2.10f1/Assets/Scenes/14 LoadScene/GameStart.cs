@@ -16,11 +16,12 @@ using UnityEngine.UI;
 
 namespace Demo14
 {
-	public class GameStart : MonoBehaviour
+	public class GameStart : MonoSingleton<GameStart>
 	{
 
-		public	Transform m_RecyclePoolTrans;
-		public	Transform m_SceneTrans;
+		#region 字属
+		public Transform m_RecyclePoolTrans;
+		public Transform m_SceneTrans;
 
 		public Button btnLoadScene;
 		public Toggle toggle;
@@ -33,17 +34,19 @@ namespace Demo14
 		public Button btnPlay;
 		AudioClip clip;
 		AudioSource source;
+		#endregion
+
 		#region 生命
-		void Awake()
+		public override	void Awake()
 		{
+			base.Awake();
             GameObject.DontDestroyOnLoad(gameObject);
 
 			InitMgr();
 			RegisterUI();
 			BindUI();
-			//
 
-
+			ObjectMgr.Instance.InstantiateObject("Assets/GameData/Prefabs/Cube.prefab",true);
 
 		}
 
@@ -125,7 +128,7 @@ namespace Demo14
 		{
 			curSceneAction();
 			SceneMgr.Instance.LoadScene(Constants_Demo14.Prefab_LoadPanel, Constants_Demo14.Scene_Menu);
-			MenuWnd menuWnd =  UIMgr.Instance.GetWnd<MenuWnd>(Common.TrimName(Constants_Demo14.Prefab_MenuPanel, TrimNameType.Slash));
+			MenuWnd menuWnd =  UIMgr.Instance.GetWnd<MenuWnd>(Common.TrimName(Constants_Demo14.Prefab_MenuPanel, TrimNameType.SlashAfter));
 			menuWnd.OnShow(tarSceneAction);
 		}
 		void A()
@@ -155,9 +158,6 @@ namespace Demo14
 
 
         #region 辅助
-
-
-
         void InitMgr()
 		{
 			AssetBundleMgr.Instance.InitMgr(false);
@@ -176,8 +176,8 @@ namespace Demo14
 
 		void RegisterUI()
 		{
-			UIMgr.Instance.Register<MenuWnd>(Common.TrimName(Constants_Demo14.Prefab_MenuPanel, TrimNameType.Slash));
-			UIMgr.Instance.Register<LoadWnd>(Common.TrimName(Constants_Demo14.Prefab_LoadPanel, TrimNameType.Slash));
+			UIMgr.Instance.Register<MenuWnd>(Common.TrimName(Constants_Demo14.Prefab_MenuPanel, TrimNameType.SlashAfter));
+			UIMgr.Instance.Register<LoadWnd>(Common.TrimName(Constants_Demo14.Prefab_LoadPanel, TrimNameType.SlashAfter));
 		}
         #endregion
 

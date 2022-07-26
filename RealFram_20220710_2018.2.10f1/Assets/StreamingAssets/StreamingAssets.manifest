@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 2371557841
+CRC: 850425826
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -9,12 +9,12 @@ AssetBundleManifest:
       Name: shader
       Dependencies: {}
     Info_2:
-      Name: assetbundleconfig
-      Dependencies: {}
-    Info_3:
       Name: attack
       Dependencies:
         Dependency_0: shader
+    Info_3:
+      Name: cube
+      Dependencies: {}
     Info_4:
       Name: demo13menupanel
       Dependencies: {}
@@ -23,4 +23,7 @@ AssetBundleManifest:
       Dependencies: {}
     Info_6:
       Name: demo14menupanel
+      Dependencies: {}
+    Info_7:
+      Name: assetbundleconfig
       Dependencies: {}

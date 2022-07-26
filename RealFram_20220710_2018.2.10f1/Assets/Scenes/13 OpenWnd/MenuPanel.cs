@@ -22,10 +22,18 @@ namespace Demo13
         public Button m_BtnLoad;
         public Button m_BtnExit;
 
+
+        void Awake()
+        {
+            m_BtnStart= transform.Find("bg/Center/btnStart").GetComponent<Button>();
+            m_BtnLoad= transform.Find("bg/Center/btnLoad").GetComponent<Button>();
+            m_BtnExit= transform.Find("bg/Center/btnExit").GetComponent<Button>();    
+        }
         void Start()
         {
 
         }
+
                 
     }
 

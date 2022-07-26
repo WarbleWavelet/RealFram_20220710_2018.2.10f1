@@ -87,11 +87,11 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// <returns></returns>
     ABCfg BinaryDeserilize()
     {
-        AssetBundle ab = AssetBundle.LoadFromFile(Application.streamingAssetsPath+ "/assetbundleconfig");//Load AB
-        TextAsset ta = ab.LoadAsset<TextAsset>("Assets/GameData/Data/ABData/AssetBundleConfig.bytes");//load bytes
+        AssetBundle ab = AssetBundle.LoadFromFile( DefinePath.OutputAB );//Load AB
+        TextAsset ta = ab.LoadAsset<TextAsset>( DefinePath.InputBytes );//load bytes
         if (ta == null)
         {
-            Debug.LogErrorFormat(" \"{0}\" is not exist", DefinePath.Demo05_Bytes_Cfg);
+            Debug.LogErrorFormat(" \"{0}\" is not exist", DefinePath.OutputAB );
 
             return null;
         }

@@ -21,7 +21,7 @@ namespace Demo13
         public MenuPanel m_MenuPanel;
         public override void OnShow(params object[] paralist)
         {
-            m_MenuPanel= m_GameObject.GetComponent<MenuPanel>();
+            m_MenuPanel= m_GameObject.AddComponent<MenuPanel>();
             AddButtonClickListener(m_MenuPanel.m_BtnStart, OnBtnStartClick);
             AddButtonClickListener(m_MenuPanel.m_BtnLoad, OnBtnLoadClick);
             AddButtonClickListener(m_MenuPanel.m_BtnExit, OnBtnExitClick);

@@ -16,9 +16,21 @@ namespace Demo14
     public class LoadPanel : MonoBehaviour
     {
 
-       // public Slider m_SliderPrg;
+        // public Slider m_SliderPrg;
         public Text m_TxtPrg;
         public Slider m_Slider;
+
+
+        void Awake()
+        {
+            m_Slider = transform.Find("Slider").GetComponent<Slider>();
+            m_TxtPrg = transform.Find("Slider/Text").GetComponent<Text>();
+        }
+
+        void Start()
+        {
+
+        }
     }
 
 }

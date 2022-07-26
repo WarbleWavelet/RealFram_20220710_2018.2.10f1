@@ -22,6 +22,10 @@
     public const string FixPre="";
     public const string FixSur_ResObject_m_Go="(Recycle)";
     public const string FixSur_InstaniateGameObject="(Clone)";
+
+    //ResourceMgr
+    public const int MaxCacheCnt = 500;
+
     #endregion
 
 }

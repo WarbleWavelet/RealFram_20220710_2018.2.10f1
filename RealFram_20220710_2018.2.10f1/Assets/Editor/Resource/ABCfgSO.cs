@@ -22,17 +22,17 @@ public class ABCfgSO : ScriptableObject
 {
 	//名字 唯一性
 	/// <summary>存储prefab的路径</summary>
-	public List<string> prefabPathLst = new List<string>();
+	public List<string> m_PrefabPathLst = new List<string>();
     /// <summary>非prefab的路径</summary>
-    public List<AB2Path> folderPathLst = new List<AB2Path>();
+    public List<AB2Path> m_FolderPathLst = new List<AB2Path>();
 
 
 
     [Serializable]
 	public struct AB2Path
 	{ 
-		public string ABName;
-		public string Path;
+		public string m_ABName;
+		public string m_Path;
 	
 	}
 }

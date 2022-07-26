@@ -1,16 +1,18 @@
 ManifestFileVersion: 0
-CRC: 1005418495
+CRC: 3667772856
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 34f48c7cd4735d0a67ed776a88d99015
+    Hash: bd178891e270834bd6c8f55446a8a22b
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+    Hash: 27295f96fcdc2b917bd061e8817c7e02
 HashAppended: 0
 ClassTypes:
-- Class: 49
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
   Script: {instanceID: 0}
 Assets:
-- Assets/GameData/Data/ABData/AssetBundleConfig.bytes
+- Assets/GameData/Prefabs/Cube.prefab
 Dependencies: []

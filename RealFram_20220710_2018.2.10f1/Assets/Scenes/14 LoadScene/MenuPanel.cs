@@ -24,6 +24,15 @@ namespace Demo14
         public Button m_BtnStopAndUnload;
         public AudioSource m_AudioSource;
 
+
+        void Awake()
+        {
+            m_BtnStart = transform.Find("bg/Center/btnExit").GetComponent<Button>();
+            m_BtnLoad = transform.Find("bg/Center/m_BtnLoad").GetComponent<Button>();
+            m_BtnExit = transform.Find("bg/Center/m_BtnExit").GetComponent<Button>();
+            m_BtnStopAndUnload = transform.Find("bg/Center/m_BtnStopAndUnload").GetComponent<Button>();
+            m_AudioSource = transform.GetComponent<AudioSource>();
+        }
         void Start()
         {
 

@@ -26,7 +26,7 @@ namespace Demo14
         {
 
 
-            m_MenuPanel = m_GameObject.GetComponent<MenuPanel>();
+            m_MenuPanel = m_GameObject.AddComponent<MenuPanel>();
             AddButtonClickListener(m_MenuPanel.m_BtnStart, OnBtnStartClick);
             AddButtonClickListener(m_MenuPanel.m_BtnLoad, OnBtnLoadClick);
             AddButtonClickListener(m_MenuPanel.m_BtnExit, OnBtnExitClick);

@@ -26,7 +26,10 @@ public class OfflineData : MonoBehaviour
 
 	public virtual void Reset()
 	{
-
+		if (m_AlllPoints == null || m_AlllPoints.Length <= 0)
+		{
+			return;
+		}
 		for (int i = 0; i < m_AlllPoints.Length; i++)
         {
             Transform t = m_AlllPoints[i] as Transform;

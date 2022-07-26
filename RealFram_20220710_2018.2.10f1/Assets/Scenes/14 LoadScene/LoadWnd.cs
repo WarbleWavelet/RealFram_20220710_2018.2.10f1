@@ -25,7 +25,7 @@ namespace Demo14
         public override void OnAwake(params object[] paralist)
         {
 
-            m_LoadPanel= m_GameObject.GetComponent<LoadPanel>();
+            m_LoadPanel= m_GameObject.AddComponent<LoadPanel>();
           
             if (paralist != null && paralist.Length > 0)
             {

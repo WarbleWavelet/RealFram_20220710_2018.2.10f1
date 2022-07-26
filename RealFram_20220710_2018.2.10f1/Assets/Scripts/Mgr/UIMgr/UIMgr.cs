@@ -163,7 +163,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <returns></returns>
     public Window OpenWnd(string panelFullPath,  bool isTop = true, params object[] paralist)
     {
-        string wndName = Common.TrimName(panelFullPath, TrimNameType.Slash);
+        string wndName = Common.TrimName(panelFullPath, TrimNameType.SlashAfter);
         Window wnd = GetWnd<Window>(wndName);
         if ( null == wnd )
         {
@@ -228,7 +228,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// </summary>
     public void OpenOnlyOneWnd(string name, bool isTop = true, params object[] paralist)
     {
-        name = Common.TrimName(name, TrimNameType.Slash);
+        name = Common.TrimName(name, TrimNameType.SlashAfter);
         CloseAllWnd();
         OpenWnd(name, isTop, paralist);
     }
@@ -239,7 +239,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="destory"></param>
     public void CloseWnd(string name, bool destory = false)
     {
-        name = Common.TrimName(name, TrimNameType.Slash);
+        name = Common.TrimName(name, TrimNameType.SlashAfter);
         Window wnd = GetWnd<Window>(name);
         CloseWnd(wnd, destory);
     }
@@ -295,7 +295,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="name"></param>
     public void HideWnd(string name)
     {
-        name = Common.TrimName(name, TrimNameType.Slash);
+        name = Common.TrimName(name, TrimNameType.SlashAfter);
         Window wnd = GetWnd<Window>(name);
         HideWnd(wnd);
     }
@@ -321,7 +321,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="paralist"></param>
     public void ShowWnd(string name, bool bTop = true, params object[] paralist)
     {
-        name = Common.TrimName(name, TrimNameType.Slash);
+        name = Common.TrimName(name, TrimNameType.SlashAfter);
         Window wnd = GetWnd<Window>(name);
         ShowWnd(wnd, bTop, paralist);
     }

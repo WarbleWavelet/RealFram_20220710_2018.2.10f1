@@ -10,8 +10,7 @@ public class DefinePath
     public const string Demo04_Asset = "Assets/Scenes/01-04/04 ReadAsset/TestAssets.asset";
     public const string Demo04_Prefab_Attack = "Assets/GameData/Prefabs/Attack.prefab";
     //
-    public const string ABCONFIGPATH = "Assets/Editor/ABConfig.asset";
-    public static string ABSAVEPATH = Application.streamingAssetsPath;
+
 
     public static string Demo05_AB_Xml = Application.dataPath  + "/AssetBundleConfig.xml";//XML可视化，随便删
     public static string Demo05_Bytes_Cfg = Application.streamingAssetsPath + "/assetbundleconfig";
@@ -19,6 +18,12 @@ public class DefinePath
     public const string Demo14_MP3_SenLin = "Assets/GameData/Sounds/senlin.mp3";
 
 
+    public const string ABCfgSOPath = "Assets/Editor/Resource/ABConfig.asset";
+    public static string OutputABPath = Application.streamingAssetsPath;
+    public static string OutputXml = Application.dataPath  + "/AssetBundleConfig.xml";//XML可视化，随便删
+    public static string OutputAB = Application.streamingAssetsPath + "/assetbundleconfig";
+    public static string OutputABName = "assetbundleconfig";
+    public static string InputBytes = "Assets/GameData/Data/ABData/AssetBundleConfig.bytes";
     //ab.LoadAssets                     assetbundleconfig                
     //AssetBundle.LoadFromFile          Application.streamingAssetsPath + "/assetbundleconfig
 }

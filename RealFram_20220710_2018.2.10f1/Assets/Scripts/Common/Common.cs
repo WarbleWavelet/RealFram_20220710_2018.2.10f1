@@ -31,9 +31,14 @@ public class Common
 
         switch (type)
         {
-            case TrimNameType.Slash:
+            case TrimNameType.SlashAfter:
                 {
                     return path.Substring(path.LastIndexOf('/') + 1);//sdcvghasvdj/gdhsag/a.prefab => a.prefab
+                }
+                break;             
+            case TrimNameType.SlashPre:
+                {
+                    return path.Substring(0,path.LastIndexOf('/') - 1);//sdcvghasvdj/gdhsag/a.prefab =>sdcvghasvdj/gdhsag
                 }
                 break;
             case TrimNameType.SlashAndPoint:
@@ -101,7 +106,8 @@ public enum TrimNameType
 {
     None,
     /// <summary>A/B/C.prefab => C.prefab</summary>
-    Slash,
+    SlashAfter,
+    SlashPre,
     /// <summary>A/B/C.prefab => C</summary>
     SlashAndPoint,
 

@@ -156,7 +156,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 224869481529121406}
-  - component: {fileID: 114298314638247500}
   - component: {fileID: 114641490638120744}
   m_Layer: 5
   m_Name: Demo13MenuPanel
@@ -165,20 +164,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &114298314638247500
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1980007235400728}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dba7c3b7b0f1db42b9a5a4efd0d2228, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BtnStart: {fileID: 114954812304952072}
-  m_BtnLoad: {fileID: 114355199958711534}
-  m_BtnExit: {fileID: 114633103938527010}
 --- !u!114 &114339683113706584
 MonoBehaviour:
   m_ObjectHideFlags: 1

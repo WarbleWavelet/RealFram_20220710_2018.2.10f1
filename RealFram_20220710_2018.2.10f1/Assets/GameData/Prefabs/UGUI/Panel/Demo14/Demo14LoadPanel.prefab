@@ -72,7 +72,6 @@ GameObject:
   - component: {fileID: 224129960366233114}
   - component: {fileID: 222869076507233134}
   - component: {fileID: 114353275177491054}
-  - component: {fileID: 114730238721863212}
   - component: {fileID: 114235675087569226}
   m_Layer: 5
   m_Name: Demo14LoadPanel
@@ -439,19 +438,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114730238721863212
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1608202745090262}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4d8bae952932e24782cd95849543b55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TxtPrg: {fileID: 114406759500621678}
-  m_Slider: {fileID: 114314418801098542}
 --- !u!222 &222044843330631942
 CanvasRenderer:
   m_ObjectHideFlags: 1

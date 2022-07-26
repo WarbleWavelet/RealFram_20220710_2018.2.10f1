@@ -74,7 +74,7 @@ namespace Demo05
         /// <returns></returns>
         T BinaryDeserilize<T>(string cfgABPath )
         {
-            string abCfgName = Common.TrimName(cfgABPath, TrimNameType.Slash);
+            string abCfgName = Common.TrimName(cfgABPath, TrimNameType.SlashAfter);
             AssetBundle ab = AssetBundle.LoadFromFile(cfgABPath);
             TextAsset ta = ab.LoadAsset<TextAsset>(abCfgName);
             MemoryStream stream = new MemoryStream(ta.bytes);

@@ -19,7 +19,7 @@ namespace Demo01
         Object LoadObjectFromAB(string path)
         {
             AssetBundle ab = AssetBundle.LoadFromFile(path);//有后缀就必须加后缀
-            string name = Common.TrimName(path, TrimNameType.Slash);
+            string name = Common.TrimName(path, TrimNameType.SlashAfter);
             Object obj = ab.LoadAsset<Object>(name);//可以不加后缀
             return obj;
         }

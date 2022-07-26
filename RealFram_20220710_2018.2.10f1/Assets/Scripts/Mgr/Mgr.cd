@@ -1,17 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="ABItem&#xD;&#xA;DoubleLinkedListNode&#xD;&#xA;">
-    <Position X="4.688" Y="2.5" Height="0.75" Width="1.7" />
-  </Comment>
-  <Comment CommentText="Get得到就Get&#xD;&#xA;Get不到就Load&#xD;&#xA;其中ResIterm要加载依赖AB包">
-    <Position X="3.756" Y="8.258" Height="0.75" Width="1.908" />
-  </Comment>
-  <Comment CommentText="ABCfg = List&lt;ABBase&gt;&#xD;&#xA;ABBase">
-    <Position X="4.75" Y="3.25" Height="0.576" Width="1.832" />
-  </Comment>
-  <Comment CommentText="ABCfgSO">
-    <Position X="4.681" Y="3.855" Height="0.312" Width="1.797" />
-  </Comment>
   <Class Name="ClassObjectPool&lt;T&gt;">
     <Position X="2.25" Y="2.5" Width="2" />
     <TypeIdentifier>
@@ -24,13 +12,9 @@
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
-    <AssociationLine Name="m_asyncResObjDic" Type="ResObj" FixedFromPoint="true">
-      <Path>
-        <Point X="10.938" Y="11.318" />
-        <Point X="10.938" Y="13.75" />
-      </Path>
+    <AssociationLine Name="m_classPoolDic" Type="System.Collections.Generic.Dictionary&lt;TKey, TValue&gt;">
       <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.247" Y="1.215" />
+        <Position X="-0.769" Y="0.591" />
       </MemberNameLabel>
     </AssociationLine>
     <AssociationLine Name="m_resObjDic" Type="ResObj">
@@ -38,22 +22,21 @@
         <Position X="-0.749" Y="0.858" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="m_classPoolDic" Type="System.Collections.Generic.Dictionary&lt;TKey, TValue&gt;">
+    <AssociationLine Name="m_asyncResObjDic" Type="ResObj">
       <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.769" Y="0.591" />
+        <Position X="-0.247" Y="1.215" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAABkAAIAAAAgAAIAAAEAAgAAA0BARIIGBEAAAQgAAA=</HashCode>
+      <HashCode>gAABkAAIAAAAgAAIAAAEAAAAAA0BARIAGBEACAQgAAg=</HashCode>
       <FileName>Assets\Scripts\Mgr\ObjectMgr.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="m_classPoolDic" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
-      <Field Name="m_asyncResObjDic" />
       <Field Name="m_resObjDic" />
-      <Field Name="m_resObjPoolDic" />
+      <Field Name="m_asyncResObjDic" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="AssetBundleMgr">
@@ -66,8 +49,8 @@
       <FileName>Assets\Scripts\Mgr\AssetBundleMgr.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Field Name="m_abItemDic" />
       <Field Name="m_resItemDic" />
+      <Field Name="m_abItemDic" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="ResItem">
@@ -92,6 +75,11 @@
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
+    <AssociationLine Name="m_NoRefResItemLst" Type="MapLst&lt;T&gt;">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.919" Y="0.173" />
+      </MemberNameLabel>
+    </AssociationLine>
     <AssociationLine Name="m_asyncLoadResParaDic" Type="AsyncLoadResPara">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-1.021" Y="0.23" />
@@ -100,11 +88,6 @@
     <AssociationLine Name="m_asyncLoadResParaLst" Type="System.Collections.Generic.List&lt;T&gt;">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.406" Y="1.802" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <AssociationLine Name="m_NoRefResItemLst" Type="MapLst&lt;T&gt;">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.919" Y="0.173" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
@@ -232,7 +215,7 @@
   <Class Name="Window" Collapsed="true">
     <Position X="16.25" Y="14.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>OIAAAGAIUCAIABAAAAEAAAAAEoAAgAAAAAAgIAGAAAA=</HashCode>
+      <HashCode>OIAAAGAIUAAIABAAAAEAAAAAEoAAgAAAAAAgIAGEAAA=</HashCode>
       <FileName>Assets\Scripts\Mgr\UIMgr\Window.cs</FileName>
     </TypeIdentifier>
   </Class>
