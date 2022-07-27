@@ -43,13 +43,61 @@ namespace Demo14
                 m_audioClip = null;    //删引用
             });
 
-            //使用预加载的可实例资源
-            GameObject go = ObjectMgr.Instance.InstantiateObject(Constants_Demo14.Prefab_Attack, true);
-            //ObjectMgr.Instance.UnloadGameObject(go);
-            ObjectMgr.Instance.UnloadGameObject(go, 0, true);
 
+           // Test_PreloadAndInstaniate();
+          
+
+            Test_AsyncLoadSprite();
+        }
+
+
+
+        #region 使用预加载的可实例资源
+        void Test_PreloadAndInstaniate()
+        {
+            GameObject go = ObjectMgr.Instance.InstantiateObject(Constants_Demo14.Prefab_Attack, true); //
+            ObjectMgr.Instance.UnloadGameObject(go);
+            ObjectMgr.Instance.UnloadGameObject(go, 0, true);
+        }
+        #endregion
+        #region 异步加载图片
+        void Test_AsyncLoadSprite()
+        {
+            string path = "Assets/GameData/Images/";
+            bool isSprite = true;
+            bool setNativeSize=true;
+            ResourceMgr.Instance.AsyncLoadObject ( path + "fgBlue.png", OnLoadSpriteFinished, AsyncLoadResPriority.High, isSprite,  m_MenuPanel.m_Image01_01 , setNativeSize);
+            ResourceMgr.Instance.AsyncLoadObject(path + "fgGray.png", OnLoadSpriteFinished, AsyncLoadResPriority.Middle, isSprite, m_MenuPanel.m_Image01_02, setNativeSize);
+            ResourceMgr.Instance.AsyncLoadObject(path + "fgRed.png", OnLoadSpriteFinished, AsyncLoadResPriority.Low, isSprite, m_MenuPanel.m_Image02_01, setNativeSize);
+            ResourceMgr.Instance.AsyncLoadObject(path + "fgYellow.png", OnLoadSpriteFinished, AsyncLoadResPriority.High, isSprite, m_MenuPanel.m_Image02_02, setNativeSize);
+            ResourceMgr.Instance.AsyncLoadObject(path + "fgGreen.png", OnLoadSpriteFinished, AsyncLoadResPriority.Middle, isSprite, m_MenuPanel.m_Image03_01, setNativeSize);
+            ResourceMgr.Instance.AsyncLoadObject(path + "fgPurple.png", OnLoadSpriteFinished, AsyncLoadResPriority.Low, isSprite, m_MenuPanel.m_Image03_02, setNativeSize);
 
         }
+
+        void OnLoadSpriteFinished(string path, UnityEngine.Object obj, object para1, object para2, object para3)
+        {
+            if (obj != null)
+            {
+                Sprite sprite = obj as Sprite;
+                          
+                Image image=para1 as Image;
+                if (para1 != null)
+                { 
+                    image.sprite = sprite;
+                }
+
+                bool setNativeSize =(bool)para2 ;
+                if (para2 != null && setNativeSize==true)
+                {
+                    image.SetNativeSize();
+                }
+
+                
+            }
+        }
+        #endregion
+
         void BindUI()
         {
             m_audioSource = m_MenuPanel.m_AudioSource;

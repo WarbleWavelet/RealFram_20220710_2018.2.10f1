@@ -1578,7 +1578,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u52A0\u8F7D\u65B9\u5F0F\n"
+  m_Text: 'Load From AB '
 --- !u!222 &1195796870
 CanvasRenderer:
   m_ObjectHideFlags: 0

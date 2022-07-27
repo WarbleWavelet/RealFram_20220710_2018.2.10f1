@@ -21,6 +21,7 @@ public class DefinePath
     public const string ABCfgSOPath = "Assets/Editor/Resource/ABConfig.asset";
     public static string OutputABPath = Application.streamingAssetsPath;
     public static string OutputXml = Application.dataPath  + "/AssetBundleConfig.xml";//XML可视化，随便删
+    public static string OutputBytes = Application.dataPath  + "/AssetBundleConfig.bytes";
     public static string OutputAB = Application.streamingAssetsPath + "/assetbundleconfig";
     public static string OutputABName = "assetbundleconfig";
     public static string InputBytes = "Assets/GameData/Data/ABData/AssetBundleConfig.bytes";
@@ -28,3 +29,4 @@ public class DefinePath
     //AssetBundle.LoadFromFile          Application.streamingAssetsPath + "/assetbundleconfig
 }
 
+                                                                             

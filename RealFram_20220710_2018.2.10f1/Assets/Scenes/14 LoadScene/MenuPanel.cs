@@ -23,16 +23,36 @@ namespace Demo14
         public Button m_BtnExit;
         public Button m_BtnStopAndUnload;
         public AudioSource m_AudioSource;
+        public Image m_Image01_01;
+        public Image m_Image01_02;
+        public Image m_Image02_01;
+        public Image m_Image02_02;
+        public Image m_Image03_01;
+        public Image m_Image03_02;
+
 
 
         void Awake()
         {
-            m_BtnStart = transform.Find("bg/Center/btnExit").GetComponent<Button>();
-            m_BtnLoad = transform.Find("bg/Center/m_BtnLoad").GetComponent<Button>();
-            m_BtnExit = transform.Find("bg/Center/m_BtnExit").GetComponent<Button>();
-            m_BtnStopAndUnload = transform.Find("bg/Center/m_BtnStopAndUnload").GetComponent<Button>();
-            m_AudioSource = transform.GetComponent<AudioSource>();
+            BindUI();
         }
+
+         void BindUI()
+            {
+            m_BtnStart  = transform.Find("bg/CenterPin/btnStart").GetComponent<Button>();
+            m_BtnLoad   = transform.Find("bg/CenterPin/btnLoad").GetComponent<Button>();
+            m_BtnExit   = transform.Find("bg/CenterPin/btnExit").GetComponent<Button>();
+            m_Image01_01 = transform.Find("bg/CenterPin/img01_01").GetComponent<Image>();
+            m_Image01_02 = transform.Find("bg/CenterPin/img01_02").GetComponent<Image>();
+            m_Image02_01 = transform.Find("bg/CenterPin/img02_01").GetComponent<Image>();
+            m_Image02_02 = transform.Find("bg/CenterPin/img02_02").GetComponent<Image>();
+            m_Image03_01 = transform.Find("bg/CenterPin/img03_01").GetComponent<Image>();
+            m_Image03_02 = transform.Find("bg/CenterPin/img03_02").GetComponent<Image>();
+
+
+            m_BtnStopAndUnload = transform.Find("bg/CenterPin/btnStopAndUnload").GetComponent<Button>();
+            m_AudioSource = transform.GetComponent<AudioSource>();
+            }
         void Start()
         {
 

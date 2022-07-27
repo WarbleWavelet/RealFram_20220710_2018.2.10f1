@@ -31,6 +31,7 @@ public class AssetBundleEditor
     /// <summary>AB的生成位置</summary>
     static string m_outputABPath = DefinePath.OutputABPath;
     static string m_outputXml = DefinePath.OutputXml;
+    static string m_outputBytes = DefinePath.InputBytes;
     static string m_outputAB = DefinePath.OutputAB;
     static string m_outputABName = DefinePath.OutputABName;
     static string m_inputBytes = DefinePath.InputBytes;
@@ -49,9 +50,12 @@ public class AssetBundleEditor
     public static void InitABCfgSO() //文件夹
     {
         m_abCfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
+        m_abCfgSO.m_PrefabPathLst.Clear();
+        m_abCfgSO.m_FolderPathLst.Clear();
         m_abCfgSO.m_PrefabPathLst.Add("Assets/GameData/Prefabs");
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "sound", m_Path = "Assets/GameData/Sounds" });
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "shader", m_Path = "Assets/GameData/Shaders" });
+        m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "image", m_Path = "Assets/GameData/Images" });
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
@@ -160,7 +164,10 @@ public class AssetBundleEditor
         for (int i = 0; i < fiArr.Length; i++)//全删除
         {
             FileInfo fi=fiArr[i];
-            if (ContainABName(fi.Name) || fi.Name.EndsWith(".meta"))
+            if (ContainABName(fi.Name) 
+                || fi.Name.EndsWith(".meta") 
+                || fi.Name.EndsWith(".manifest") //manifest里面是资源依赖和标识符等，会重写，防止慢就不删了
+                || fi.Name.EndsWith( m_outputABName) )
             {
                 continue;
             }
@@ -233,7 +240,7 @@ public class AssetBundleEditor
         }
 
         Class2Xml(abCfg, m_outputXml); //生成Xml
-        Class2Bin(abCfg, m_outputAB); //生成bytes
+        Class2Bin(abCfg, m_outputBytes); //生成bytes
 
         AssetDatabase.Refresh();
     
@@ -253,9 +260,9 @@ public class AssetBundleEditor
             {
                 File.Delete(m_outputXml);
             }
-            if (File.Exists(m_outputAB))
+            if (File.Exists(m_outputBytes))
             {
-                File.Delete(m_outputAB);
+                File.Delete(m_outputBytes);
             }
         }
 

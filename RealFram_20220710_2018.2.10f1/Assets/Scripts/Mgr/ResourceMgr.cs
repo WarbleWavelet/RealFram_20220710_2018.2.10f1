@@ -38,7 +38,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     public Dictionary<uint, ResItem> m_RefResItemDic { get; set; } = new Dictionary<uint, ResItem>();
 
     /// <summary>从哪里加载：AB包 、 Editor</summary>
-    bool m_loadFromAB = false;
+    bool m_loadFromAB = true;
 
     #region Async
     /// <summary>某个MonoBehaviour（它要开协程）</summary>
@@ -65,6 +65,10 @@ public class ResourceMgr : Singleton<ResourceMgr>
         m_loadFromAB=state;
     }
 
+    public bool GetLoadFromAB()
+    {
+       return m_loadFromAB;
+    }
     #region 生命
     /// <summary>
     /// 开始协程的条件，传入自身this
@@ -595,6 +599,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     public void AsyncLoadObject(string path,
         OnAsyncObject cb,
         AsyncLoadResPriority priority,
+        bool isSprite=false,
         object para1 = null,
         object para2 = null,
         object para3 = null,
@@ -619,7 +624,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         AsyncLoadResPara para = null;
         if (m_asyncLoadResParaDic.TryGetValue(crc, out para) == false || para == null)
         {
-            para = SpawnAsyncLoadPara(path, priority);
+            para = SpawnAsyncLoadPara(path, priority,isSprite);
 
         }
 
@@ -706,11 +711,12 @@ public class ResourceMgr : Singleton<ResourceMgr>
                         AssetBundleRequest abReq = null;
                         if (para.m_Sprite == true)// 特殊：Sprite 会不能直接等于 asset
                         {
-                            abReq = resItem.m_AB.LoadAssetAsync<Sprite>(resItem.m_ABName);
+                           // abReq = resItem.m_AB.LoadAssetAsync<Sprite>(resItem.m_ABName);
+                            abReq = resItem.m_AB.LoadAssetAsync<Sprite>(  resItem.m_AssetName);
                         }
                         else
                         {
-                            abReq = resItem.m_AB.LoadAssetAsync(resItem.m_ABName);
+                            abReq = resItem.m_AB.LoadAssetAsync(resItem.m_AssetName);
                         }
                         yield return abReq;
 
@@ -923,7 +929,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <param name="path"></param>
     /// <param name="resObj"></param>
     /// <param name="priority"></param>
-    AsyncLoadResPara SpawnAsyncLoadPara(string path,  AsyncLoadResPriority priority)
+    AsyncLoadResPara SpawnAsyncLoadPara(string path,  AsyncLoadResPriority priority, bool isSprite=false)
     {
         AsyncLoadResPara para = null;
         uint crc = CRC32.GetCRC32(path);
@@ -931,6 +937,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         para.m_Crc = crc;
         para.m_Path = path;
         para.m_Priority = priority;
+        para.m_Sprite = isSprite;
         //
 
         m_asyncLoadResParaDic.Add(crc, para);

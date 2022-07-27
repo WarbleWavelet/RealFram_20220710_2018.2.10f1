@@ -37,27 +37,41 @@ namespace Demo14
 		#endregion
 
 		#region 生命
-		public override	void Awake()
+		public override void Awake()
 		{
 			base.Awake();
-            GameObject.DontDestroyOnLoad(gameObject);
+			GameObject.DontDestroyOnLoad(gameObject);
 
 			InitMgr();
 			RegisterUI();
 			BindUI();
 
-			ObjectMgr.Instance.InstantiateObject("Assets/GameData/Prefabs/Cube.prefab",true);
+			//Test_AddAbAnsInstance();
+		
 
 		}
 
-		void BindUI()
+
+		#region 测试 能新增AB包并且可以实例	 
+		void Test_AddAbAnsInstance()
+		{ObjectMgr.Instance.InstantiateObject("Assets/GameData/Prefabs/Cube.prefab", true); 
+		}
+		#endregion						   
+
+
+
+        void BindUI()
         {
 
-            #region Mgr中资源的加载方式、切场景
-             toggle.onValueChanged.AddListener((bool state) =>
+			#region Mgr中资源的加载方式、切场景
+			bool state=	ResourceMgr.Instance.GetLoadFromAB();																				
+			toggle.GetComponentInChildren<Text>().text = 	state.ToString();
+			toggle.isOn = state;
+			toggle.onValueChanged.AddListener((bool _state) =>
 			{
-				toggle.GetComponentInChildren<Text>().text = state == true ? "LoadFromAB" : "LoadFromEditor";
-				ResourceMgr.Instance.SetLoadFromAB(state);
+				ResourceMgr.Instance.SetLoadFromAB(_state);
+				toggle.GetComponentInChildren<Text>().text = ResourceMgr.Instance.GetLoadFromAB().ToString();
+
 			});
 
 
