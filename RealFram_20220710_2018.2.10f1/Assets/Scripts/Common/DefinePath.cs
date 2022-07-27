@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 
 public class DefinePath
 {
@@ -19,12 +20,29 @@ public class DefinePath
 
 
     public const string ABCfgSOPath = "Assets/Editor/Resource/ABConfig.asset";
-    public static string OutputABPath = Application.streamingAssetsPath;
+    public static string OutputABInnerPath = Application.streamingAssetsPath;
+    //public static string OutputABOutterPath =  Application.dataPath + "/../AssetBundle/";//放到外面，不生成meta   ,失败
+
     public static string OutputXml = Application.dataPath  + "/AssetBundleConfig.xml";//XML可视化，随便删
-    public static string OutputBytes = Application.dataPath  + "/AssetBundleConfig.bytes";
-    public static string OutputAB = Application.streamingAssetsPath + "/assetbundleconfig";
-    public static string OutputABName = "assetbundleconfig";
-    public static string InputBytes = "Assets/GameData/Data/ABData/AssetBundleConfig.bytes";
+    public static string OutputBytes = Application.dataPath  + "/AssetBundleConfig.bytes";//bytes，与下面简单的路径不同
+    public static string OutputAB = Application.streamingAssetsPath + "/assetbundleconfig"; //bytes路径的AB包路径
+    public static string OutputABName = "assetbundleconfig";//bytes路径的AB包名
+    public static string InputBytes = "Assets/GameData/Data/ABData/AssetBundleConfig.bytes"; //bytes
+
+
+
+    #region 打包相关
+    public static string AppBuildPath_Andriod = Application.dataPath + "/../BuildTarget/Android/"; 
+    public static string AppBuildPath_IOS = Application.dataPath + "/../BuildTarget/IOS/";
+    public static string AppBuildPath_Windows = Application.dataPath + "/../BuildTarget/Windows/";
+
+    public static string ABBuildPath_Andriod = Application.dataPath + "/../AssetBundle/Android/";
+    public static string ABBuildPath_IOS = Application.dataPath + "/../AssetBundle/IOS/";
+    public static string ABBuildPath_Windows = Application.dataPath + "/../AssetBundle/Windows/";
+
+    public static string OutputABOutterPath = Common.TrimName(Application.dataPath, TrimNameType.SlashPre) + "/AssetBundle/";//Assets的上一级
+    #endregion
+
     //ab.LoadAssets                     assetbundleconfig                
     //AssetBundle.LoadFromFile          Application.streamingAssetsPath + "/assetbundleconfig
 }

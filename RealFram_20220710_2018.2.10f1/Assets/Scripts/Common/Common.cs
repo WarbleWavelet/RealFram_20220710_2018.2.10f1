@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,7 +39,7 @@ public class Common
                 break;             
             case TrimNameType.SlashPre:
                 {
-                    return path.Substring(0,path.LastIndexOf('/') - 1);//sdcvghasvdj/gdhsag/a.prefab =>sdcvghasvdj/gdhsag
+                    return path.Substring(0,path.LastIndexOf('/')  );//sdcvghasvdj/gdhsag/a.prefab =>sdcvghasvdj/gdhsag
                 }
                 break;
             case TrimNameType.SlashAndPoint:
@@ -99,6 +100,17 @@ public class Common
 
         });
     }
+
+
+    /// <summary>有就好，没有就创建</summary>
+    public static void TickPath(string path)
+    {
+        if (Directory.Exists(path) == false) //输出path
+        {
+            Directory.CreateDirectory(path);
+        }
+    }
+
 }
 
 

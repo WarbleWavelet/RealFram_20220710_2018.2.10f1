@@ -29,7 +29,7 @@ public class AssetBundleEditor
     static ABCfgSO m_abCfgSO;
     static string m_abCfgSOPath = DefinePath.ABCfgSOPath;
     /// <summary>AB的生成位置</summary>
-    static string m_outputABPath = DefinePath.OutputABPath;
+    static string m_outputABPath = DefinePath.OutputABInnerPath;
     static string m_outputXml = DefinePath.OutputXml;
     static string m_outputBytes = DefinePath.InputBytes;
     static string m_outputAB = DefinePath.OutputAB;
@@ -131,9 +131,11 @@ public class AssetBundleEditor
 
 
     #region 打包 删包
-    [MenuItem(Constants.MenuItem + "/03 打包", false,41)]//按钮在菜单栏的位置
-    static void BuildAB()
+    [MenuItem(Constants.MenuItem + "/04 打包", false,61)]//按钮在菜单栏的位置
+  public  static void BuildAB()
     {
+        Common.TickPath(m_outputABPath);
+
         abWriter = new AssetBundleWriter()  //打包
         {
             m_OutputPath = m_outputABPath,//输出位置
@@ -146,16 +148,26 @@ public class AssetBundleEditor
             Directory.CreateDirectory(abWriter.m_OutputPath);
         }
       
-        BuildPipeline.BuildAssetBundles(   //目录，模式，平台
+       AssetBundleManifest mft = BuildPipeline.BuildAssetBundles(   //目录，模式，平台
             abWriter.m_OutputPath,
             abWriter.m_BuildAssetBundleOptions,
             abWriter.m_BuildTarget
         );
+
+        if (mft == null) //打包结果
+        {
+            Debug.LogError("AB打包失败");
+        }
+        else 
+        {
+
+            Debug.Log("AB打包完毕");
+        }
         AssetDatabase.Refresh();//有时耗时长，不要到处使用
     }
 
 
-    [MenuItem(Constants.MenuItem + "/删包", false,42)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/删包", false,62)]//按钮在菜单栏的位置
     static void DeleteAB()
     {
         DirectoryInfo di = new DirectoryInfo(m_outputABPath);  //搜索该文件夹
@@ -192,7 +204,7 @@ public class AssetBundleEditor
     /// <path,ABName>
     /// </summary>
     /// <param name="dic"></param>
-    [MenuItem(Constants.MenuItem+"/04 生成Xml Bin", false,61)]
+    [MenuItem(Constants.MenuItem+"/03 生成Xml Bin", false,41)]
     static void WriteData()
     {
 
@@ -247,7 +259,7 @@ public class AssetBundleEditor
     }
 
    
-    [MenuItem(Constants.MenuItem + "/删Xml Bin", false, 62)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem + "/删Xml Bin", false, 42)]//按钮在菜单栏的位置
     static void DeleteData()
     {
         DirectoryInfo di = new DirectoryInfo(  Application.dataPath );
@@ -586,11 +598,25 @@ public class AssetBundleEditor
       
     }
     #endregion
+
+    /// <summary>
+    /// 一键打包
+    /// </summary>
+
+    //放在文件夹Editor下。相邻超过10为一组有分割线
+    [MenuItem(Constants.MenuItem + "/1234 一键打包到内部", false, 81)]//按钮在菜单栏的位置
+    public static void Build()
+    {
+        AssetBundleEditor.InitABCfgSO();
+        AssetBundleEditor.MarkAB();
+        AssetBundleEditor.WriteData();
+        AssetBundleEditor.BuildAB();
+    }
 }
 
 
 /// <summary>
-/// 写入AB的几个参数配置
+/// 自定义的写入AB的几个参数配置
 /// </summary>
 public class AssetBundleWriter
 {

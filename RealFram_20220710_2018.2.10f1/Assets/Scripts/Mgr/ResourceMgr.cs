@@ -654,11 +654,11 @@ public class ResourceMgr : Singleton<ResourceMgr>
            
             for (int i = 0; i < (int)AsyncLoadResPriority.Count; i++) //不同优先级的回调列表，High Middle Low
             {
-                if (m_asyncLoadResParaLst[(int)AsyncLoadResPriority.High].Count > 0)
+                if (m_asyncLoadResParaLst[(int)AsyncLoadResPriority.High].Count > 0) //优先high
                 {
                     i = (int)AsyncLoadResPriority.High;
                 }
-                else if (m_asyncLoadResParaLst[(int)AsyncLoadResPriority.Middle].Count > 0)
+                else if (m_asyncLoadResParaLst[(int)AsyncLoadResPriority.Middle].Count > 0) //次优先Middle
                 {
                     i = (int)AsyncLoadResPriority.Middle;
                 }
