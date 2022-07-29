@@ -19,7 +19,7 @@ public class MonsterData : ExcelBase
     [XmlIgnore] //不序列化
     public Dictionary<int, MonsterBase> m_MonsterDic = new Dictionary<int, MonsterBase>();
 
-    /// <summary>所有的怪物</summary>
+    /// <summary>所有的怪物</summary>                 
     [XmlElement("MonsterLst")]
     public List<MonsterBase> MonsterLst { get; set; }   //反序列时填充，new会叠加
     #endregion

@@ -97,6 +97,33 @@ public class FormatTool
         }
         return t;
     }
+
+
+    public static System.Object Xml2Class(string xmlPath, Type type)
+    {
+        System.Object obj = null;
+        try
+        {
+            using (FileStream fs = new FileStream(xmlPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            {
+                XmlSerializer xs = new XmlSerializer(type);
+                obj = xs.Deserialize(fs);
+            }
+        }
+        catch (Exception e)
+        {
+
+
+            Debug.LogError("Err");
+
+
+
+
+
+        }
+
+        return obj;
+    }
     #endregion
 
 
