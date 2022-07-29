@@ -3,6 +3,9 @@ using UnityEditor;
 
 public class DefinePath
 {
+    /// <summary>工程跟目录</summary>
+    public static string ProjectRoot = Application.dataPath.Replace("Assets", "");
+
     public static string Demo01_Bytes_Attack = Application.streamingAssetsPath + "/attack";
     public const string Demo01_Prefab_Attack = "Assets/GameData/Prefabs/Attack.prefab";
     public static string Demo02_Xml = Application.dataPath + "/Scenes/01-04/02 Class2Xml/Demo02_test.xml";
@@ -45,6 +48,10 @@ public class DefinePath
 
     //ab.LoadAssets                     assetbundleconfig                
     //AssetBundle.LoadFromFile          Application.streamingAssetsPath + "/assetbundleconfig
+
+
+    #region 配置相关
+
+    #endregion
 }
 
-                                                                             

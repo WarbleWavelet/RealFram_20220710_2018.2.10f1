@@ -1,4 +1,6 @@
-﻿public class Constants
+﻿using UnityEngine;
+
+public class Constants
 {
     public const float Demo01_Offset = 10f;
     public const string MenuItem = "MyTools";
