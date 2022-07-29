@@ -2,7 +2,7 @@
 {
     public const float Demo01_Offset = 10f;
     public const string MenuItem = "MyTools";
-    public const string MenuAsset = "MyAssets";
+    public const string Assets = "My Assets/";
     public const string Shader_BengHuai = "Custom/benghuai";
 
 

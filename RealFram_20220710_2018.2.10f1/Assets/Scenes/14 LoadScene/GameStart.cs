@@ -41,23 +41,37 @@ namespace Demo14
 		{
 			base.Awake();
 			GameObject.DontDestroyOnLoad(gameObject);
-
+			//
+			Test_LoadDataCfg();
 			InitMgr();
 			RegisterUI();
 			BindUI();
 
-			//Test_AddAbAnsInstance();
-		
+
 
 		}
+
+        void Start()
+        {
+			//Test_AddABAndInstance();
+			
+        }
 
 
 		#region 测试 能新增AB包并且可以实例	 
-		void Test_AddAbAnsInstance()
-		{ObjectMgr.Instance.InstantiateObject("Assets/GameData/Prefabs/Cube.prefab", true); 
+		void Test_AddABAndInstance()
+		{
+			ObjectMgr.Instance.InstantiateObject("Assets/GameData/Prefabs/Cube.prefab", true); 
 		}
-		#endregion						   
+		#endregion
 
+
+		#region 测试 数据配置
+		void Test_LoadDataCfg()
+		{ 
+		
+		}
+        #endregion	
 
 
         void BindUI()

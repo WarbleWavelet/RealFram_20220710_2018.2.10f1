@@ -16,7 +16,7 @@ using UnityEngine;
 /// <summary>
 /// AB包配置 : ScriptableObject
 /// </summary>
-[CreateAssetMenu(fileName = "ABConfig", menuName = "Create ABConfig", order = 0)]
+[CreateAssetMenu(fileName = "MyABCfgSO", menuName = Constants.Assets+"Create ABConfigSO", order = 0)] //Constants.MenuAssets="My Assets"
 
 public class ABCfgSO : ScriptableObject
 {

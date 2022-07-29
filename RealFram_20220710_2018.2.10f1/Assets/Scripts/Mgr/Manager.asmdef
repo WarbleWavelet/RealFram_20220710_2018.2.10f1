@@ -1,7 +1,8 @@
 {
     "name": "Manager",
     "references": [
-        "Common"
+        "Common",
+        "Data"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

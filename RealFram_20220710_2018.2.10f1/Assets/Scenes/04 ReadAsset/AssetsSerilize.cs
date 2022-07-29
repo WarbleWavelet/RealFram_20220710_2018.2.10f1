@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Demo04
 { 
-    [CreateAssetMenu(fileName = Constants.MenuAsset,menuName ="My Assets/Demo/04 Create Assets",order = 0)]//顺序
+    [CreateAssetMenu(fileName = Constants.Assets,menuName ="My Assets/Demo/04 Create Assets",order = 0)]//顺序
     public class AssetsSerilize : ScriptableObject
     {
         public int Id;
