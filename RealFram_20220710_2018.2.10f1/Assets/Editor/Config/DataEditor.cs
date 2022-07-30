@@ -231,16 +231,33 @@ public class DataEditor
         {
             m_ID = 0,
             m_Name = "千山鸟费劲",
-            m_Female = false
-
+            m_Female = false,
+            m_Lst = new List<string>()
         };
+        testReflection.m_Lst.Add("刘备");
+        testReflection.m_Lst.Add("关羽");
+        testReflection.m_Lst.Add("张飞");
 
        int ID = (int)GetClassMember(testReflection, "m_ID", GetBindingFlags() );
        string name = (string)GetClassMember(testReflection, "m_Name", GetBindingFlags());
        bool female = (bool)GetClassMember(testReflection, "m_Female", GetBindingFlags());
+        object lst = GetClassMember(testReflection, "m_Lst", GetBindingFlags());
+        int lstCnt=System.Convert.ToInt32( 
+            lst.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod,null,lst,new object[]{ })
+            );
 
-        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}", ID, name, female);
+        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\tlstCnt：{3}", ID, name, female,lstCnt);
 
+
+        for (int i = 0; i < lstCnt; i++)
+        {
+          object item =  lst.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { i });
+
+            Debug.Log(item);
+
+
+        }
+    
 
     }
 
@@ -447,4 +464,5 @@ public class TestReflection
     public int m_ID { get; set; }
     public string m_Name { get; set; }
     public bool m_Female { get; set; }
+    public List<string> m_Lst { get; set; }
 }
