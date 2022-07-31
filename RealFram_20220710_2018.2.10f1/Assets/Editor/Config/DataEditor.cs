@@ -227,57 +227,79 @@ public class DataEditor
     [MenuItem("测试/Reflection/Test_Reflection", false, 4)]//按钮在菜单栏的位置
     static void Test_Reflection() //读取工程下xmlPath的xml
     {
-        TestReflection testReflection = new TestReflection
+        TestReflection testRef = new TestReflection
         {
             m_ID = 0,
             m_Name = "千山鸟费劲",
             m_Female = false,
-            m_Lst = new List<string>()
+            m_Lst = new List<string>(),
+            m_SubLst = new List<TestReflectionSub>()
         };
-        testReflection.m_Lst.Add("刘备");
-        testReflection.m_Lst.Add("关羽");
-        testReflection.m_Lst.Add("张飞");
+        testRef.m_Lst.Add("刘备");
+        testRef.m_Lst.Add("关羽");
+        testRef.m_Lst.Add("张飞");
+        testRef.m_SubLst.Add(new TestReflectionSub() { m_Name = "刘禅" });
+        testRef.m_SubLst.Add(new TestReflectionSub() { m_Name = "关平" });
+        testRef.m_SubLst.Add(new TestReflectionSub() { m_Name = "张苞" });
+        //                                                                                //
+        int ID = (int)GetClassMember(testRef, "m_ID", GetBindingFlags());
+        string name = (string)GetClassMember(testRef, "m_Name", GetBindingFlags());
+        bool female = (bool)GetClassMember(testRef, "m_Female", GetBindingFlags());
+        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}", ID, name, female);
 
-       int ID = (int)GetClassMember(testReflection, "m_ID", GetBindingFlags() );
-       string name = (string)GetClassMember(testReflection, "m_Name", GetBindingFlags());
-       bool female = (bool)GetClassMember(testReflection, "m_Female", GetBindingFlags());
-        object lst = GetClassMember(testReflection, "m_Lst", GetBindingFlags());
-        int lstCnt=System.Convert.ToInt32( 
-            lst.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod,null,lst,new object[]{ })
-            );
+        List<object> lst = ReflectionList(testRef, "m_Lst");
+        List<object> subLst = ReflectionList(testRef, "m_SubLst");
+        //
 
-        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\tlstCnt：{3}", ID, name, female,lstCnt);
-
-
-        for (int i = 0; i < lstCnt; i++)
+        foreach (var item in lst) //列表存字符串
         {
-          object item =  lst.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { i });
-
             Debug.Log(item);
-
-
         }
-    
-
+        foreach (var item in subLst) //列表存类
+        {
+            string subName = GetClassMember(item, "m_Name", GetBindingFlags()) as string;
+            Debug.Log(subName);
+        }
     }
 
 
 
 
     #region 辅助
+    /// <summary>
+    /// 得到该类该列表属性的所有对象，返回表
+    /// </summary>
+    /// <param name="_class"></param>
+    /// <param name="memberName"></param>
+    /// <returns></returns>
+    static List<object> ReflectionList(object _class, string memberName)
+    {
+        object lst = GetClassMember(_class, memberName, GetBindingFlags());
+        int lstCnt = System.Convert.ToInt32(lst.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { }));
+        List<object> resLst = new List<object>();
+        for (int i = 0; i < lstCnt; i++)
+        {
+            object item = lst.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { i });
+            resLst.Add(item);
+        }
+
+        return resLst;
+    }
+
+
 
     /// <summary>
     /// 类反射得到字段属性值
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="t"></param>
+    /// <param name="obj"></param>
     /// <param name="propertyName"></param>
     /// <param name="bindingFlags"></param>
     /// <returns></returns>
-    static object GetClassMember<T>(T t, string propertyName, BindingFlags bindingFlags)
+    static object GetClassMember(object obj, string propertyName, BindingFlags bindingFlags)
     {
 
-        Type type = t.GetType();
+        Type type = obj.GetType();
         MemberInfo[] miArr = type.GetMember(propertyName, BindingFlags.Public | BindingFlags.Instance);
 
         while (miArr == null || miArr.Length <= 0) //保护性措施
@@ -295,12 +317,12 @@ public class DataEditor
         {
             case MemberTypes.Field:
                 {
-                    res = type.GetField(propertyName, bindingFlags).GetValue(t);
+                    res = type.GetField(propertyName, bindingFlags).GetValue(obj);
                 }
                 break;
             case MemberTypes.Property:
                 {
-                    res = type.GetProperty(propertyName, bindingFlags).GetValue(t);
+                    res = type.GetProperty(propertyName, bindingFlags).GetValue(obj);
                 }
                 break;
             default: break;
@@ -449,7 +471,7 @@ public class DataEditor
     }
     #endregion
 
-  
+
     #endregion
 
 }
@@ -465,4 +487,10 @@ public class TestReflection
     public string m_Name { get; set; }
     public bool m_Female { get; set; }
     public List<string> m_Lst { get; set; }
+    public List<TestReflectionSub> m_SubLst { get; set; }
+}
+
+public class TestReflectionSub
+{
+    public string m_Name { get; set; }
 }
