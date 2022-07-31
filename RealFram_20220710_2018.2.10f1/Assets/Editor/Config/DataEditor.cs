@@ -224,7 +224,7 @@ public class DataEditor
 
 
 
-    [MenuItem("测试/Reflection/Test_Reflection", false, 4)]//按钮在菜单栏的位置
+    [MenuItem("测试/Reflection/根据反射读取类的属性值", false, 4)]//按钮在菜单栏的位置
     static void Test_Reflection() //读取工程下xmlPath的xml
     {
         TestReflection testRef = new TestReflection
@@ -262,10 +262,62 @@ public class DataEditor
         }
     }
 
+    [MenuItem("测试/Reflection/数据反射成类", false, 4)]//按钮在菜单栏的位置
+    static void Test_ReflectionByData() //读取工程下xmlPath的xml
+    {
+        object testRef = CreateClass("TestReflection01");
+        SetClassMemberValue(testRef, "m_Name", "刘备");
+        SetClassMemberValue(testRef, "m_Female", false);
+        //SetClassMemberValue(testRef, "m_Female", System.Convert.ToBoolean( "false"));
+        SetClassMemberValue(testRef, "m_ID", 0);
+       // SetClassMemberValue(testRef, "m_ID", System.Convert.ToInt32( "0" ));
 
+        TestReflection01 testRef01= testRef as TestReflection01;
+
+        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}", testRef01.m_ID, testRef01.m_Name, testRef01.m_Female);
+
+    }
 
 
     #region 辅助
+    /// <summary>
+    /// 设置类中属性的值
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="memberName"></param>
+    /// <param name="memberVal"></param>
+    static void SetClassMemberValue(object obj, string memberName, object memberVal)
+    { 
+        PropertyInfo pi=obj.GetType().GetProperty(memberName);
+        pi.SetValue(obj, memberVal);
+    }
+
+    /// <summary>
+    /// 反射创建类的实例
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    private static object CreateClass(string name)
+    {
+        object obj = null;
+        Type type = null;
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Type tempType = asm.GetType(name);
+            if (tempType != null)
+            {
+                type = tempType;
+                break;
+            }
+        }
+        if (type != null)
+        {
+            obj = Activator.CreateInstance(type);
+        }
+        return obj;
+    }
+
+
     /// <summary>
     /// 得到该类该列表属性的所有对象，返回表
     /// </summary>
@@ -493,4 +545,16 @@ public class TestReflection
 public class TestReflectionSub
 {
     public string m_Name { get; set; }
+}
+
+public class TestReflection01
+{
+    //public int m_ID;
+    //public string m_Name;
+    //public bool m_Female;       
+    //或
+    public int m_ID { get; set; }
+    public string m_Name { get; set; }
+    public bool m_Female { get; set; }
+
 }
