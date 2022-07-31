@@ -10,6 +10,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -262,19 +263,40 @@ public class DataEditor
         }
     }
 
+
     [MenuItem("测试/Reflection/数据反射成类", false, 4)]//按钮在菜单栏的位置
     static void Test_ReflectionByData() //读取工程下xmlPath的xml
     {
-        object testRef = CreateClass("TestReflection01");
-        SetClassMemberValue(testRef, "m_Name", "刘备");
-        SetClassMemberValue(testRef, "m_Female", false);
+        object obj = CreateClass("TestReflection01");
+        SetClassMemberValue(obj, "m_Name", "刘备");
+        SetClassMemberValue(obj, "m_Female", false);
         //SetClassMemberValue(testRef, "m_Female", System.Convert.ToBoolean( "false"));
-        SetClassMemberValue(testRef, "m_ID", 0);
+        SetClassMemberValue(obj, "m_ID", 0);
        // SetClassMemberValue(testRef, "m_ID", System.Convert.ToInt32( "0" ));
 
-        TestReflection01 testRef01= testRef as TestReflection01;
+        TestReflection01 testRef01= obj as TestReflection01;
 
         Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}", testRef01.m_ID, testRef01.m_Name, testRef01.m_Female);
+
+    }     
+
+
+    [MenuItem("测试/Reflection/数据反射成类(浮点，枚举)", false, 4)]//按钮在菜单栏的位置
+    static void Test_MoreReflectionByData() //读取工程下xmlPath的xml
+    {
+        object obj = CreateClass("TestReflection02");
+        SetClassMemberValue(obj, "m_Name", "刘备");
+        SetClassMemberValue(obj, "m_Female", System.Convert.ToBoolean("false"));
+        SetClassMemberValue(obj, "m_ID", System.Convert.ToInt32("0"));
+        SetClassMemberValue(obj, "m_Height", System.Convert.ToSingle("180.1")); //浮点
+        PropertyInfo enumInfo = obj.GetType().GetProperty("m_Rank");
+        object infoValue = TypeDescriptor.GetConverter(enumInfo.PropertyType).ConvertFromInvariantString("One"); //枚举
+        enumInfo.SetValue(obj, infoValue);
+
+
+        TestReflection02 testRef02 = obj as TestReflection02;
+
+        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\t height:{3}\t rank:{4}", testRef02.m_ID, testRef02.m_Name, testRef02.m_Female, testRef02.m_Height, testRef02.m_Rank);
 
     }
 
@@ -557,4 +579,26 @@ public class TestReflection01
     public string m_Name { get; set; }
     public bool m_Female { get; set; }
 
+}  public class TestReflection02
+{
+    //public int m_ID;
+    //public string m_Name;
+    //public bool m_Female;       
+    //或
+    public int m_ID { get; set; }
+    public string m_Name { get; set; }
+    public bool m_Female { get; set; }
+
+    public float m_Height { get; set; }
+
+    public Rank02 m_Rank { get; set; }
+                   
+}
+
+public enum Rank02
+{
+    None = 0,
+    One = 1,
+    Two = 2,
+    Three = 3,
 }
