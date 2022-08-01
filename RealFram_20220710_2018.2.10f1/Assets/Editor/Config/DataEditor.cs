@@ -243,13 +243,13 @@ public class DataEditor
         testRef.m_SubLst.Add(new TestReflectionSub() { m_Name = "关平" });
         testRef.m_SubLst.Add(new TestReflectionSub() { m_Name = "张苞" });
         //                                                                                //
-        int ID = (int)GetClassMember(testRef, "m_ID", GetBindingFlags());
-        string name = (string)GetClassMember(testRef, "m_Name", GetBindingFlags());
-        bool female = (bool)GetClassMember(testRef, "m_Female", GetBindingFlags());
+        int ID = (int)Ref_Class_Member_Get(testRef, "m_ID", GetBindingFlags());
+        string name = (string)Ref_Class_Member_Get(testRef, "m_Name", GetBindingFlags());
+        bool female = (bool)Ref_Class_Member_Get(testRef, "m_Female", GetBindingFlags());
         Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}", ID, name, female);
 
-        List<object> lst = ReflectionList(testRef, "m_Lst");
-        List<object> subLst = ReflectionList(testRef, "m_SubLst");
+        List<object> lst = Ref_Class_List_Get(testRef, "m_Lst");
+        List<object> subLst = Ref_Class_List_Get(testRef, "m_SubLst");
         //
 
         foreach (var item in lst) //列表存字符串
@@ -258,7 +258,7 @@ public class DataEditor
         }
         foreach (var item in subLst) //列表存类
         {
-            string subName = GetClassMember(item, "m_Name", GetBindingFlags()) as string;
+            string subName = Ref_Class_Member_Get(item, "m_Name", GetBindingFlags()) as string;
             Debug.Log(subName);
         }
     }
@@ -267,11 +267,11 @@ public class DataEditor
     [MenuItem("测试/Reflection/数据反射成类", false, 4)]//按钮在菜单栏的位置
     static void Test_ReflectionByData() //读取工程下xmlPath的xml
     {
-        object obj = CreateClass("TestReflection01");
-        SetClassMemberValue(obj, "m_Name", "刘备");
-        SetClassMemberValue(obj, "m_Female", false);
+        object obj = Ref_Class_New("TestReflection01");
+        Ref_Class_Member_SetValue(obj, "m_Name", "刘备");
+        Ref_Class_Member_SetValue(obj, "m_Female", false);
         //SetClassMemberValue(testRef, "m_Female", System.Convert.ToBoolean( "false"));
-        SetClassMemberValue(obj, "m_ID", 0);
+        Ref_Class_Member_SetValue(obj, "m_ID", 0);
        // SetClassMemberValue(testRef, "m_ID", System.Convert.ToInt32( "0" ));
 
         TestReflection01 testRef01= obj as TestReflection01;
@@ -284,12 +284,12 @@ public class DataEditor
     [MenuItem("测试/Reflection/数据反射成类(浮点，枚举)", false, 4)]//按钮在菜单栏的位置
     static void Test_ReflectionByData_Float_Enum() //读取工程下xmlPath的xml
     {
-        object obj = CreateClass( "TestReflection02" );
-        SetClassMemberValue( obj, "m_Name", "刘备","string");
-        SetClassMemberValue( obj, "m_Female", "false", "bool");
-        SetClassMemberValue( obj, "m_ID","0", "int");
-        SetClassMemberValue( obj, "m_Height", "180.1", "float"); //浮点
-        SetClassMemberValue( obj, "m_Rank", "One", "enum"); //枚举
+        object obj = Ref_Class_New( "TestReflection02" );
+        Ref_Class_Member_SetValue( obj, "m_Name", "刘备","string");
+        Ref_Class_Member_SetValue( obj, "m_Female", "false", "bool");
+        Ref_Class_Member_SetValue( obj, "m_ID","0", "int");
+        Ref_Class_Member_SetValue( obj, "m_Height", "180.1", "float"); //浮点
+        Ref_Class_Member_SetValue( obj, "m_Rank", "One", "enum"); //枚举
 
 
         TestReflection02 testRef02 = obj as TestReflection02;
@@ -301,63 +301,84 @@ public class DataEditor
     [MenuItem("测试/Reflection/数据反射成类(列表)", false, 4)]//按钮在菜单栏的位置
     static void Test_ReflectionByData_Lst() //读取工程下xmlPath的xml
     {
-        object _class = CreateClass( "TestReflection02" );
-        SetClassMemberValue( _class, "m_Name", "刘备","string");
-        SetClassMemberValue( _class, "m_Female", "false", "bool");
-        SetClassMemberValue( _class, "m_ID","0", "int");
-        SetClassMemberValue( _class, "m_Height", "180.1", "float"); //浮点
-        SetClassMemberValue( _class, "m_Rank", "One", "enum"); //枚举
+        object _classObj = Ref_Class_New( "TestReflection02" );
+        Ref_Class_Member_SetValue( _classObj, "m_Name", "刘备","string");
+        Ref_Class_Member_SetValue( _classObj, "m_Female", "false", "bool");
+        Ref_Class_Member_SetValue( _classObj, "m_ID","0", "int");
+        Ref_Class_Member_SetValue( _classObj, "m_Height", "180.1", "float"); //浮点
+        Ref_Class_Member_SetValue( _classObj, "m_Rank", "One", "enum"); //枚举
 
 
-        TestReflection02 testRef02 = _class as TestReflection02;
+        TestReflection02 _class = _classObj as TestReflection02;
 
-        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\t height:{3}\t rank:{4}", testRef02.m_ID, testRef02.m_Name, testRef02.m_Female, testRef02.m_Height, testRef02.m_Rank);
+        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\t height:{3}\t rank:{4}", _class.m_ID, _class.m_Name, _class.m_Female, _class.m_Height, _class.m_Rank);
+         //
 
-
-        Type type = typeof(string);
-        Type lstType = typeof(List<>);
-        Type finalType = lstType.MakeGenericType( new Type[] { type } );
-        object lst =   Activator.CreateInstance( finalType, new object[] {   } );
+        object strLst = Ref_List_New(  typeof(string)  ); //处理列表
+        object classLst = Ref_List_New(  typeof(TestReflectionSub)  );
         for (int i = 0; i < 3; i++)
         {
-            object item = i+"_dhkjs";
-                lst.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { item });
+            object strItem = i+"_刘备";
+            Ref_List_Add( strLst, strItem);
+            //
+            object classItem = Ref_Class_New("TestReflectionSub");
+            Ref_Class_Member_SetValue( classItem, "m_Name", i+"_刘禅", "string");
+            Ref_List_Add( classLst, classItem);
         }
-        testRef02.GetType().GetProperty("m_Lst").SetValue(testRef02, lst);
+        _class.GetType().GetProperty("m_Lst").SetValue(_class, strLst);
+        _class.GetType().GetProperty("m_SubLst").SetValue(_class, classLst);
 
-        foreach (var item in testRef02.m_Lst)
+
+
+        foreach (var item in _class.m_Lst) //打印列表
         {
-
             Debug.Log(item);
-
-
         }
-                
+        foreach (var item in _class.m_SubLst) //打印列表
+        {
+            Debug.Log(item.m_Name);
+        }
+
     }
 
+
+    static object Ref_List_Add(object lst, object item)
+    {
+        return  lst.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { item });
+    }
+
+
+    static object Ref_List_New(Type type)
+    {
+        Type lstType = typeof(List<>);
+        Type finalType = lstType.MakeGenericType(new Type[] { type });
+        object lst = Activator.CreateInstance(finalType, new object[] { });
+
+        return lst;
+    }
 
     #region 辅助
     /// <summary>
     /// 设置类中属性的值 v2
     /// </summary>
-    /// <param name="obj"></param>
+    /// <param name="_class"></param>
     /// <param name="memberName"></param>
-    /// <param name="val"></param>
-    static void SetClassMemberValue(object obj, string memberName, object val, string type)
+    /// <param name="memberVal"></param>
+    static void Ref_Class_Member_SetValue(object _class, string memberName, object memberVal, string memberType)
     { 
-        PropertyInfo pi = obj.GetType().GetProperty( memberName );
+        PropertyInfo pi = _class.GetType().GetProperty( memberName );
 
 
-        switch (type)
+        switch (memberType)
         {
             case "int":
                 {
-                       val = Convert.ToInt32(val);
+                       memberVal = Convert.ToInt32(memberVal);
                 }
                 break;
             case "float":
                 {
-                      val=Convert.ToSingle(val);
+                      memberVal=Convert.ToSingle(memberVal);
                 }
                 break;
             case "double":
@@ -367,19 +388,19 @@ public class DataEditor
                 break;
             case "enum":
                 {
-                    val = TypeDescriptor.GetConverter(pi.PropertyType).ConvertFromInvariantString(val.ToString()); //枚举
+                    memberVal = TypeDescriptor.GetConverter(pi.PropertyType).ConvertFromInvariantString(memberVal.ToString()); //枚举
                 }
                 break;
             case "string": break;              
             case "bool":
                 {
-                    val = Convert.ToBoolean(val);
+                    memberVal = Convert.ToBoolean(memberVal);
                 }
                 break;
             default:break;
         }
 
-        pi.SetValue(obj, val);
+        pi.SetValue(_class, memberVal);
     }
 
 
@@ -389,7 +410,7 @@ public class DataEditor
     /// <param name="obj"></param>
     /// <param name="memberName"></param>
     /// <param name="val"></param>
-    static void SetClassMemberValue(object obj, string memberName, object val)
+    static void Ref_Class_Member_SetValue(object obj, string memberName, object val)
     {
         PropertyInfo pi = obj.GetType().GetProperty(memberName);
 
@@ -402,7 +423,7 @@ public class DataEditor
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    private static object CreateClass(string name)
+    private static object Ref_Class_New(string name)
     {
         object obj = null;
         Type type = null;
@@ -429,9 +450,9 @@ public class DataEditor
     /// <param name="_class"></param>
     /// <param name="memberName"></param>
     /// <returns></returns>
-    static List<object> ReflectionList(object _class, string memberName)
+    static List<object> Ref_Class_List_Get(object _class, string memberName)
     {
-        object lst = GetClassMember(_class, memberName, GetBindingFlags());
+        object lst = Ref_Class_Member_Get(_class, memberName, GetBindingFlags());
         int lstCnt = System.Convert.ToInt32(lst.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { }));
         List<object> resLst = new List<object>();
         for (int i = 0; i < lstCnt; i++)
@@ -453,7 +474,7 @@ public class DataEditor
     /// <param name="propertyName"></param>
     /// <param name="bindingFlags"></param>
     /// <returns></returns>
-    static object GetClassMember(object obj, string propertyName, BindingFlags bindingFlags)
+    static object Ref_Class_Member_Get(object obj, string propertyName, BindingFlags bindingFlags)
     {
 
         Type type = obj.GetType();
@@ -678,6 +699,8 @@ public class TestReflection01
 
     public Rank02 m_Rank { get; set; }
     public List<string> m_Lst { get; set; }
+
+    public List<TestReflectionSub> m_SubLst { get; set; }
 }
 
 public enum Rank02
