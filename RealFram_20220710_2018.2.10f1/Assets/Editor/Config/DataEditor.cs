@@ -282,37 +282,120 @@ public class DataEditor
 
 
     [MenuItem("测试/Reflection/数据反射成类(浮点，枚举)", false, 4)]//按钮在菜单栏的位置
-    static void Test_MoreReflectionByData() //读取工程下xmlPath的xml
+    static void Test_ReflectionByData_Float_Enum() //读取工程下xmlPath的xml
     {
-        object obj = CreateClass("TestReflection02");
-        SetClassMemberValue(obj, "m_Name", "刘备");
-        SetClassMemberValue(obj, "m_Female", System.Convert.ToBoolean("false"));
-        SetClassMemberValue(obj, "m_ID", System.Convert.ToInt32("0"));
-        SetClassMemberValue(obj, "m_Height", System.Convert.ToSingle("180.1")); //浮点
-        PropertyInfo enumInfo = obj.GetType().GetProperty("m_Rank");
-        object infoValue = TypeDescriptor.GetConverter(enumInfo.PropertyType).ConvertFromInvariantString("One"); //枚举
-        enumInfo.SetValue(obj, infoValue);
+        object obj = CreateClass( "TestReflection02" );
+        SetClassMemberValue( obj, "m_Name", "刘备","string");
+        SetClassMemberValue( obj, "m_Female", "false", "bool");
+        SetClassMemberValue( obj, "m_ID","0", "int");
+        SetClassMemberValue( obj, "m_Height", "180.1", "float"); //浮点
+        SetClassMemberValue( obj, "m_Rank", "One", "enum"); //枚举
 
 
         TestReflection02 testRef02 = obj as TestReflection02;
 
         Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\t height:{3}\t rank:{4}", testRef02.m_ID, testRef02.m_Name, testRef02.m_Female, testRef02.m_Height, testRef02.m_Rank);
 
+    }        
+    
+    [MenuItem("测试/Reflection/数据反射成类(列表)", false, 4)]//按钮在菜单栏的位置
+    static void Test_ReflectionByData_Lst() //读取工程下xmlPath的xml
+    {
+        object _class = CreateClass( "TestReflection02" );
+        SetClassMemberValue( _class, "m_Name", "刘备","string");
+        SetClassMemberValue( _class, "m_Female", "false", "bool");
+        SetClassMemberValue( _class, "m_ID","0", "int");
+        SetClassMemberValue( _class, "m_Height", "180.1", "float"); //浮点
+        SetClassMemberValue( _class, "m_Rank", "One", "enum"); //枚举
+
+
+        TestReflection02 testRef02 = _class as TestReflection02;
+
+        Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\t height:{3}\t rank:{4}", testRef02.m_ID, testRef02.m_Name, testRef02.m_Female, testRef02.m_Height, testRef02.m_Rank);
+
+
+        Type type = typeof(string);
+        Type lstType = typeof(List<>);
+        Type finalType = lstType.MakeGenericType( new Type[] { type } );
+        object lst =   Activator.CreateInstance( finalType, new object[] {   } );
+        for (int i = 0; i < 3; i++)
+        {
+            object item = i+"_dhkjs";
+                lst.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { item });
+        }
+        testRef02.GetType().GetProperty("m_Lst").SetValue(testRef02, lst);
+
+        foreach (var item in testRef02.m_Lst)
+        {
+
+            Debug.Log(item);
+
+
+        }
+                
     }
 
 
     #region 辅助
     /// <summary>
-    /// 设置类中属性的值
+    /// 设置类中属性的值 v2
     /// </summary>
     /// <param name="obj"></param>
     /// <param name="memberName"></param>
-    /// <param name="memberVal"></param>
-    static void SetClassMemberValue(object obj, string memberName, object memberVal)
+    /// <param name="val"></param>
+    static void SetClassMemberValue(object obj, string memberName, object val, string type)
     { 
-        PropertyInfo pi=obj.GetType().GetProperty(memberName);
-        pi.SetValue(obj, memberVal);
+        PropertyInfo pi = obj.GetType().GetProperty( memberName );
+
+
+        switch (type)
+        {
+            case "int":
+                {
+                       val = Convert.ToInt32(val);
+                }
+                break;
+            case "float":
+                {
+                      val=Convert.ToSingle(val);
+                }
+                break;
+            case "double":
+                {
+
+                }
+                break;
+            case "enum":
+                {
+                    val = TypeDescriptor.GetConverter(pi.PropertyType).ConvertFromInvariantString(val.ToString()); //枚举
+                }
+                break;
+            case "string": break;              
+            case "bool":
+                {
+                    val = Convert.ToBoolean(val);
+                }
+                break;
+            default:break;
+        }
+
+        pi.SetValue(obj, val);
     }
+
+
+    /// <summary>
+    /// 设置类中属性的值  v1
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="memberName"></param>
+    /// <param name="val"></param>
+    static void SetClassMemberValue(object obj, string memberName, object val)
+    {
+        PropertyInfo pi = obj.GetType().GetProperty(memberName);
+
+        pi.SetValue(obj, val);
+    }
+
 
     /// <summary>
     /// 反射创建类的实例
@@ -551,6 +634,8 @@ public class DataEditor
 }
 
 
+
+#region 反射 测试类
 public class TestReflection
 {
     //public int m_ID;
@@ -592,7 +677,7 @@ public class TestReflection01
     public float m_Height { get; set; }
 
     public Rank02 m_Rank { get; set; }
-                   
+    public List<string> m_Lst { get; set; }
 }
 
 public enum Rank02
@@ -602,3 +687,5 @@ public enum Rank02
     Two = 2,
     Three = 3,
 }
+#endregion
+
