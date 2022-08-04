@@ -16,7 +16,7 @@ public class OfflineEditor
 
 
     //放在文件夹Editor下。相邻超过10为一组有分割线
-    [MenuItem(Constants.MenuItem+ "/Create OfflineData", false, 100)]
+    [MenuItem(Constants.MenuItem_Offline+ "Create OfflineData", false, 100)]
     static void AssetsCreateOfflineData()
     {
         GameObject[] goArr=Selection.gameObjects;
@@ -38,7 +38,7 @@ public class OfflineEditor
 
 
     #region UIOfflineData
-  [MenuItem(Constants.MenuItem + "/Create UIOfflineData", false, 101)]
+  [MenuItem(Constants.MenuItem_Offline + "Create UIOfflineData", false, 101)]
     static void AssetsCreateUIOfflineData()
     {
         GameObject[] goArr = Selection.gameObjects;
@@ -57,7 +57,7 @@ public class OfflineEditor
         EditorUtility.ClearProgressBar();
     }
 
-    [MenuItem(Constants.MenuItem + "/Create All UIOfflineData", false, 102)]
+    [MenuItem(Constants.MenuItem_Offline + "Create All UIOfflineData", false, 102)]
     static void AssetsCreateAllUIOfflineData()
     {
         string[] guidArr = AssetDatabase.FindAssets(Constans_UIOfflineData.m_Type, new string[] { Constans_UIOfflineData.m_Path });
@@ -83,7 +83,7 @@ public class OfflineEditor
     }
 
 
-    [MenuItem(Constants.MenuItem + "/Reset All UIOfflineData", false, 103)]
+    [MenuItem(Constants.MenuItem_Offline + "Reset All UIOfflineData", false, 103)]
     static void AssetsResetAllUIOfflineData()
     {
 
@@ -115,7 +115,7 @@ public class OfflineEditor
 
 
     #region ParticleOfflineData
- [MenuItem(Constants.MenuItem + "/Create All ParticleOfflineData", false, 104)]
+ [MenuItem(Constants.MenuItem_Offline + "Create All ParticleOfflineData", false, 104)]
     static void AssetsCreateAllParticleOfflineData()
     {
 

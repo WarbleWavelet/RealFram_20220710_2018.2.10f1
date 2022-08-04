@@ -2,7 +2,8 @@
     "name": "Demo14",
     "references": [
         "Common",
-        "Manager"
+        "Manager",
+        "Data"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

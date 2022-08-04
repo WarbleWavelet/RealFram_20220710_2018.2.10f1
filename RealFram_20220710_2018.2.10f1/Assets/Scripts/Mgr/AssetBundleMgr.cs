@@ -37,8 +37,9 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     void Reset()
     {
+
         m_resItemDic.Clear();
-        m_cfg = BinaryDeserilize();
+        m_cfg = Bin2Class();
     }
 
 
@@ -49,6 +50,10 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// <param name="log">打印日志</param>
     public void InitMgr(bool log = true)
     {
+        if (ResourceMgr.Instance.GetLoadFromAB() == false)
+        {
+            return;
+        }
         Reset();
         //
         for (int i = 0; i < m_cfg.ABLst.Count; i++)
@@ -85,7 +90,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// /反序列化存储的Cfg
     /// </summary>
     /// <returns></returns>
-    ABCfg BinaryDeserilize()
+    ABCfg Bin2Class()
     {
         AssetBundle ab = AssetBundle.LoadFromFile( DefinePath.OutputAB );//Load AB
         TextAsset ta = ab.LoadAsset<TextAsset>( DefinePath.InputBytes );//load bytes
@@ -348,7 +353,7 @@ public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬
             {
                 Debug.LogErrorFormat("RefCnt Err:{0}", m_RefCnt);
             }
-      
+
         }
     }
     #endregion
@@ -356,8 +361,14 @@ public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬
     #endregion
 
 
+    public ResItem()
+    {
 
-
+    }
+    public ResItem(uint crc)
+    {
+        this.m_Crc = crc;
+    }
 
 
     public override string ToString()

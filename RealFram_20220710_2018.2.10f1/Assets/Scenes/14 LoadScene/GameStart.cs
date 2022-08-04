@@ -68,8 +68,9 @@ namespace Demo14
 
 		#region 测试 数据配置
 		void Test_LoadDataCfg()
-		{ 
-		
+		{
+			CfgMgr.Instance.LoadData<MonsterData>(DefinePath.Cfg_MonsterData);
+			CfgMgr.Instance.LoadData<BuffData>(DefinePath.Cfg_BuffData);
 		}
         #endregion	
 

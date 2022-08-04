@@ -24,11 +24,11 @@ public class DataEditor
     static string m_Excel_OutetrPath = DefinePath.ProjectRoot + "Data/Excel/";
     const string m_path_Bin = "Assets/GameData/Data/Bin/";
     const string m_path_Scripts = "Assets/Scripts/Data/";
-
+    const int m_startIdx = Constants.MenuItem_FormatTool_StartIdx;
 
     #region MenuItem
 
-    [MenuItem("Assets/My Assets/Class2Xml", false, 0)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool+"Xml/Class2Xml", false, 0+m_startIdx)]//按钮在菜单栏的位置
     static void Class2Xml()
     {
 
@@ -52,7 +52,7 @@ public class DataEditor
     }
 
 
-    [MenuItem("Assets/My Assets/Xml2Bin", false, 1)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Xml/Xml2Bin", false, 1 + m_startIdx)]//按钮在菜单栏的位置
     static void Xml2Bin()
     {
 
@@ -75,7 +75,7 @@ public class DataEditor
 
     }
 
-    [MenuItem("Assets/My Assets/AllXml2Bin", false, 2)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Xml/AllXml2Bin", false, 2 + m_startIdx)]//按钮在菜单栏的位置
     static void AllXml2Bin()
     {
 
@@ -104,7 +104,7 @@ public class DataEditor
 
 
 
-    [MenuItem("测试/Xml/Test_ReadXml", false, 3)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Xml/Test_ReadXml", false, 3 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_ReadXml() //读取工程下xmlPath的xml
     {
 
@@ -177,7 +177,7 @@ public class DataEditor
 
 
 
-    [MenuItem("测试/Excel/Test_WriteExcel", false, 4)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Excel/Test_WriteExcel", false, 4 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_WriteExcel() //读取工程下xmlPath的xml
     {
         string xlsxPath = m_Excel_OutetrPath + "G怪物.xlsx";
@@ -225,7 +225,7 @@ public class DataEditor
 
 
 
-    [MenuItem("测试/Reflection/根据反射读取类的属性值", false, 4)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_根据反射读取类的属性值", false, 4 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_Reflection() //读取工程下xmlPath的xml
     {
         TestReflection testRef = new TestReflection
@@ -264,7 +264,7 @@ public class DataEditor
     }
 
 
-    [MenuItem("测试/Reflection/数据反射成类", false, 4)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类", false, 4 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_ReflectionByData() //读取工程下xmlPath的xml
     {
         object obj = Ref_Class_New("TestReflection01");
@@ -281,7 +281,7 @@ public class DataEditor
     }
 
 
-    [MenuItem("测试/Reflection/数据反射成类(浮点，枚举)", false, 4)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类(浮点，枚举)", false, 4 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_ReflectionByData_Float_Enum() //读取工程下xmlPath的xml
     {
         object obj = Ref_Class_New("TestReflection02");
@@ -298,7 +298,7 @@ public class DataEditor
 
     }
 
-    [MenuItem("测试/Reflection/数据反射成类(列表)", false, 4)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类(列表)", false, 4 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_ReflectionByData_Lst() //读取工程下xmlPath的xml
     {
         object _classObj = Ref_Class_New("TestReflection02");
@@ -348,7 +348,7 @@ public class DataEditor
 
 
 
-    [MenuItem("测试/Reflection/Xml2Excel", false, 4)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Xml2Excel", false, 4 + m_startIdx)]//按钮在菜单栏的位置
     static void Xml2Excel() //读取工程下xmlPath的xml
     {
 

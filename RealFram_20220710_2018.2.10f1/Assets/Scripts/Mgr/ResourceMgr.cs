@@ -38,7 +38,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     public Dictionary<uint, ResItem> m_RefResItemDic { get; set; } = new Dictionary<uint, ResItem>();
 
     /// <summary>从哪里加载：AB包 、 Editor</summary>
-    bool m_loadFromAB = true;
+    bool m_loadFromAB = false;
 
     #region Async
     /// <summary>某个MonoBehaviour（它要开协程）</summary>
@@ -60,15 +60,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
     #endregion
 
-    public void SetLoadFromAB(bool state = true)
-    { 
-        m_loadFromAB=state;
-    }
 
-    public bool GetLoadFromAB()
-    {
-       return m_loadFromAB;
-    }
     #region 生命
     /// <summary>
     /// 开始协程的条件，传入自身this
@@ -203,6 +195,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         Object obj = null;  //Get不到就到下一层Get
 #if UNITY_EDITOR//测试从Editor加载            
 
+
         if (m_loadFromAB == false)
         {
 
@@ -215,11 +208,11 @@ public class ResourceMgr : Singleton<ResourceMgr>
             {
                 if (resItem == null)
                 {
-                    resItem = new ResItem();
-                    resItem.m_Crc = crc;
+                    resItem = new ResItem(crc);
                 }
+                 obj = LoadObjectByEditor<Object>(path);
             }
-            obj = LoadObjectByEditor<Object>(path);
+           
 
         }
 #endif
@@ -240,11 +233,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
             }
             else
             {
-                resItem = new ResItem
-                {
-                    m_Crc = crc,
+                resItem = new ResItem(crc);
 
-                };
             }
         }
    
@@ -359,7 +349,10 @@ public class ResourceMgr : Singleton<ResourceMgr>
         if (resItem == null)
         {
 
-            UnityEngine.Debug.LogError(this.GetType().ToString() + "." + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
+            UnityEngine.Debug.LogError(
+                this.GetType().ToString() 
+                + "." 
+                + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
 
 
             return;
@@ -695,8 +688,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
                     resItem = AssetBundleMgr.Instance.GetResItem(para.m_Crc);
                     if (resItem == null)//保护处理
                     {
-                        resItem = new ResItem();
-                        resItem.m_Crc = para.m_Crc;
+                        resItem = new ResItem(para.m_Crc);
                     }
 #endif
                 }
@@ -811,19 +803,31 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         T obj = null;
 #if UNITY_EDITOR//测试从Editor加载            
-
         if (m_loadFromAB == false)
         {
 
-            resItem = AssetBundleMgr.Instance.GetResItem(crc);
-            if (resItem.m_Obj != null)
+            resItem = AssetBundleMgr.Instance.GetResItem(crc);  //StreamAsset
+            if (resItem != null && resItem.m_AB != null)
             {
-                obj = resItem.m_Obj as T;
+                if (resItem.m_Obj != null)
+                {
+                    obj = resItem.m_Obj as T;
+                }
+                else
+                {
+                    obj = resItem.m_AB.LoadAsset<T>(resItem.m_AssetName);
+
+                }
             }
             else
             {
+                if (resItem == null)
+                {
+                    resItem = new ResItem(crc);
+                }
                 obj = LoadObjectByEditor<T>(path);
             }
+
         }
 #endif
         if (obj == null)
@@ -847,6 +851,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         return obj;
     }
+
 
 
 #if UNITY_EDITOR
@@ -947,6 +952,26 @@ public class ResourceMgr : Singleton<ResourceMgr>
     }
     #endregion
 
+
+
+    #region LoadFromAB
+    /// <summary>
+    /// 设置AB包
+    /// </summary>
+    /// <param name="state"></param>
+    public void SetLoadFromAB(bool state = true)
+    {
+        m_loadFromAB = state;
+    }
+    /// <summary>
+    /// 加载Ab包
+    /// </summary>
+    /// <returns></returns>
+    public bool GetLoadFromAB()
+    {
+        return m_loadFromAB;
+    }
+    #endregion
 
 
 }

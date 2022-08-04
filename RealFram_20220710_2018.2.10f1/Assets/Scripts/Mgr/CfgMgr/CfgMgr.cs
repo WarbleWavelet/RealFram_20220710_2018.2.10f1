@@ -25,7 +25,7 @@ public class CfgMgr : Singleton<CfgMgr>
    /// <typeparam name="T"></typeparam>
    /// <param name="binPath">二进制文件路径</param>
    /// <returns></returns>
-    public static T LoadData<T>(string binPath) where T : ExcelBase
+    public  T LoadData<T>(string binPath) where T : ExcelBase
     {
         if (string.IsNullOrEmpty(binPath))//Null
         {
@@ -44,7 +44,7 @@ public class CfgMgr : Singleton<CfgMgr>
         if (data == null)
         {
             Debug.Log(binPath + "不存在，从xml加载数据了！");
-            string xmlPath = binPath.Replace("Binary", "Xml").Replace(".bytes", ".xml");  //注意Bin Xm命名一致，别坑自己人
+            string xmlPath = binPath.Replace("Bin", "Xml").Replace(".bytes", ".xml");  //注意Bin Xm命名一致，别坑自己人
             data = FormatTool.Xml2Class<T>(xmlPath);
         }
 #endif
@@ -89,10 +89,3 @@ public class CfgMgr : Singleton<CfgMgr>
     }
 }
 
-/// <summary>
-/// 数据配置
-/// </summary>
-public class Cfg
-{
-    public string m_Path;
-}
