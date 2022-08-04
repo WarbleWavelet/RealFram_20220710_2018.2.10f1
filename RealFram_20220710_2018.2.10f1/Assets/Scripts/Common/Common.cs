@@ -36,23 +36,23 @@ public class Common
                 {
                     return path.Substring(path.LastIndexOf('/') + 1);//sdcvghasvdj/gdhsag/a.prefab => a.prefab
                 }
-                break;             
+                //break;             
             case TrimNameType.SlashPre:
                 {
                     return path.Substring(0,path.LastIndexOf('/')  );//sdcvghasvdj/gdhsag/a.prefab =>sdcvghasvdj/gdhsag
                 }
-                break;
+                //break;
             case TrimNameType.SlashAndPoint:
                 {
                     string name = path.Substring(path.LastIndexOf('/') + 1);// plane.unity3d
                     name = name.Substring(0, name.LastIndexOf('.'));// plane
                     return name;
                 }
-                break;
+                //break;
             default:
                 {
                     return path;
-                } break;
+                } //break;
         }
 
 
@@ -119,6 +119,7 @@ public enum TrimNameType
     None,
     /// <summary>A/B/C.prefab => C.prefab</summary>
     SlashAfter,
+    /// <summary>A/B/C.prefab => A/B</summary>
     SlashPre,
     /// <summary>A/B/C.prefab => C</summary>
     SlashAndPoint,

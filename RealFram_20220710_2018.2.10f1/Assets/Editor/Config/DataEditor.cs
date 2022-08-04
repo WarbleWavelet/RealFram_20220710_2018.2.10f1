@@ -20,8 +20,8 @@ using UnityEngine;
 public class DataEditor
 {
     const string m_Xml_InnerPath = "Assets/GameData/Data/Xml/";
-    static string m_Xml_OutetrPath = DefinePath.ProjectRoot + "/Data/Reg/";
-    static string m_Excel_OutetrPath = DefinePath.ProjectRoot + "/Data/Excel/";
+    static string m_Xml_OutetrPath = DefinePath.ProjectRoot + "Data/Reg/";
+    static string m_Excel_OutetrPath = DefinePath.ProjectRoot + "Data/Excel/";
     const string m_path_Bin = "Assets/GameData/Data/Bin/";
     const string m_path_Scripts = "Assets/Scripts/Data/";
 
@@ -248,8 +248,8 @@ public class DataEditor
         bool female = (bool)Ref_Class_Member_Get(testRef, "m_Female", GetBindingFlags());
         Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}", ID, name, female);
 
-        List<object> lst = Ref_Class_List_Get(testRef, "m_Lst");
-        List<object> subLst = Ref_Class_List_Get(testRef, "m_SubLst");
+        List<object> lst = Ref_Class_List_Get(testRef, "m_Lst",-1);
+        List<object> subLst = Ref_Class_List_Get(testRef, "m_SubLst",-1);
         //
 
         foreach (var item in lst) //列表存字符串
@@ -272,58 +272,58 @@ public class DataEditor
         Ref_Class_Member_SetValue(obj, "m_Female", false);
         //SetClassMemberValue(testRef, "m_Female", System.Convert.ToBoolean( "false"));
         Ref_Class_Member_SetValue(obj, "m_ID", 0);
-       // SetClassMemberValue(testRef, "m_ID", System.Convert.ToInt32( "0" ));
+        // SetClassMemberValue(testRef, "m_ID", System.Convert.ToInt32( "0" ));
 
-        TestReflection01 testRef01= obj as TestReflection01;
+        TestReflection01 testRef01 = obj as TestReflection01;
 
         Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}", testRef01.m_ID, testRef01.m_Name, testRef01.m_Female);
 
-    }     
+    }
 
 
     [MenuItem("测试/Reflection/数据反射成类(浮点，枚举)", false, 4)]//按钮在菜单栏的位置
     static void Test_ReflectionByData_Float_Enum() //读取工程下xmlPath的xml
     {
-        object obj = Ref_Class_New( "TestReflection02" );
-        Ref_Class_Member_SetValue( obj, "m_Name", "刘备","string");
-        Ref_Class_Member_SetValue( obj, "m_Female", "false", "bool");
-        Ref_Class_Member_SetValue( obj, "m_ID","0", "int");
-        Ref_Class_Member_SetValue( obj, "m_Height", "180.1", "float"); //浮点
-        Ref_Class_Member_SetValue( obj, "m_Rank", "One", "enum"); //枚举
+        object obj = Ref_Class_New("TestReflection02");
+        Ref_Class_Member_SetValue(obj, "m_Name", "刘备", "string");
+        Ref_Class_Member_SetValue(obj, "m_Female", "false", "bool");
+        Ref_Class_Member_SetValue(obj, "m_ID", "0", "int");
+        Ref_Class_Member_SetValue(obj, "m_Height", "180.1", "float"); //浮点
+        Ref_Class_Member_SetValue(obj, "m_Rank", "One", "enum"); //枚举
 
 
         TestReflection02 testRef02 = obj as TestReflection02;
 
         Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\t height:{3}\t rank:{4}", testRef02.m_ID, testRef02.m_Name, testRef02.m_Female, testRef02.m_Height, testRef02.m_Rank);
 
-    }        
-    
+    }
+
     [MenuItem("测试/Reflection/数据反射成类(列表)", false, 4)]//按钮在菜单栏的位置
     static void Test_ReflectionByData_Lst() //读取工程下xmlPath的xml
     {
-        object _classObj = Ref_Class_New( "TestReflection02" );
-        Ref_Class_Member_SetValue( _classObj, "m_Name", "刘备","string");
-        Ref_Class_Member_SetValue( _classObj, "m_Female", "false", "bool");
-        Ref_Class_Member_SetValue( _classObj, "m_ID","0", "int");
-        Ref_Class_Member_SetValue( _classObj, "m_Height", "180.1", "float"); //浮点
-        Ref_Class_Member_SetValue( _classObj, "m_Rank", "One", "enum"); //枚举
+        object _classObj = Ref_Class_New("TestReflection02");
+        Ref_Class_Member_SetValue(_classObj, "m_Name", "刘备", "string");
+        Ref_Class_Member_SetValue(_classObj, "m_Female", "false", "bool");
+        Ref_Class_Member_SetValue(_classObj, "m_ID", "0", "int");
+        Ref_Class_Member_SetValue(_classObj, "m_Height", "180.1", "float"); //浮点
+        Ref_Class_Member_SetValue(_classObj, "m_Rank", "One", "enum"); //枚举
 
 
         TestReflection02 _class = _classObj as TestReflection02;
 
         Debug.LogFormat("测试反射：\tID：{0}\tname：{1}\tfemale：{2}\t height:{3}\t rank:{4}", _class.m_ID, _class.m_Name, _class.m_Female, _class.m_Height, _class.m_Rank);
-         //
+        //
 
-        object strLst = Ref_List_New(  typeof(string)  ); //处理列表
-        object classLst = Ref_List_New(  typeof(TestReflectionSub)  );
+        object strLst = Ref_List_New(typeof(string)); //处理列表
+        object classLst = Ref_List_New(typeof(TestReflectionSub));
         for (int i = 0; i < 3; i++)
         {
-            object strItem = i+"_刘备";
-            Ref_List_Add( strLst, strItem);
+            object strItem = i + "_刘备";
+            Ref_List_Add(strLst, strItem);
             //
             object classItem = Ref_Class_New("TestReflectionSub");
-            Ref_Class_Member_SetValue( classItem, "m_Name", i+"_刘禅", "string");
-            Ref_List_Add( classLst, classItem);
+            Ref_Class_Member_SetValue(classItem, "m_Name", i + "_刘禅", "string");
+            Ref_List_Add(classLst, classItem);
         }
         _class.GetType().GetProperty("m_Lst").SetValue(_class, strLst);
         _class.GetType().GetProperty("m_SubLst").SetValue(_class, classLst);
@@ -341,10 +341,486 @@ public class DataEditor
 
     }
 
+    #endregion
 
+
+    #region 说明
+
+
+
+    [MenuItem("测试/Reflection/Xml2Excel", false, 4)]//按钮在菜单栏的位置
+    static void Xml2Excel() //读取工程下xmlPath的xml
+    {
+
+        string className = "";
+        string xmlName = "";
+        string excelName = "";
+        UnityEngine.Object[] obj = Selection.objects;
+        string name = obj[0].name; //"MonsterData";
+        //
+        Dictionary<string, Lst> lstDic = ReadReg(name, ref excelName, ref xmlName, ref className); //读取结构
+        object _object = ClassName2Object(className);
+
+
+
+        List<Lst> lstLst = new List<Lst>();
+        foreach (Lst lst in lstDic.Values)
+        {
+            if ( lst.m_Depth == 1)
+            {
+                lstLst.Add(lst);
+            }
+        }
+
+        Dictionary<string, global::Sheet> sheetDic = new Dictionary<string, global::Sheet>();
+        for (int i = 0; i < lstLst.Count; i++)    //Lst节点
+        {
+            ReadData( _object, lstLst[i], lstDic, sheetDic, "",60 );
+        }
+
+        string xlsxPath = m_Excel_OutetrPath + excelName; //被占用，自带了后缀
+        if (FileIsOpened(xlsxPath))
+        {
+            Debug.LogError("文件被占用，无法修改");
+            return;
+        }
+
+        try
+        {
+            FileInfo fi = new FileInfo(xlsxPath); //存则删，新建
+            if (fi.Exists==true)
+            {
+               // fi.Delete();
+                
+            }
+            fi = new FileInfo(xlsxPath);
+            //
+            using (ExcelPackage pack = new ExcelPackage(fi))
+            {
+                foreach (string str in sheetDic.Keys)
+                {
+                    ExcelWorksheet worksheet = pack.Workbook.Worksheets.Add(str);
+                    global::Sheet sheet = sheetDic[str];
+                    for (int i = 0; i < sheet.m_NameLst.Count; i++)//字段数据，标头
+                    {
+                        ExcelRange range = worksheet.Cells[1, i + 1];//1开始
+                        range.Value = sheet.m_NameLst[i];
+                        range.AutoFitColumns();
+                    }
+
+                    for (int i = 0; i < sheet.m_RowLst.Count; i++) //每一行数据
+                    {
+                        global::Row row = sheet.m_RowLst[i];
+                        for (int j = 0; j < sheet.m_RowLst[i].m_RowDataDic.Count; j++)
+                        {                                                                      
+                            ExcelRange range = worksheet.Cells[i + 2, j + 1];
+                            string val = row.m_RowDataDic[sheet.m_NameLst[j]];
+                            range.Value = val;
+                            range.AutoFitColumns();
+                            if (val.Contains("\n") || val.Contains("\r\n"))
+                            {
+                                range.Style.WrapText = true;
+                            }
+                        }
+                    }
+
+                    worksheet.Cells.AutoFitColumns();
+                }
+                pack.Save();
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return;
+        }
+        Debug.Log("生成" + xlsxPath + "成功！！！");
+    }
+
+    /// <summary>
+    /// 判断文件是否被占用 打开
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    private static bool FileIsOpened(string path)
+    {
+        bool result = false;
+
+        if (!File.Exists(path))
+        {
+            result = false;
+        }
+        else
+        {
+            FileStream fileStream = null;
+            try
+            {
+                fileStream = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+                result = false;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                result = true;
+            }
+            finally
+            {
+                if (fileStream != null)
+                {
+                    fileStream.Close();
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+
+
+    /// <summary>
+    /// 递归读取类里面的数据
+    /// </summaryxml_VarClass
+    /// <param name="_object"></param>
+    /// <param name="lst"></param>
+    /// <param name="lstDic">查找储存值</param>
+    /// <param name="sheetDic">查找储存值</param>
+    private static void ReadData(object _object, 
+        Lst lst, 
+        Dictionary<string, Lst> lstDic, 
+        Dictionary<string, global::Sheet> sheetDic, 
+        string mainKey,
+        int idx)
+    {
+
+        Debug.Log("hkdgkcdckd"+idx);
+
+
+        List<Var> varLst = lst.m_VarList;
+        Var _var = lst.m_ParentVar;
+        //object var_NameLst = Ref_Class_List_Get(  _object, "m_MonsterLst",1  );//第一层var
+        object var_NameLst = Ref_Class_Member_Get(_object, "m_MonsterLst");// 第一层var
+        int varCnt = Ref_List_Cnt(  var_NameLst ,1);
+        Sheet sheet = new Sheet();
+
+
+        if (  string.IsNullOrEmpty(_var.m_Foregin) ==false )
+        {
+            sheet.m_NameLst.Add(_var.m_Foregin);
+            sheet.m_TypeLst.Add(_var.m_Type);
+        }
+
+        for (int i = 0; i < varLst.Count; i++)
+        {
+            if ( string.IsNullOrEmpty(varLst[i].m_Col) ==false )
+            {
+                sheet.m_NameLst.Add(varLst[i].m_Col);
+                sheet.m_TypeLst.Add(varLst[i].m_Type);
+            }
+        }
+
+        string tempKey = mainKey; //第一层mainKey
+        for (int i = 0; i < varCnt; i++) //遍历第一层var，有n个monster
+        {
+            object item = Ref_List_Get(var_NameLst, i);//这一行
+            Row row = new Row();
+
+            if (  string.IsNullOrEmpty(_var.m_Foregin)==false && string.IsNullOrEmpty(tempKey)==false  )
+            {
+                row.m_RowDataDic.Add(_var.m_Foregin, tempKey);
+            }
+
+            if (  string.IsNullOrEmpty(lst.m_MainKey)==false  )
+            {
+                mainKey = Ref_Class_Member_Get(item, lst.m_MainKey).ToString();
+            }
+
+            for (int j = 0; j < varLst.Count; j++) //第2层var，monster的n个属性
+            {
+
+                if (varLst[j].m_Type == "list" && string.IsNullOrEmpty(varLst[j].m_SplitStr))
+                {
+                    Lst getLst = lstDic[varLst[j].m_SheetName_SelfList];
+                    ReadData(item, getLst, lstDic, sheetDic, mainKey,228);
+                }
+                else if (varLst[j].m_Type == "list")
+                {
+                    Lst getLst = lstDic[varLst[j].m_SheetName_SelfList];
+                    string value = GetSplitStrList(item, varLst[j], getLst);
+                    row.m_RowDataDic.Add(varLst[j].m_Col, value);
+                }
+                else if (varLst[j].m_Type == "listStr" 
+                    || varLst[j].m_Type == "listFloat" 
+                    || varLst[j].m_Type == "listInt" 
+                    || varLst[j].m_Type == "listBool")     
+                {
+                    string value = GetSpliteBaseList(item, varLst[j]);
+                    row.m_RowDataDic.Add(varLst[j].m_Col, value);
+                }
+                else
+                {
+                    object value = Ref_Class_Member_Get(item, varLst[j].m_Name);
+                    if (varLst != null)
+                    {
+                        row.m_RowDataDic.Add(varLst[j].m_Col, value.ToString());
+                    }
+                    else
+                    {
+                        Debug.LogErrorFormat(  "反射出来为空！",varLst[j].m_Name);   //有可能xml配错了
+                    }
+                }
+            }
+
+            string key = _var.m_SheetName_SelfList;
+            if (key != null)
+            {
+                if (sheetDic.ContainsKey(key) == true)
+                {
+                    sheetDic[key].m_RowLst.Add(row);
+                }
+                else
+                {
+                    sheet.m_RowLst.Add(row);
+                    sheetDic.Add(key, sheet);
+                }
+            }
+            else
+            {
+                Debug.LogError("key为空");
+            }
+
+        }
+    }
+
+    /// <summary>
+    /// 获取本身是一个类的列表，但是数据比较少；（没办法确定父级结构的）
+    /// </summary>
+    /// <returns></returns>
+    private static string GetSplitStrList(object data, Var varClass, Lst sheetClass)
+    {
+        string split = varClass.m_SplitStr;
+        string classSplit = sheetClass.m_SplitStr;
+        string str = "";
+        if (string.IsNullOrEmpty(split) || string.IsNullOrEmpty(classSplit))
+        {
+            Debug.LogError("类的列类分隔符或变量分隔符为空！！！");
+            return str;
+        }
+        object dataList = Ref_Class_Member_Get(data, varClass.m_Name, GetBindingFlags());
+            int listCount = System.Convert.ToInt32(dataList.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, null, dataList, new object[] { }));
+            for (int i = 0; i < listCount; i++)
+            {
+                object item = dataList.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, dataList, new object[] { i });
+                for (int j = 0; j < sheetClass.m_VarList.Count; j++)
+                {
+                    object value = Ref_Class_Member_Get(item, sheetClass.m_VarList[j].m_Name, GetBindingFlags());
+                    str += value.ToString();
+                    if (j != sheetClass.m_VarList.Count - 1)
+                    {
+                        str += classSplit.Replace("\\n", "\n").Replace("\\r", "\r");
+                    }
+                }
+
+                if (i != listCount - 1)
+                {
+                    str += split.Replace("\\n", "\n").Replace("\\r", "\r");
+                }
+            }
+            return str;
+        
+    }
+
+        /// <summary>
+        /// 获取基础List里面的所有值
+        /// </summary>
+        /// <returns></returns>
+        private static string GetSpliteBaseList(object data, Var varClass)
+        {
+            string str = "";
+            if (string.IsNullOrEmpty(varClass.m_SplitStr))
+            {
+                Debug.LogError("基础List的分隔符为空！");
+                return str;
+            }
+            object dataList = Ref_Class_List_Get(data, varClass.m_Name,4);
+            int listCount = System.Convert.ToInt32(dataList.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, null, dataList, new object[] { }));
+
+            for (int i = 0; i < listCount; i++)
+            {
+                object item = dataList.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, dataList, new object[] { i });
+                str += item.ToString();
+                if (i != listCount - 1)
+                {
+                    str += varClass.m_SplitStr.Replace("\\n", "\n").Replace("\\r", "\r");
+                }
+            }
+            return str;
+        }
+
+
+
+   /// <summary>
+   /// 读取xml结构,第一层data
+   /// </summary>
+   /// <param name="name"></param>
+   /// <param name="excelName"></param>
+   /// <param name="xmlName"></param>
+   /// <param name="className"></param>
+   /// <returns></returns>
+    private static Dictionary<string, Lst> ReadReg(string name, ref string excelName, ref string xmlName, ref string className)
+    {
+        string path = m_Xml_OutetrPath + name + ".xml";
+        // string name = Common.TrimName(path, TrimNameType.SlashAndPoint);
+        if (File.Exists(path) == false)//判
+        {
+            Debug.LogFormat("不存在：{0}", path);
+        }
+
+
+        XmlDocument xml = new XmlDocument(); //读Xml
+        XmlReader reader = XmlReader.Create(path);
+        XmlReaderSettings settings = new XmlReaderSettings();
+        settings.IgnoreComments = true;//忽略xml里面的注释
+        xml.Load(reader);
+        XmlNode xn = xml.SelectSingleNode("data");
+        XmlElement xe = (XmlElement)xn;
+        className = xe.GetAttribute("name");
+        xmlName = xe.GetAttribute("to");
+        excelName = xe.GetAttribute("from");
+       
+        Dictionary<string, Lst> lstDic = new Dictionary<string, Lst>(); //储存所有变量的表         //递归读取
+        ReadXmlNode(xe, lstDic,0);
+
+        reader.Close();
+
+
+        return lstDic;
+    }
+
+    /// <summary>
+    /// 递归读取配置
+    /// </summary>
+    /// <param name="dataE"></param>
+    /// <param name="lstDic">引用类型，不用写ref</param>
+    /// <param name="depth">深度</param>
+    private static void ReadXmlNode(XmlElement dataE, Dictionary<string, Lst> lstDic, int depth)
+    {
+        #region xml
+        /**
+        <data name ="MonsterData" from="G怪物.xlsx" to = "MonsterData.xml">
+            <variable  name="AllMonster" type="list">
+                <list name = "MonsterBase" sheetname="怪物配置" mainKey = "Id">
+                    <variable  name="Id" col = "ID" type="int"/>
+                    <variable  name="Name" col = "名字" type="string"/>
+                    <variable  name="OutLook" col = "预知路径" type="string"/>
+                    <variable  name="Level" col = "怪物等级" type="int"/>
+                    <variable  name="Rare" col = "怪物稀有度" type="int" defaultValue = "0"/>
+                    <variable  name="Height" col = "怪物高度" type="float"/>
+                </list>
+            </variable>
+        </data>
+         */
+        #endregion
+
+        depth++;
+        foreach (XmlNode node in dataE.ChildNodes)
+        {
+            XmlElement xe = (XmlElement)node;      //02 var1
+            if (xe.GetAttribute("type") == "list") //是list
+            {
+                XmlElement listE = (XmlElement)node.FirstChild;//列表的只有一个节点  //03 _list
+
+                Var _var = SetVar( xe);
+                Lst _lst = SetLst( listE, ref _var,  depth);
+
+                if (string.IsNullOrEmpty(_lst.m_SheetName)==false)
+                {
+                    if (lstDic.ContainsKey(_lst.m_SheetName)==false)
+                    {
+                        
+                        foreach (XmlNode insideNode in listE.ChildNodes)            //获取该类下面所有变量
+                        {
+                            XmlElement insideE = (XmlElement)insideNode;
+                            Var insideVar = SetVar( insideE);
+
+                            _lst.m_VarList.Add(insideVar);
+                        }
+                        lstDic.Add(_lst.m_SheetName, _lst);
+                    }
+                }
+
+                ReadXmlNode(listE, lstDic, depth);
+            }
+        }
+    }
+
+
+
+
+    #region 辅助
+
+
+    static Var SetVar( XmlElement _xe)
+    {
+        global::Var _class = new global::Var()                      //list里面的varClass
+        {
+            m_Name = _xe.GetAttribute("name"),
+            m_Type = _xe.GetAttribute("type"),
+            m_Col = _xe.GetAttribute("col"),
+            m_DeafultValue = _xe.GetAttribute("defaultValue"),
+            m_Foregin = _xe.GetAttribute("foregin"),
+            m_SplitStr = _xe.GetAttribute("split"),
+        };
+        if (_class.m_Type == "list")                        //是list,继续读
+        {
+            _class.m_LstName_SelfList = ((XmlElement)_xe.FirstChild).GetAttribute("name");
+            _class.m_SheetName_SelfList = ((XmlElement)_xe.FirstChild).GetAttribute("sheetname");
+        }
+
+        return _class;
+    }
+
+    static Lst SetLst( XmlElement _xe, ref global::Var parentVar,  int depth)
+    {
+        Lst _class = new Lst()     //lstClass               
+        {
+            m_Name = _xe.GetAttribute("name"),
+            m_SheetName = _xe.GetAttribute("sheetname"),
+            m_SplitStr = _xe.GetAttribute("split"),
+            m_MainKey = _xe.GetAttribute("mainKey"),
+            m_ParentVar = parentVar,
+            m_Depth = depth,
+        };
+
+        return _class;
+    }
+
+
+
+    static int Ref_List_Cnt(object lst,int idx)
+    {
+        if (lst == null)
+        {
+            Debug.LogErrorFormat("Ref_List_Cnt{0}为空,idx={1}", lst, idx);
+            return -1;
+        }
+
+        return System.Convert.ToInt32(
+            lst.GetType().InvokeMember("get_Count", 
+            BindingFlags.Default | BindingFlags.InvokeMethod, 
+            null, lst, new object[] { })
+        );
+    }
     static object Ref_List_Add(object lst, object item)
     {
-        return  lst.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { item });
+        return lst.GetType().InvokeMember("Add", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { item });
+    }       
+    
+    
+    static object Ref_List_Get(object lst, int i)
+    {
+        return lst.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { i });
     }
 
 
@@ -357,7 +833,7 @@ public class DataEditor
         return lst;
     }
 
-    #region 辅助
+
     /// <summary>
     /// 设置类中属性的值 v2
     /// </summary>
@@ -444,16 +920,20 @@ public class DataEditor
     }
 
 
-    /// <summary>
+    /// <summary>                                                
     /// 得到该类该列表属性的所有对象，返回表
     /// </summary>
-    /// <param name="_class"></param>
+    /// <param name="_object"></param>
     /// <param name="memberName"></param>
+    /// <param name="idx">调试找位置用的</param>
     /// <returns></returns>
-    static List<object> Ref_Class_List_Get(object _class, string memberName)
+    static List<object> Ref_Class_List_Get(object _object, string memberName,int idx)
     {
-        object lst = Ref_Class_Member_Get(_class, memberName, GetBindingFlags());
-        int lstCnt = System.Convert.ToInt32(lst.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { }));
+        
+        Debug.Log("Ref_Class_List_Get" + idx);
+        object lst = Ref_Class_Member_Get( _object, memberName );
+        int lstCnt = Ref_List_Cnt( lst ,2);
+        //
         List<object> resLst = new List<object>();
         for (int i = 0; i < lstCnt; i++)
         {
@@ -470,15 +950,27 @@ public class DataEditor
     /// 类反射得到字段属性值
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="obj"></param>
-    /// <param name="propertyName"></param>
+    /// <param name="_object"></param>
+    /// <param name="memberName"></param>
     /// <param name="bindingFlags"></param>
     /// <returns></returns>
-    static object Ref_Class_Member_Get(object obj, string propertyName, BindingFlags bindingFlags)
+    static object Ref_Class_Member_Get(object _object, 
+        string memberName, 
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
     {
 
-        Type type = obj.GetType();
-        MemberInfo[] miArr = type.GetMember(propertyName, BindingFlags.Public | BindingFlags.Instance);
+        #region 测试
+        /**
+           Test test= new Test();
+           test.m_Lst=new List<int> { 1, 2, 3 };
+           Type type = test.GetType();
+           MemberInfo[] miArr = type.GetMember("m_Lst", bindingFlags);
+           _object = test;
+        /**/
+        #endregion
+
+        Type type = _object.GetType();
+        MemberInfo[] miArr = type.GetMember(memberName, bindingFlags);
 
         while (miArr == null || miArr.Length <= 0) //保护性措施
         {
@@ -487,7 +979,7 @@ public class DataEditor
             {
                 return null;
             }
-            miArr = type.GetMember(propertyName, bindingFlags);
+            miArr = type.GetMember(memberName, BindingFlags.Default|BindingFlags.Public);
         }
 
         object res = null;
@@ -495,12 +987,12 @@ public class DataEditor
         {
             case MemberTypes.Field:
                 {
-                    res = type.GetField(propertyName, bindingFlags).GetValue(obj);
+                    res = type.GetField(memberName, bindingFlags).GetValue(_object);
                 }
                 break;
             case MemberTypes.Property:
                 {
-                    res = type.GetProperty(propertyName, bindingFlags).GetValue(obj);
+                    res = type.GetProperty(memberName, bindingFlags).GetValue(_object);
                 }
                 break;
             default: break;
@@ -554,6 +1046,35 @@ public class DataEditor
         sheet.DefaultRowHeight = 30;//sheet页面默认列高度
         sheet.Cells.Style.WrapText = true;//设置所有单元格的自动换行
         pack.Save();
+    }
+
+    /// <summary>
+    /// 反序列化xml到类
+    /// </summary>
+    /// <param name="className"></param>
+    /// <returns></returns>
+    private static object ClassName2Object(string className)
+    {
+        Type type = null;
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Type tempType = asm.GetType(className);
+            if (tempType != null)
+            {
+                type = tempType;
+                break;
+            }
+        }
+        if (type != null)
+        {
+            string xmlPath = m_Xml_InnerPath + className +".xml";
+            object obj = FormatTool.Xml2Class(xmlPath, type);
+            return obj;
+
+            // return FormatTool.Xml2Class(xmlPath, type);
+        }
+
+        return null;
     }
 
 
@@ -656,6 +1177,66 @@ public class DataEditor
 
 
 
+#region XML
+
+/// <summary>
+/// 变量类
+/// </summary>
+public class Var
+{
+  
+    public string m_Name { get; set; }  //原类里面变量的名称
+    public string m_Type { get; set; } //变量类型
+    public string m_Col { get; set; }   //变量对应的Excel里的列
+    public string m_DeafultValue { get; set; } //变量的默认值
+    public string m_Foregin { get; set; }     //变量是list的话，外联部分列
+    public string m_SplitStr { get; set; }    //分隔符
+    public string m_LstName_SelfList { get; set; }   //如果自己是List，对应的list类名
+    public string m_SheetName_SelfList { get; set; } //如果自己是list,对应的sheet名
+}
+
+/// <summary>
+/// xml list的节点
+/// </summary>
+public class Lst
+{
+   
+    public Var m_ParentVar { get; set; } //所属父级Var变量
+    public int    m_Depth { get; set; }    //深度
+    public string m_Name { get; set; }    //类名
+    public string m_SheetName { get; set; } //类对应的sheet名
+    public string m_MainKey { get; set; } //主键
+    public string m_SplitStr { get; set; }    //分隔符
+
+    public List<Var> m_VarList = new List<Var>();     //所包含的变量
+}
+
+#endregion
+
+
+#region Excel
+/// <summary>
+/// Excel的数据 ,工作表
+/// </summary>
+public class Sheet
+{
+    public List<string> m_NameLst = new List<string>();
+    public List<string> m_TypeLst = new List<string>();
+    public List<Row> m_RowLst = new List<Row>();   //每一行的数据是
+}
+
+
+/// <summary>
+/// 行
+/// </summary>
+public class Row
+{
+    public string m_ParentVal = "";
+    public Dictionary<string, string> m_RowDataDic = new Dictionary<string, string>();
+}
+
+#endregion
+
 #region 反射 测试类
 public class TestReflection
 {
@@ -710,5 +1291,11 @@ public enum Rank02
     Two = 2,
     Three = 3,
 }
-#endregion
 
+
+public class Test
+{
+    public List<int> m_Lst { get; set; }
+}
+
+#endregion

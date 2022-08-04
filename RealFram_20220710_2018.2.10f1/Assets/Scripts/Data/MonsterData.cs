@@ -20,18 +20,22 @@ public class MonsterData : ExcelBase
     public Dictionary<int, MonsterBase> m_MonsterDic = new Dictionary<int, MonsterBase>();
 
     /// <summary>所有的怪物</summary>                 
-    [XmlElement("MonsterLst")]
-    public List<MonsterBase> MonsterLst { get; set; }   //反序列时填充，new会叠加
+    [XmlElement("AllMonster")] //与xml相关，不改
+    public List<MonsterBase> m_MonsterLst { get; set; }  //反序列时填充，new会叠加
+    //public List<MonsterBase> m_MonsterLst { get; set; }   //反序列时填充，new会叠加
     #endregion
 
 
+
+
+    #region 方法
 #if UNITY_EDITOR
     /// <summary>
     /// 编辑器下初始类转xml
     /// </summary>
     public override void Construction()
     {
-        MonsterLst = new List<MonsterBase>();
+        m_MonsterLst = new List<MonsterBase>();
         for (int i = 0; i < 5; i++)
         {
             MonsterBase monster = new MonsterBase
@@ -42,7 +46,7 @@ public class MonsterData : ExcelBase
                 Rare = 2,
                 Height = 2 + i,
             };
-            MonsterLst.Add(monster);
+            m_MonsterLst.Add(monster);
         }
     }
 #endif
@@ -53,7 +57,7 @@ public class MonsterData : ExcelBase
     public override void Init()
     {
         m_MonsterDic.Clear();
-        foreach (MonsterBase monster in MonsterLst) //记录百科
+        foreach (MonsterBase monster in m_MonsterLst) //记录百科
         {
             if (m_MonsterDic.ContainsKey(monster.Id))
             {
@@ -75,8 +79,7 @@ public class MonsterData : ExcelBase
     {
         return m_MonsterDic[id];
     }
-
-
+    #endregion
 }
 
 
@@ -84,22 +87,11 @@ public class MonsterData : ExcelBase
 [System.Serializable]
 public class MonsterBase
 {
-    //ID
-    [XmlAttribute("Id")]
-    public int Id { get; set; }
-    //Name
-    [XmlAttribute("Name")]
-    public string Name { get; set; }
-    //预知路径
-    [XmlAttribute("OutLook")]
-    public string OutLook { get; set; }
-    //怪物等级
-    [XmlAttribute("Level")]
-    public int Level { get; set; }
-    //怪物稀有度
-    [XmlAttribute("Rare")]
-    public int Rare { get; set; }
-    //怪物高度
-    [XmlAttribute("Height")]
-    public float Height { get; set; }
+    
+    [XmlAttribute("Id")] public int Id { get; set; }                    //ID
+    [XmlAttribute("Name")] public string Name { get; set; }             //Name
+    [XmlAttribute("OutLook")] public string OutLook { get; set; }       //预知路径
+    [XmlAttribute("Level")] public int Level { get; set; }              //怪物等级
+    [XmlAttribute("Rare")] public int Rare { get; set; }                //怪物稀有度
+    [XmlAttribute("Height")]  public float Height { get; set; }         //怪物高度
 }
