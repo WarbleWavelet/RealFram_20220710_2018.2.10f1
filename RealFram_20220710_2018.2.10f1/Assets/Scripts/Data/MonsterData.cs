@@ -20,7 +20,7 @@ public class MonsterData : ExcelBase
     public Dictionary<int, MonsterBase> m_MonsterDic = new Dictionary<int, MonsterBase>();
 
     /// <summary>所有的怪物</summary>                 
-    [XmlElement("AllMonster")] //与xml相关，不改
+    [XmlElement("m_MonsterLst")] //与xml相关，不改 //这个属性后来要对接Xml，所以统一
     public List<MonsterBase> m_MonsterLst { get; set; }  //反序列时填充，new会叠加
     //public List<MonsterBase> m_MonsterLst { get; set; }   //反序列时填充，new会叠加
     #endregion
