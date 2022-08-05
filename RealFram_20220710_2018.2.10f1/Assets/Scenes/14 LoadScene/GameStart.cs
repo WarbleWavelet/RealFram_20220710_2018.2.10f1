@@ -70,7 +70,8 @@ namespace Demo14
 		void Test_LoadDataCfg()
 		{
 			CfgMgr.Instance.LoadData<MonsterData>(DefinePath.Cfg_MonsterData);
-			CfgMgr.Instance.LoadData<BuffData>(DefinePath.Cfg_BuffData);
+			CfgMgr.Instance.LoadData<BuffData>(DefinePath.Cfg_BuffData); //拆分类列表
+			//CfgMgr.Instance.LoadData<BuffData>(DefinePath.Cfg_BuffData2); //不拆分类列表
 		}
         #endregion	
 

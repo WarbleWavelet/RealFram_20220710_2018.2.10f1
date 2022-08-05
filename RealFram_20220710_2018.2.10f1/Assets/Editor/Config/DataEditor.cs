@@ -351,7 +351,7 @@ public class DataEditor
 
 
     [MenuItem(Constants.MenuItem_FormatTool + "Xml/Xml2Excel", false, 8 + m_startIdx)]//按钮在菜单栏的位置
-    static void Xml2ExcelMenuItem() //读取工程下xmlPath的xml
+    static void MenuItem_Xml2Excel() //读取工程下xmlPath的xml
     {
 
         UnityEngine.Object[] objArr = Selection.objects;
@@ -513,6 +513,7 @@ public class DataEditor
     /// <param name="lst"></param>
     /// <param name="lstDic">查找储存值</param>
     /// <param name="sheetDic">查找储存值</param>
+    /// <param name="mainKey">子表需要主键值</param>
     private static void ReadData(object _object,
         Lst lst,
         Dictionary<string, Lst> lstDic,
@@ -532,7 +533,7 @@ public class DataEditor
         Sheet sheet = new Sheet();
 
 
-        if (string.IsNullOrEmpty(_var.m_Foregin) == false)
+        if (string.IsNullOrEmpty(_var.m_Foregin) == false)//外键不为空
         {
             sheet.m_NameLst.Add(_var.m_Foregin);
             sheet.m_TypeLst.Add(_var.m_Type);
@@ -547,13 +548,14 @@ public class DataEditor
             }
         }
 
-        string tempKey = mainKey; //第一层mainKey
+        string tempKey = mainKey; //缓存第一层mainKey，子表外键
         for (int i = 0; i < varCnt; i++) //遍历第一层var，有n个monster
         {
             object item = Ref_List_Get(var_NameLst, i);//这一行
             Row row = new Row();
 
-            if (string.IsNullOrEmpty(_var.m_Foregin) == false && string.IsNullOrEmpty(tempKey) == false)
+            if (string.IsNullOrEmpty(_var.m_Foregin) == false 
+                && string.IsNullOrEmpty(tempKey) == false)
             {
                 row.m_RowDataDic.Add(_var.m_Foregin, tempKey);
             }
@@ -566,12 +568,13 @@ public class DataEditor
             for (int j = 0; j < varLst.Count; j++) //第2层var，monster的n个属性
             {
 
-                if (varLst[j].m_Type == "list" && string.IsNullOrEmpty(varLst[j].m_SplitStr))
+                if (varLst[j].m_Type == "list"
+                    && string.IsNullOrEmpty(varLst[j].m_SplitStr)==true) //列表理不是类
                 {
                     Lst getLst = lstDic[varLst[j].m_SheetName_SelfList];
                     ReadData(item, getLst, lstDic, sheetDic, mainKey, 228);
                 }
-                else if (varLst[j].m_Type == "list")
+                else if (varLst[j].m_Type == "list") //列表里面是类，建立子表
                 {
                     Lst getLst = lstDic[varLst[j].m_SheetName_SelfList];
                     string value = GetSplitStrList(item, varLst[j], getLst);
@@ -580,7 +583,7 @@ public class DataEditor
                 else if (varLst[j].m_Type == "listStr"
                     || varLst[j].m_Type == "listFloat"
                     || varLst[j].m_Type == "listInt"
-                    || varLst[j].m_Type == "listBool")
+                    || varLst[j].m_Type == "listBool")              //单元格里是分隔符;
                 {
                     string value = GetSpliteBaseList(item, varLst[j]);
                     row.m_RowDataDic.Add(varLst[j].m_Col, value);
@@ -621,35 +624,55 @@ public class DataEditor
     }
 
     /// <summary>
-    /// 获取本身是一个类的列表，但是数据比较少；（没办法确定父级结构的）
+    /// 01 获取本身是一个类的列表，但是数据比较少
+    /// 02 没办法确定父级结构的
+    /// 00用分隔符方式转类列表。类之间用 \n，属性之间用;
     /// </summary>
     /// <returns></returns>
-    private static string GetSplitStrList(object data, Var varClass, Lst sheetClass)
+    private static string GetSplitStrList(object _object, Var _var, Lst lst)
     {
-        string split = varClass.m_SplitStr;
-        string classSplit = sheetClass.m_SplitStr;
+
+        #region 示例
+        /*
+		<variable  name="AllBuffList" type="list" foregin ="ID" >
+			<list name = "BuffTest" sheetname="所有buff的测试list" >
+				<variable  name="Id" col = "TestID" type="int"/>
+				<variable  name="Name" col = "名字" type="string"/>
+			</list>
+		</variable> 
+
+        <MonsterBuffList Id="5" Name="全BUFF4" OutLook="Assets/GameData/...4" Time="8.298173" BuffType="Ranshao">
+            <AllString>ceshi4</AllString>
+            <AllBuffList Id="4" Name="name0" />
+            <AllBuffList Id="5" Name="name1" />
+        </MonsterBuffList>
+         */
+        #endregion
+
+        string split = _var.m_SplitStr;
+        string classSplit = lst.m_SplitStr;
         string str = "";
         if (string.IsNullOrEmpty(split) || string.IsNullOrEmpty(classSplit))
         {
             Debug.LogError("类的列类分隔符或变量分隔符为空！！！");
             return str;
         }
-        object dataList = Ref_Class_Member_Get(data, varClass.m_Name, GetBindingFlags());
-        int listCount = System.Convert.ToInt32(dataList.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, null, dataList, new object[] { }));
-        for (int i = 0; i < listCount; i++)
+        object dataList = Ref_Class_Member_Get(_object, _var.m_Name, GetBindingFlags());
+        int lstCnt = Ref_List_Cnt(dataList);
+        for (int i = 0; i < lstCnt; i++) //list外层的var ，一般只有一个
         {
-            object item = dataList.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, dataList, new object[] { i });
-            for (int j = 0; j < sheetClass.m_VarList.Count; j++)
+            object item = Ref_List_Get(dataList, i);
+            for (int j = 0; j < lst.m_VarList.Count; j++)// list里面2 个 var
             {
-                object value = Ref_Class_Member_Get(item, sheetClass.m_VarList[j].m_Name, GetBindingFlags());
-                str += value.ToString();
-                if (j != sheetClass.m_VarList.Count - 1)
+                object value = Ref_Class_Member_Get(item, lst.m_VarList[j].m_Name);
+                str += value.ToString();              //
+                if (j != lst.m_VarList.Count - 1)
                 {
                     str += classSplit.Replace("\\n", "\n").Replace("\\r", "\r");
                 }
             }
 
-            if (i != listCount - 1)
+            if (i != lstCnt - 1 )
             {
                 str += split.Replace("\\n", "\n").Replace("\\r", "\r");
             }
@@ -660,26 +683,51 @@ public class DataEditor
 
     /// <summary>
     /// 获取基础List里面的所有值
+    /// 示例处理AllString
     /// </summary>
+    /// <param name="_object">数据类</param>
+    /// <param name="_var">结构类</param>
     /// <returns></returns>
-    private static string GetSpliteBaseList(object data, Var varClass)
+    private static string GetSpliteBaseList(object _object, Var _var)
     {
+
+        #region 示例
+        /** 切割AllString里面的数据，分号连接
+         * 数据类
+        <AllBuffList Id="3" Name="全BUFF2" OutLook="Assets/GameData/...2" Time="0.95974493" BuffType="Ranshao">
+            <AllString>ceshi2</AllString>
+            <AllString>ceshiq2</AllString>
+            <AllBuffList Id="3" Name="name0" />
+        </AllBuffList>
+
+        结构类
+        <variable  name="AllString" col = "测试list列" type="listStr" split = ";"/>
+        <variable  name="AllBuffList" type="list" foregin ="ID" >
+            <list name = "BuffTest" sheetname="所有buff的测试list" >
+                <variable  name="Id" col = "TestID" type="int"/>
+                <variable  name="Name" col = "名字" type="string"/>
+            </list>
+        </variable>
+         **/
+        #endregion
+
         string str = "";
-        if (string.IsNullOrEmpty(varClass.m_SplitStr))
+        if (string.IsNullOrEmpty(_var.m_SplitStr)) //；等
         {
             Debug.LogError("基础List的分隔符为空！");
             return str;
         }
-        object dataList = Ref_Class_List_Get(data, varClass.m_Name, 4);
-        int listCount = System.Convert.ToInt32(dataList.GetType().InvokeMember("get_Count", BindingFlags.Default | BindingFlags.InvokeMethod, null, dataList, new object[] { }));
+    
+        object dataLst = Ref_Class_Member_Get(_object, _var.m_Name); //AllBuffList找AllString
+        int lstCnt = Ref_List_Cnt(dataLst); //2个
 
-        for (int i = 0; i < listCount; i++)
+        for (int i = 0; i < lstCnt; i++) //列表里面的字符串
         {
-            object item = dataList.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, dataList, new object[] { i });
+            object item = Ref_List_Get(dataLst,i);
             str += item.ToString();
-            if (i != listCount - 1)
+            if (i != lstCnt - 1) //遍历中
             {
-                str += varClass.m_SplitStr.Replace("\\n", "\n").Replace("\\r", "\r");
+                str += _var.m_SplitStr.Replace("\\n", "\n").Replace("\\r", "\r");//分隔符，分号
             }
         }
         return str;
@@ -820,8 +868,13 @@ public class DataEditor
     }
 
 
-
-    static int Ref_List_Cnt(object lst,int idx)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="lst"></param>
+    /// <param name="idx">调试确定位置</param>
+    /// <returns></returns>
+    static int Ref_List_Cnt(object lst,int idx=-1)
     {
         if (lst == null)
         {
@@ -841,9 +894,15 @@ public class DataEditor
     }       
     
     
-    static object Ref_List_Get(object lst, int i)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="lst"></param>
+    /// <param name="idx">索引</param>
+    /// <returns></returns>
+    static object Ref_List_Get(object lst, int idx)
     {
-        return lst.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { i });
+        return lst.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { idx });
     }
 
 
@@ -950,7 +1009,7 @@ public class DataEditor
     /// <param name="memberName"></param>
     /// <param name="idx">调试找位置用的</param>
     /// <returns></returns>
-    static List<object> Ref_Class_List_Get(object _object, string memberName,int idx)
+    static List<object> Ref_Class_List_Get(object _object, string memberName,int idx=-1)
     {
         
         Debug.Log("Ref_Class_List_Get" + idx);
@@ -960,7 +1019,9 @@ public class DataEditor
         List<object> resLst = new List<object>();
         for (int i = 0; i < lstCnt; i++)
         {
-            object item = lst.GetType().InvokeMember("get_Item", BindingFlags.Default | BindingFlags.InvokeMethod, null, lst, new object[] { i });
+            object item = lst.GetType().InvokeMember("get_Item", 
+                BindingFlags.Default | BindingFlags.InvokeMethod, 
+                null, lst, new object[] { i });
             resLst.Add(item);
         }
 
@@ -979,7 +1040,8 @@ public class DataEditor
     /// <returns></returns>
     static object Ref_Class_Member_Get(object _object, 
         string memberName, 
-        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance,
+        int i=-1)
     {
 
         #region 测试

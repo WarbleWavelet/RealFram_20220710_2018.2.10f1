@@ -32,16 +32,19 @@ public class BuffData : ExcelBase {
         AllBuffList = new List<BuffBase>();
         for (int i = 0; i < 10; i++)
         {
-            BuffBase buff = new BuffBase();
-            buff.Id = i + 1;
-            buff.Name = "全BUFF" + i;
-            buff.OutLook = "Assets/GameData/..." + i;
-            buff.Time = Random.Range(0.5F, 10);
-            buff.BuffType = (BuffEnum)Random.Range(0, 4);
-            buff.AllString = new List<string>();
+            BuffBase buff = new BuffBase
+            {
+                Id = i + 1,
+                Name = "全BUFF" + i,
+                OutLook = "Assets/GameData/..." + i,
+                Time = Random.Range(0.5F, 10),
+                BuffType = (BuffEnum)Random.Range(0, 4),
+                AllString = new List<string>(),
+                AllBuffList = new List<BuffTest>(),
+            };
             buff.AllString.Add("ceshi" + i);
             buff.AllString.Add("ceshiq" + i);
-            buff.AllBuffList = new List<BuffTest>();
+
             int count = Random.Range(0, 4);
             for (int j = 0; j < count; j++)
             {
@@ -55,15 +58,17 @@ public class BuffData : ExcelBase {
         MonsterBuffList = new List<BuffBase>();
         for (int i = 0; i < 5; i++)
         {
-            BuffBase buff = new BuffBase();
-            buff.Id = i + 1;
-            buff.Name = "全BUFF" + i;
-            buff.OutLook = "Assets/GameData/..." + i;
-            buff.Time = Random.Range(0.5F, 10);
-            buff.BuffType = (BuffEnum)Random.Range(0, 4);
-            buff.AllString = new List<string>();
+            BuffBase buff = new BuffBase
+            {
+                Id = i + 1,
+                Name = "全BUFF" + i,
+                OutLook = "Assets/GameData/..." + i,
+                Time = Random.Range(0.5F, 10),
+                BuffType = (BuffEnum)Random.Range(0, 4),
+                AllString = new List<string>(),
+                AllBuffList = new List<BuffTest>(),
+            };
             buff.AllString.Add("ceshi" + i);
-            buff.AllBuffList = new List<BuffTest>();
             int count = Random.Range(0, 4);
             for (int j = 0; j < count; j++)
             {
