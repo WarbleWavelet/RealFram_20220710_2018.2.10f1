@@ -12,14 +12,14 @@ public class Common
 
 
     /// <summary>异步的Guid，为了可以取消该异步</summary> 
-    static long  m_asyncGuid=0;
+    static long m_asyncGuid = 0;
     /// <summary>异步的Guid，为了可以取消该异步</summary>
     public static long CreateGuid()
     {
         return m_asyncGuid++;
     }
 
-    public static void Log( object obj)
+    public static void Log(object obj)
     {
         UnityEngine.Debug.Log(obj.GetType().ToString() + "." + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
 
@@ -36,19 +36,19 @@ public class Common
                 {
                     return path.Substring(path.LastIndexOf('/') + 1);//sdcvghasvdj/gdhsag/a.prefab => a.prefab
                 }
-                //break;             
+            //break;             
             case TrimNameType.SlashPre:
                 {
-                    return path.Substring(0,path.LastIndexOf('/')  );//sdcvghasvdj/gdhsag/a.prefab =>sdcvghasvdj/gdhsag
+                    return path.Substring(0, path.LastIndexOf('/'));//sdcvghasvdj/gdhsag/a.prefab =>sdcvghasvdj/gdhsag
                 }
-                //break;
+            //break;
             case TrimNameType.SlashAndPoint:
                 {
                     string name = path.Substring(path.LastIndexOf('/') + 1);// plane.unity3d
                     name = name.Substring(0, name.LastIndexOf('.'));// plane
                     return name;
                 }
-                //break;
+            //break;
             default:
                 {
                     return path;
@@ -62,7 +62,7 @@ public class Common
     /// AB加载，实例时Shader丢失，修复该问题
     /// </summary>
     /// <param name="go"></param>
-   public static void FixShader(GameObject go, string shaderName)
+    public static void FixShader(GameObject go, string shaderName)
     {
         MeshRenderer[] mr = go.GetComponentsInChildren<MeshRenderer>();
         List<Material> lst = new List<Material>();
@@ -84,7 +84,7 @@ public class Common
 
     public static void PlayBGMusic(AudioSource source, AudioClip clip)
 
-    { 
+    {
 
         source.clip = clip;
         source.Play();
@@ -92,7 +92,7 @@ public class Common
     }
 
 
-   public static void BindBtn(Button btn, Action action)
+    public static void BindBtn(Button btn, Action action)
     {
         btn.onClick.AddListener(() =>
         {
@@ -111,10 +111,21 @@ public class Common
         }
     }
 
+    /// <summary>
+    /// 去除所有空格
+    /// </summary>
+    /// <param name="val"></param>
+    /// <returns></returns>
+    public static string TrimAllSpace(string val)
+    {
+        return val.Trim().Replace(" ", "");
+    }
 }
 
 
-public enum TrimNameType
+
+
+    public enum TrimNameType
 {
     None,
     /// <summary>A/B/C.prefab => C.prefab</summary>

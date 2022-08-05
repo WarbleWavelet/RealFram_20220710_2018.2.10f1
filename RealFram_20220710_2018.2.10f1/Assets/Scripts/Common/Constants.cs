@@ -6,7 +6,7 @@ public class Constants
     public const string MenuItem = "MyTools";
     public const string MenuItem_Offline = "MyTools/离线数据/";
     public const string MenuItem_FormatTool = "数据转换/";
-    public const int MenuItem_FormatTool_StartIdx = 400;
+    public const int MenuItem_FormatTool_StartIdx = 0;
     public const string Assets = "My Assets/";
     public const string Shader_BengHuai = "Custom/benghuai";
 
