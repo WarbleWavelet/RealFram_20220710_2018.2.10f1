@@ -55,7 +55,7 @@ public class BuffData : ExcelBase {
             buff.AllString = new List<string>();
             buff.AllString.Add("ceshi" + i);
             //
-            //buff.AllBuffList = GetSubAllBuffList();
+            buff.AllBuffList = GetSubAllBuffList();
             //
             MonsterBuffList.Add(buff);
         }
@@ -79,7 +79,7 @@ public class BuffData : ExcelBase {
             buff.AllString.Add("ceshi" + i);
             buff.AllString.Add("ceshiq" + i);
             //
-            //buff.AllBuffList = GetSubAllBuffList();
+            buff.AllBuffList = GetSubAllBuffList();
             //
             AllBuffList.Add(buff);
         }
@@ -87,20 +87,20 @@ public class BuffData : ExcelBase {
         return AllBuffList;
     }
 
-    //List<BuffTest> GetSubAllBuffList()
-    //{
-    //    List<BuffTest> AllBuffList = new List<BuffTest>();
-    //    int count = Random.Range(0, 4);
-    //    for (int j = 0; j < count; j++)
-    //    {
-    //        BuffTest test = new BuffTest();
-    //        test.Id = j + Random.Range(0, 5);
-    //        test.Name = "name" + j;
-    //        AllBuffList.Add(test);
-    //    }
+    List<BuffTest> GetSubAllBuffList()
+    {
+        List<BuffTest> AllBuffList = new List<BuffTest>();
+        int count = Random.Range(0, 4);
+        for (int j = 0; j < count; j++)
+        {
+            BuffTest test = new BuffTest();
+            test.Id = j + Random.Range(0, 5);
+            test.Name = "name" + j;
+            AllBuffList.Add(test);
+        }
 
-    //    return AllBuffList;
-    //}
+        return AllBuffList;
+    }
     #endregion
 
     public override void Init()
@@ -139,7 +139,7 @@ public class BuffBase
     [XmlAttribute("Time")] public float Time { get; set; }              //怪物等级
     [XmlAttribute("BuffType")]  public BuffEnum BuffType { get; set; }
     [XmlElement("AllString")] public List<string> AllString { get; set; }
-    //[XmlElement("AllBuffList")] public List<BuffTest> AllBuffList { get; set; }
+    [XmlElement("AllBuffList")] public List<BuffTest> AllBuffList { get; set; }
 }
 
 

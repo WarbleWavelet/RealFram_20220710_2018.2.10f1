@@ -231,7 +231,7 @@ public class DataEditor
         //}
 
 
-        Excel2Xml("MonsterData");
+        Excel2Xml("BuffData");
         AssetDatabase.Refresh();
         EditorUtility.ClearProgressBar();
     }
@@ -432,7 +432,7 @@ public class DataEditor
         
         string excelPath = m_Excel_OutetrPath + excelName;//第二步，读取excel里面的数据
         Dictionary<string, Sheet> sheetDic = new Dictionary<string, Sheet>();
-        try
+        try  //读取Excel
         {
             using (FileStream stream = new FileStream(excelPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) //支持打开
             {
@@ -563,20 +563,27 @@ public class DataEditor
                 Var _var = lst.m_VarList[j];//var节点
                 string rangeVal = sheet.m_RowLst[i].m_RowDataDic[sheet.m_NameLst[j]];//变量对应的变量名的值
 
-                if (_var.m_Type == "list")//递归 ，类列表
+
+                //Debug.LogFormat("列名：{0}",_var.m_Col);
+                if ( _var == null || _var.m_Type == null || _var.m_Type == "")//读不到数据时
                 {
-                    ReadDataToClass(_object,
-                        lstDic[_var.m_ClassName_SelfList],
-                        sheetDic[_var.m_ClassName_SelfList],
-                        lstDic, sheetDic);
+                    Debug.LogErrorFormat("_var:{0},_var.m_Type:{1}",_var,_var.m_Type );
                 }
-                else if (TypeNotListClass(_var.m_Type) == true)//非类列表
+                if (_var.m_Type == "list" && String.IsNullOrEmpty(_var.m_SplitStr) == true)//递归 ，类列表
                 {
-                    SetBaseLst( addItem  , _var, rangeVal);
+                    ReadDataToClass(_object, lstDic[_var.m_SheetName_SelfList], sheetDic[_var.m_SheetName_SelfList], lstDic, sheetDic);
+                }
+                else if (_var.m_Type == "list" )
+                {
+                    SetClassLst( addItem, lstDic[_var.m_SheetName_SelfList], rangeVal);
+                }
+                else if (IsBaseList(_var.m_Type) == true)//非类列表
+                {
+                    SetBaseLst(addItem, _var, rangeVal);
                 }
                 else//值写入
                 {
-                   
+
                     if (String.IsNullOrEmpty(rangeVal) == true && _var.m_DeafultValue != null)  //对单元格空白的处理
                     {
                         rangeVal = _var.m_DeafultValue;
@@ -620,7 +627,7 @@ public class DataEditor
         string className = "";
         string xmlName = "";
         string excelName = "";
-        string regName = name+"3";//一般同名,不一样就是为了测试别的
+       string regName = name;//一般同名,不一样就是为了测试别的
         //
         Dictionary<string, global::Lst> lstDic = ReadReg(regName, ref excelName, ref xmlName, ref className); //读取结构
         object _object = ClassName2Object(className);
@@ -630,7 +637,7 @@ public class DataEditor
         List<global::Lst> lstLst = new List<global::Lst>();
         foreach (global::Lst lst in lstDic.Values)
         {
-            if (lst.m_Depth == 1)
+            if (lst.m_Depth == 1) //第一层lst
             {
                 lstLst.Add(lst);
             }
@@ -779,10 +786,15 @@ public class DataEditor
 
         for (int i = 0; i < varLst.Count; i++)
         {
-            if (string.IsNullOrEmpty(varLst[i].m_Col) == false)
+            string colName = varLst[i].m_Col;
+            if (string.IsNullOrEmpty(colName) == false)  //列名
             {
-                sheet.m_NameLst.Add(varLst[i].m_Col);
-                sheet.m_TypeLst.Add(varLst[i].m_Type);
+                sheet.m_NameLst.Add(colName);//列名
+                sheet.m_TypeLst.Add(varLst[i].m_Type); //变量类型
+            }
+            else
+            {
+                Debug.LogErrorFormat("未设置列名：{0}", varLst[i].m_Name );
             }
         }
 
@@ -818,7 +830,7 @@ public class DataEditor
                     string value = GetClassLst(item, varLst[j], getLst);
                     row.m_RowDataDic.Add(varLst[j].m_Col, value);
                 }
-                else if ( TypeNotListClass(varLst[j].m_Type)==true )              //单元格里是分隔符;
+                else if ( IsBaseList(varLst[j].m_Type)==true )              //单元格里是分隔符;
                 {
                     string value = GetBaseLst(item, varLst[j]);
                     row.m_RowDataDic.Add(varLst[j].m_Col, value);
@@ -864,7 +876,7 @@ public class DataEditor
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    static bool TypeNotListClass(string type)
+    static bool IsBaseList(string type)
     {
         return type == "listStr"
             || type == "listFloat"
@@ -920,13 +932,13 @@ public class DataEditor
                 str += value.ToString();              //
                 if (j != lst.m_VarList.Count - 1)
                 {
-                    str += classSplit.Replace("\\n", "\n").Replace("\\r", "\r");
+                    str += TrimReg( classSplit);
                 }
             }
 
             if (i != lstCnt - 1)
             {
-                str += split.Replace("\\n", "\n").Replace("\\r", "\r");
+                str +=  TrimReg(split);
             }
         }
         return str;
@@ -979,7 +991,7 @@ public class DataEditor
             str += item.ToString();
             if (i != lstCnt - 1) //遍历中
             {
-                str += _var.m_SplitStr.Replace("\\n", "\n").Replace("\\r", "\r");//分隔符，分号
+                str += TrimReg(_var.m_SplitStr);//分隔符，分号
             }
         }
         return str;
@@ -1019,7 +1031,7 @@ public class DataEditor
     }
 
     /// <summary>
-    /// 基础List赋值
+    /// 基础（分类）List赋值
     /// </summary>
     /// <param name="_object"></param>
     /// <param name="_var"></param>
@@ -1032,10 +1044,10 @@ public class DataEditor
             Debug.LogErrorFormat("list为空：{0}",list );
             return;
         }
-        string[] rowArray = value.Split(new string[] { _var.m_SplitStr }, StringSplitOptions.None);//分割
-        for (int i = 0; i < rowArray.Length; i++)
+        string[] rowArr = SplitString(value,  _var.m_SplitStr); //分割
+        for (int i = 0; i < rowArr.Length; i++)
         {
-            object addItem = rowArray[i].Trim();
+            object addItem = rowArr[i].Trim();
             try
             {
                 Ref_List_Add(list, addItem);
@@ -1047,6 +1059,64 @@ public class DataEditor
         }
         Ref_Class_Member_SetValue(_object, _var.m_Name,list);
      
+    }
+
+
+
+    /// <summary>
+    /// 类List赋值
+    /// </summary>
+    /// <param name="_object"></param>
+    /// <param name="lst"></param>
+    /// <param name="rowData"></param>
+    private static void SetClassLst(object _object, Lst lst, string rowData)
+    {
+        object item = Ref_Class_New(lst.m_Name);
+        object list = Ref_List_New(item.GetType());
+
+         
+        if (string.IsNullOrEmpty(rowData)==true)//打印空白单元格信息
+        {
+            object Id = Ref_Class_Member_Get(_object, "Id");  ////在_object里面，不确定Class取不了
+            if (Id != null)
+            {
+                Debug.LogFormat("表{0}里面{1}={2}自定义list的列{3}里有空值！","",  "Id",(int)Id , lst.m_ParentVar.m_Col); //找不到正确的SheetName
+            }
+            else
+            { 
+                 Debug.LogFormat("表{0}里面自定义list的列{1}里有空值！", "", lst.m_ParentVar.m_Col);
+            }
+            return;
+        }
+        else //将单元格中的类列表写入lst
+        {
+            string splitStr = TrimReg( lst.m_ParentVar.m_SplitStr ); //Reg中读出的要替换
+            string[] rowArray = SplitString(rowData,  splitStr);  //行分割 "\n"
+            for (int i = 0; i < rowArray.Length; i++) //遍历每行表格
+            {
+                object addItem = Ref_Class_New(lst.m_Name);
+                string[] rangeLst =   SplitString( rowArray[i].Trim(), lst.m_SplitStr); // 行的单元格分割
+                for (int j = 0; j < rangeLst.Length; j++)
+                {
+                    Ref_Class_Member_SetValue(addItem, lst.m_VarList[j].m_Name, rangeLst[j].Trim(), lst.m_VarList[j].m_Type);//用类存储起来
+                }
+
+                Ref_List_Add(list, addItem );
+            }
+
+        }
+        Ref_Class_Member_SetValue(_object,lst.m_ParentVar.m_Name, list);
+    }
+
+
+    /// <summary>
+    /// 分隔符从Reg读取时要替换
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    static string TrimReg(string str)
+    { 
+         return str.Replace("\\n", "\n").Replace("\\r", "\r");
     }
     #endregion
 
@@ -1317,6 +1387,11 @@ public class DataEditor
         PropertyInfo pi = _object.GetType().GetProperty(memberName);
 
         pi.SetValue(_object, memberVal);
+    }
+
+    public static string[] SplitString(string _string, string splitStr)
+    {
+        return _string.Split(new string[] { splitStr }, StringSplitOptions.None);
     }
 
 
@@ -1605,7 +1680,7 @@ public class DataEditor
 
 
 
-#region XML 结构
+#region XML 结构 Reg
 
 /// <summary>
 /// 变量类
