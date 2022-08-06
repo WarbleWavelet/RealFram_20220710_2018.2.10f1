@@ -439,48 +439,58 @@ public class DataEditor
                 using (ExcelPackage pack = new ExcelPackage(stream))
                 {
                     ExcelWorksheets excelWorksheetArr = pack.Workbook.Worksheets;
-                    for (int i = 0; i < excelWorksheetArr.Count; i++)//工作表
+                    for (int sheetIdx = 0; sheetIdx < excelWorksheetArr.Count; sheetIdx++)//工作表
                     {
                         Sheet sheet = new Sheet();
-                        ExcelWorksheet worksheet = excelWorksheetArr[i + 1]; //Excel从1开始
+                        ExcelWorksheet worksheet = excelWorksheetArr[sheetIdx + 1]; //Excel从1开始
                         Lst lst = lstDic[worksheet.Name];
-                        int colCnt = worksheet.Dimension.End.Column;//列
+                        int colCnt = worksheet.Dimension.End.Column;//列  //Dimension尺寸
                         int rowCnt = worksheet.Dimension.End.Row;     //行
 
-                        for (int n = 0; n < lst.m_VarList.Count; n++)
+                        for (int colIdx = 0; colIdx < lst.m_VarList.Count; colIdx++) //每个表的列信息
                         {
-                            sheet.m_NameLst.Add(lst.m_VarList[n].m_Name);  //列的变量名（列名，列的变量名，列的类型）
-                            sheet.m_TypeLst.Add(lst.m_VarList[n].m_Type);  //列类型
+                            sheet.m_NameLst.Add(lst.m_VarList[colIdx].m_Name);  //列的变量名（列名，列的变量名，列的类型）
+                            sheet.m_TypeLst.Add(lst.m_VarList[colIdx].m_Type);  //列类型
                         }
 
-                        for (int m = 1; m < rowCnt; m++)
+                        for (int rowIdx = 1; rowIdx < rowCnt; rowIdx++)
                         {
                             Row row = new Row();
-                            int n = 0;
-                            if (string.IsNullOrEmpty(lst.m_SplitStr) && lst.m_ParentVar != null
-                                && !string.IsNullOrEmpty(lst.m_ParentVar.m_Foregin))
+                            int colIdx = 0;
+
+
+                            if ( IsSubSheet(lst)==true)
                             {
-                                row.m_ParentVal = worksheet.Cells[m + 1, 1].Value.ToString().Trim();
-                                n = 1;
+
+                               string IDVal=  worksheet.Cells[rowIdx + 1, 1].Value.ToString().Trim();   
+                                row.m_ParentVal = IDVal;  //外键
+                                colIdx = 1;
                             }
-                            for (; n < colCnt; n++)
+                            for (; colIdx < colCnt; colIdx++)
                             {
-                                ExcelRange range = worksheet.Cells[m + 1, n + 1];
+                       
+                                ExcelRange range = worksheet.Cells[rowIdx + 1, colIdx + 1];
                                 string rangeVal = ""; 
                                 if (range.Value != null) //表格不填数据，用默认值
                                 {
-                                    rangeVal = Common.TrimAllSpace( range.Value.ToString() );  //单元格数据
+                                    rangeVal = range.Value.ToString().Trim();  //单元格数据
                                 }
 
                                 
-                                string colName =  Common.TrimAllSpace(  worksheet.Cells[1, n + 1].Value.ToString()  ); //第一行的都是列名//正则会去除/r/n
+                                string colName =   worksheet.Cells[1, colIdx + 1].Value.ToString().Trim(); //第一行的都是列名//正则会去除/r/n
                                 string varName = GetVarNameFromColName(lst.m_VarList, colName);//变量名
+
                                 row.m_RowDataDic.Add( varName , rangeVal);  //Id,1之类
                             }
 
-                            sheet.m_RowLst.Add(row);
+                            sheet.m_RowLst.Add(row); //行数据
                         }
-                        sheetDic.Add(worksheet.Name, sheet);
+                        if (String.IsNullOrEmpty(worksheet.Name))
+                        {
+
+                            Debug.LogErrorFormat("变量名为空：{0}", 11);
+                        }
+                        sheetDic.Add(worksheet.Name, sheet); //表
                     }
                 }
             }
@@ -491,13 +501,28 @@ public class DataEditor
             return;
         }
 
+        
 
-        object _object =  NewSetObjectByClassName(  className,m_Xml_InnerPath,xmlName, lstDic,sheetDic);
+
+        object _object =  NewSetObjectByClassName(  className, lstDic,sheetDic);
         //
         FormatTool.Class2Xml(m_Xml_InnerPath + xmlName, _object);
         Debug.LogFormat("{0}转{1}成功" ,excelName,xmlName);
         AssetDatabase.Refresh();
     }
+
+
+    /// <summary>
+    /// 在Excel中是被拆分的子表
+    /// </summary>
+    /// <param name="lst"></param>
+    /// <returns></returns>
+        static bool IsSubSheet(Lst lst)
+        {
+            return string.IsNullOrEmpty( lst.m_SplitStr)==true
+            && lst.m_ParentVar != null
+            && string.IsNullOrEmpty(lst.m_ParentVar.m_Foreign) == false;
+        }
 
 
     /// <summary>
@@ -510,8 +535,6 @@ public class DataEditor
     /// <param name="sheetDic"></param>
     /// <param name=""></param>
     static object NewSetObjectByClassName(string className,
-        string xmlPath,
-        string xmlName,
         Dictionary<string, Lst> lstDic,
         Dictionary<string, Sheet> sheetDic
          )
@@ -521,8 +544,8 @@ public class DataEditor
         List<string> outterKeyLst = new List<string>();
         foreach (string str in lstDic.Keys)//最外层var的Name
         {
-            Lst sheetClass = lstDic[str];
-            if (sheetClass.m_Depth == 1)
+            Lst lst = lstDic[str];
+            if (lst.m_Depth == 1)
             {
                 outterKeyLst.Add(str);
             }
@@ -530,7 +553,8 @@ public class DataEditor
 
         for (int i = 0; i < outterKeyLst.Count; i++)
         {
-            ReadDataToClass( _object, lstDic[outterKeyLst[i]], sheetDic[outterKeyLst[i]], lstDic, sheetDic);//递归
+            string outterKey = outterKeyLst[i];
+            ReadDataToClass( _object, lstDic[outterKey], sheetDic[outterKey], lstDic, sheetDic, null);//递归
         }
 
 
@@ -540,6 +564,7 @@ public class DataEditor
 
 
     /// <summary>
+    /// Xml与Excel的中间存储类（需要Reg(Xml结构文件)）
     /// 以MonsterData为例写注释
     /// </summary>
     /// <param name="_object"></param>
@@ -547,43 +572,62 @@ public class DataEditor
     /// <param name="sheet"></param>
     /// <param name="lstDic"></param>
     /// <param name="sheetDic"></param>
+    /// <param name="foreign">外键，子表的外键</param>
     private static void ReadDataToClass(object _object, Lst lst, Sheet sheet, 
         Dictionary<string, Lst> lstDic, 
-        Dictionary<string, Sheet> sheetDic)
+        Dictionary<string, Sheet> sheetDic,
+        object foreign)
     {
         object item = Ref_Class_New( lst.m_Name ); //为了得到变量类型
         object m_lst = Ref_List_New( item.GetType() );
        
-        for (int i = 0; i < sheet.m_RowLst.Count; i++) //创建 m_MonsterLst
+        for (int rowIdx = 0; rowIdx < sheet.m_RowLst.Count; rowIdx++) //创建 m_MonsterLst
         {
+            Row row = sheet.m_RowLst[rowIdx];
+            if (foreign != null 
+                && String.IsNullOrEmpty(row.m_ParentVal)==false) 
+            {
+                if (foreign.ToString() != row.m_ParentVal) //没有外键，不用拆分，继续赋值
+                {
+                    continue;
+                }
+            }
+
             object addItem = Ref_Class_New(lst.m_Name); //MonsterData
 
-            for (int j = 0; j < lst.m_VarList.Count; j++) //m_MonsterLst之类
+            for (int colIdx = 0; colIdx < lst.m_VarList.Count; colIdx++) //m_MonsterLst之类
             {
-                Var _var = lst.m_VarList[j];//var节点
-                string rangeVal = sheet.m_RowLst[i].m_RowDataDic[sheet.m_NameLst[j]];//变量对应的变量名的值
-
+                Var _var = lst.m_VarList[colIdx];//var节点
 
                 //Debug.LogFormat("列名：{0}",_var.m_Col);
-                if ( _var == null || _var.m_Type == null || _var.m_Type == "")//读不到数据时
+                if (_var == null || _var.m_Type == null || _var.m_Type == "")//读不到数据时
                 {
-                    Debug.LogErrorFormat("_var:{0},_var.m_Type:{1}",_var,_var.m_Type );
+                    Debug.LogErrorFormat("_var:{0},_var.m_Type:{1}", _var, _var.m_Type);
                 }
-                if (_var.m_Type == "list" && String.IsNullOrEmpty(_var.m_SplitStr) == true)//递归 ，类列表
+                if (_var.m_Type == "list" 
+                    && String.IsNullOrEmpty(_var.m_SplitStr) == true)// 不分割类列表
                 {
-                    ReadDataToClass(_object, lstDic[_var.m_SheetName_SelfList], sheetDic[_var.m_SheetName_SelfList], lstDic, sheetDic);
+                    ReadDataToClass(addItem, 
+                        lstDic[_var.m_SheetName_SelfList], 
+                        sheetDic[_var.m_SheetName_SelfList],
+                        lstDic, sheetDic,
+                        Ref_Class_Member_Get(addItem, lst.m_MainKey));
                 }
-                else if (_var.m_Type == "list" )
+                else if (_var.m_Type == "list")//分割类列表
                 {
-                    SetClassLst( addItem, lstDic[_var.m_SheetName_SelfList], rangeVal);
+                    string rangeVal = GetRange( sheet, rowIdx, colIdx);
+                    SetClassLst( addItem,
+                        lstDic[_var.m_SheetName_SelfList], 
+                        rangeVal);
                 }
-                else if (IsBaseList(_var.m_Type) == true)//非类列表
+                else if (IsBaseList(_var.m_Type) == true)//base列表
                 {
+                    string rangeVal = GetRange(sheet, rowIdx, colIdx);
                     SetBaseLst(addItem, _var, rangeVal);
                 }
                 else//值写入
                 {
-
+                    string rangeVal = GetRange( sheet, rowIdx, colIdx);
                     if (String.IsNullOrEmpty(rangeVal) == true && _var.m_DeafultValue != null)  //对单元格空白的处理
                     {
                         rangeVal = _var.m_DeafultValue;
@@ -593,16 +637,26 @@ public class DataEditor
                         Debug.LogErrorFormat("表格单元格数据为空，Reg未配置默认数据:{0}", rangeVal);
                         continue;
                     }
-
-                    Ref_Class_Member_SetValue(addItem, sheet.m_NameLst[j], rangeVal, sheet.m_TypeLst[j]);
+                    Ref_Class_Member_SetValue(addItem, sheet.m_NameLst[colIdx], rangeVal, sheet.m_TypeLst[colIdx]);
                 }
             }
              Ref_List_Add(m_lst, addItem);
         }
-
-        Ref_Class_Member_SetValue(_object,lst.m_ParentVar.m_Name, m_lst);
+       Ref_Class_Member_SetValue(_object,lst.m_ParentVar.m_Name, m_lst);
     }
 
+
+
+
+    static string GetRange(Sheet sheet, int rowIdx, int colIdx)
+    {
+        Row row = sheet.m_RowLst[rowIdx]; //行
+        Dictionary<string, string> rowData = row.m_RowDataDic;//行的数据
+        string colName = sheet.m_NameLst[colIdx]; //列名
+        string rangeVal = rowData[colName];//根据列名取数据 
+
+        return rangeVal;
+    }
     /// <summary>
     /// 列名得到变量名
     /// </summary>
@@ -759,6 +813,7 @@ public class DataEditor
     /// <param name="lstDic">查找储存值</param>
     /// <param name="sheetDic">查找储存值</param>
     /// <param name="mainKey">子表需要主键值</param>
+    /// <param name="idx">调试用的</param>
     private static void ReadData(object _object,
         global::Lst lst,
         Dictionary<string, global::Lst> lstDic,
@@ -767,7 +822,7 @@ public class DataEditor
         int idx)
     {
 
-        Debug.Log("ReadData" + idx);
+        //Debug.Log("ReadData" + idx);
 
 
         List<Var> varLst = lst.m_VarList;
@@ -778,9 +833,9 @@ public class DataEditor
         global::Sheet sheet = new global::Sheet();
 
 
-        if (string.IsNullOrEmpty(_var.m_Foregin) == false)//外键不为空
+        if (string.IsNullOrEmpty(_var.m_Foreign) == false)//外键不为空
         {
-            sheet.m_NameLst.Add(_var.m_Foregin);
+            sheet.m_NameLst.Add(_var.m_Foreign);
             sheet.m_TypeLst.Add(_var.m_Type);
         }
 
@@ -794,7 +849,7 @@ public class DataEditor
             }
             else
             {
-                Debug.LogErrorFormat("未设置列名：{0}", varLst[i].m_Name );
+                //Debug.LogFormat("未设置列名或在拆分子表：{0}", varLst[i].m_Name );
             }
         }
 
@@ -804,10 +859,10 @@ public class DataEditor
             object item = Ref_List_Get(var_NameLst, i);//这一行
             Row row = new Row();
 
-            if (string.IsNullOrEmpty(_var.m_Foregin) == false
+            if (string.IsNullOrEmpty(_var.m_Foreign) == false
                 && string.IsNullOrEmpty(tempKey) == false)
             {
-                row.m_RowDataDic.Add(_var.m_Foregin, tempKey);
+                row.m_RowDataDic.Add(_var.m_Foreign, tempKey);
             }
 
             if (string.IsNullOrEmpty(lst.m_MainKey) == false)
@@ -1064,18 +1119,18 @@ public class DataEditor
 
 
     /// <summary>
-    /// 类List赋值
+    /// 类列表赋值  （拆分或不拆分）
     /// </summary>
     /// <param name="_object"></param>
     /// <param name="lst"></param>
-    /// <param name="rowData"></param>
-    private static void SetClassLst(object _object, Lst lst, string rowData)
+    /// <param name="rangeVal"></param>
+    private static void SetClassLst(object _object, Lst lst, string rangeVal)
     {
         object item = Ref_Class_New(lst.m_Name);
         object list = Ref_List_New(item.GetType());
 
          
-        if (string.IsNullOrEmpty(rowData)==true)//打印空白单元格信息
+        if (string.IsNullOrEmpty(rangeVal)==true)//打印空白单元格信息
         {
             object Id = Ref_Class_Member_Get(_object, "Id");  ////在_object里面，不确定Class取不了
             if (Id != null)
@@ -1091,19 +1146,17 @@ public class DataEditor
         else //将单元格中的类列表写入lst
         {
             string splitStr = TrimReg( lst.m_ParentVar.m_SplitStr ); //Reg中读出的要替换
-            string[] rowArray = SplitString(rowData,  splitStr);  //行分割 "\n"
-            for (int i = 0; i < rowArray.Length; i++) //遍历每行表格
+            string[] rangeArr = SplitString(rangeVal,  splitStr);  //行分割 "\n"
+            for (int i = 0; i < rangeArr.Length; i++) //遍历每行表格
             {
                 object addItem = Ref_Class_New(lst.m_Name);
-                string[] rangeLst =   SplitString( rowArray[i].Trim(), lst.m_SplitStr); // 行的单元格分割
+                string[] rangeLst =   SplitString( rangeArr[i].Trim(), lst.m_SplitStr); // 行的单元格分割
                 for (int j = 0; j < rangeLst.Length; j++)
                 {
                     Ref_Class_Member_SetValue(addItem, lst.m_VarList[j].m_Name, rangeLst[j].Trim(), lst.m_VarList[j].m_Type);//用类存储起来
                 }
-
                 Ref_List_Add(list, addItem );
             }
-
         }
         Ref_Class_Member_SetValue(_object,lst.m_ParentVar.m_Name, list);
     }
@@ -1195,7 +1248,7 @@ public class DataEditor
                 XmlElement listE = (XmlElement)node.FirstChild;//列表的只有一个节点  //03 _list
 
                 Var _var = SetVar(xe);
-                global::Lst _lst = SetLst(listE, ref _var, depth);
+                global::Lst _lst = SetLst(listE,  _var, depth);
 
                 if (string.IsNullOrEmpty(_lst.m_SheetName) == false)
                 {
@@ -1232,7 +1285,7 @@ public class DataEditor
             m_Type = _xe.GetAttribute("type"),
             m_Col = _xe.GetAttribute("col"),
             m_DeafultValue = _xe.GetAttribute("defaultValue"),
-            m_Foregin = _xe.GetAttribute("foregin"),
+            m_Foreign = _xe.GetAttribute("foreign"),
             m_SplitStr = _xe.GetAttribute("split"),
         };
         if (_class.m_Type == "list")                        //是list,继续读
@@ -1250,7 +1303,7 @@ public class DataEditor
     /// </summary>
     /// <param name="_xe"></param>
     /// <returns></returns>
-    static global::Lst SetLst(XmlElement _xe, ref global::Var parentVar, int depth)
+    static global::Lst SetLst(XmlElement _xe,  global::Var parentVar, int depth)
     {
         global::Lst _class = new global::Lst()     //lstClass               
         {
@@ -1333,12 +1386,12 @@ public class DataEditor
     /// <summary>
     /// 设置类中属性的值 v2
     /// </summary>
-    /// <param name="_class"></param>
+    /// <param name="_object"></param>
     /// <param name="memberName"></param>
     /// <param name="memberVal"></param>
-    static void Ref_Class_Member_SetValue(object _class, string memberName, object memberVal, string memberType)
+    static void Ref_Class_Member_SetValue(object _object, string memberName, object memberVal, string memberType)
     {
-        PropertyInfo pi = _class.GetType().GetProperty(memberName);
+        PropertyInfo pi = _object.GetType().GetProperty(memberName);
 
 
         switch (memberType)
@@ -1372,7 +1425,7 @@ public class DataEditor
             default: break;
         }
 
-        pi.SetValue(_class, memberVal);
+        pi.SetValue(_object, memberVal);
     }
 
 
@@ -1385,7 +1438,6 @@ public class DataEditor
     static void Ref_Class_Member_SetValue(object _object, string memberName, object memberVal)
     {
         PropertyInfo pi = _object.GetType().GetProperty(memberName);
-
         pi.SetValue(_object, memberVal);
     }
 
@@ -1692,7 +1744,7 @@ public class Var
     public string m_Type { get; set; } //变量类型
     public string m_Col { get; set; }   //变量对应的Excel里的列
     public string m_DeafultValue { get; set; } //变量的默认值
-    public string m_Foregin { get; set; }     //变量是list的话，外联部分列
+    public string m_Foreign { get; set; }     //变量是list的话，外联部分列
     public string m_SplitStr { get; set; }    //分隔符
     public string m_ClassName_SelfList { get; set; }   //如果自己是List，对应的list类名
     public string m_SheetName_SelfList { get; set; } //如果自己是list,对应的sheet名
@@ -1734,7 +1786,7 @@ public class Sheet
 /// </summary>
 public class Row
 {
-    public string m_ParentVal = "";
+    public string m_ParentVal = "";  //外键
     public Dictionary<string, string> m_RowDataDic = new Dictionary<string, string>();
 }
 

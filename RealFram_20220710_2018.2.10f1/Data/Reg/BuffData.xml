@@ -9,8 +9,8 @@
 			<variable  name="Time" col = "时长" type="float"/>
 			<variable  name="BuffType" col = "Buff类型" type="enum"/>
 			<variable  name="AllString" col = "测试list列" type="listStr" split = ";"/>
-			<variable  name="AllBuffList" col = "测试类列" type="list"    split = "\n">
-				<list name = "BuffTest" sheetname="所有buff的测试list"  split = ";" >
+			<variable  name="AllBuffList" type="list" foreign="ID" >
+				<list name = "BuffTest" sheetname="所有buff的测试list" >
 					<variable  name="Id" col = "TestID" type="int"/>
 					<variable  name="Name" col = "名字" type="string"/>
 				</list>
@@ -25,8 +25,8 @@
 			<variable  name="Time" col = "时长" type="float"/>
 			<variable  name="BuffType" col = "Buff类型" type="enum"/>
 			<variable  name="AllString" col = "测试list列" type="listStr" split = ";"/>
-			<variable  name="AllBuffList" col = "测试类列" type="list"   split = "\n">
-				<list name = "BuffTest" sheetname="怪物buff的测试list"  split = ";">
+			<variable  name="AllBuffList" type="list" foreign="ID">
+				<list name = "BuffTest" sheetname="怪物buff的测试list" >
 					<variable  name="Id" col = "TestID" type="int"/>
 					<variable  name="Name" col = "名字" type="string"/>
 				</list>

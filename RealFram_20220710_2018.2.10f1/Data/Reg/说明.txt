@@ -1,3 +1,4 @@
-BuffData  类列表分割
-BuffData2 类列表不分割
-BuffData3 去掉类列表
+BuffData  当前使用的
+BuffData2 不使用类列表
+BuffData3 不拆分的类列表
+BuffData4 拆分的类列表
