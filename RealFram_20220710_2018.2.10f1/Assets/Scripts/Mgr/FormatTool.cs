@@ -28,7 +28,7 @@ public class FormatTool
     /// <param name="toPath"></param>
     /// <param name="obj"></param>
     /// <returns></returns>
-   public static bool Xml2Class(string toPath, System.Object obj)
+   public static bool Class2Xml(string toPath, System.Object obj)
     {
         if (File.Exists(toPath))
         {
@@ -43,8 +43,8 @@ public class FormatTool
                 using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))
                 {
 
-                   XmlSerializerNamespaces xmlSerializerNamespaces = new XmlSerializerNamespaces();
-                    xmlSerializerNamespaces.Add(string.Empty, string.Empty);
+                   //XmlSerializerNamespaces xmlSerializerNamespaces = new XmlSerializerNamespaces();
+                   // xmlSerializerNamespaces.Add(string.Empty, string.Empty);
                     XmlSerializer xml = new XmlSerializer(obj.GetType());
                     xml.Serialize(sw, obj);
 

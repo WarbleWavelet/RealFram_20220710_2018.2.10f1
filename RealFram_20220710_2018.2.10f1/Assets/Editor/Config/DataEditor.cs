@@ -19,10 +19,10 @@ using UnityEngine;
 
 public class DataEditor
 {
-    const string m_Xml_InnerPath = "Assets/GameData/Data/Xml/";
-    static string m_Xml_OutetrPath = DefinePath.ProjectRoot + "Data/Reg/";
-    static string m_Excel_OutetrPath = DefinePath.ProjectRoot + "Data/Excel/";
-    static string m_Excel_InnerPath = "Assets/GameData/Data/Excel/";
+    const string m_Xml_InnerPath = "Assets/GameData/Data/Xml/";//xml数据
+    static string m_Xml_OutetrPath = DefinePath.ProjectRoot + "Data/Reg/"; //xml结构
+    static string m_Excel_OutetrPath = DefinePath.ProjectRoot + "Data/Excel/";//excel数据
+    static string m_Excel_InnerPath = "Assets/GameData/Data/Excel/";//没有的
     //
     const string m_path_Bin = "Assets/GameData/Data/Bin/";
     const string m_path_Scripts = "Assets/Scripts/Data/";
@@ -34,7 +34,7 @@ public class DataEditor
 
     #region Class
     [MenuItem(Constants.MenuItem_FormatTool + "Class/Class2Xml", false, 1 + m_startIdx)]//按钮在菜单栏的位置
-    static void Class2Xml()
+    static void MenuItem_Class2Xml()
     {
 
         UnityEngine.Object[] objArr = Selection.objects;
@@ -47,7 +47,7 @@ public class DataEditor
             info += "正在转化" + obj.name + "....";
             float prg = (1.0f * i) / objArr.Length; ;
             EditorUtility.DisplayCancelableProgressBar(title, info, prg);
-            Name2Class2Xml(obj.name);
+            Class2Xml(obj.name);
         }
 
 
@@ -466,16 +466,16 @@ public class DataEditor
                             for (; n < colCnt; n++)
                             {
                                 ExcelRange range = worksheet.Cells[m + 1, n + 1];
-                                string colVal = "";
-                                if (range.Value != null)
+                                string rangeVal = ""; 
+                                if (range.Value != null) //表格不填数据，用默认值
                                 {
-                                    colVal = Common.TrimAllSpace( range.Value.ToString() );
+                                    rangeVal = Common.TrimAllSpace( range.Value.ToString() );  //单元格数据
                                 }
 
                                 
                                 string colName =  Common.TrimAllSpace(  worksheet.Cells[1, n + 1].Value.ToString()  ); //第一行的都是列名//正则会去除/r/n
-                                string varName = GetNameFromCol(lst.m_VarList, colName);//变量名
-                                row.m_RowDataDic.Add( varName , colVal);  //Id,1之类
+                                string varName = GetVarNameFromColName(lst.m_VarList, colName);//变量名
+                                row.m_RowDataDic.Add( varName , rangeVal);  //Id,1之类
                             }
 
                             sheet.m_RowLst.Add(row);
@@ -494,7 +494,7 @@ public class DataEditor
 
         object _object =  NewSetObjectByClassName(  className,m_Xml_InnerPath,xmlName, lstDic,sheetDic);
         //
-        FormatTool.Xml2Class(m_Xml_InnerPath + xmlName, _object);
+        FormatTool.Class2Xml(m_Xml_InnerPath + xmlName, _object);
         Debug.LogFormat("{0}转{1}成功" ,excelName,xmlName);
         AssetDatabase.Refresh();
     }
@@ -553,32 +553,42 @@ public class DataEditor
     {
         object item = Ref_Class_New( lst.m_Name ); //为了得到变量类型
         object m_lst = Ref_List_New( item.GetType() );
-        //创建 m_MonsterLst
-        for (int i = 0; i < sheet.m_RowLst.Count; i++)
+       
+        for (int i = 0; i < sheet.m_RowLst.Count; i++) //创建 m_MonsterLst
         {
             object addItem = Ref_Class_New(lst.m_Name); //MonsterData
 
             for (int j = 0; j < lst.m_VarList.Count; j++) //m_MonsterLst之类
             {
                 Var _var = lst.m_VarList[j];//var节点
-                if (_var.m_Type == "list")//递归
+                string rangeVal = sheet.m_RowLst[i].m_RowDataDic[sheet.m_NameLst[j]];//变量对应的变量名的值
+
+                if (_var.m_Type == "list")//递归 ，类列表
                 {
                     ReadDataToClass(_object,
                         lstDic[_var.m_ClassName_SelfList],
                         sheetDic[_var.m_ClassName_SelfList],
                         lstDic, sheetDic);
                 }
+                else if (TypeNotListClass(_var.m_Type) == true)//非类列表
+                {
+                    SetBaseLst( addItem  , _var, rangeVal);
+                }
                 else//值写入
                 {
-                    string rowData = sheet.m_RowLst[i].m_RowDataDic[  sheet.m_NameLst[j]  ];//变量对应的变量名的值
-                    if (String.IsNullOrEmpty(rowData) == true && _var.m_DeafultValue != null)  //默认值
+                   
+                    if (String.IsNullOrEmpty(rangeVal) == true && _var.m_DeafultValue != null)  //对单元格空白的处理
                     {
-                        rowData = _var.m_DeafultValue;
+                        rangeVal = _var.m_DeafultValue;
                     }
-                    Ref_Class_Member_SetValue(  addItem, sheet.m_NameLst[j],rowData,sheet.m_TypeLst[j]);
-                }
+                    if (String.IsNullOrEmpty(rangeVal) == true)
+                    {
+                        Debug.LogErrorFormat("表格单元格数据为空，Reg未配置默认数据:{0}", rangeVal);
+                        continue;
+                    }
 
-               
+                    Ref_Class_Member_SetValue(addItem, sheet.m_NameLst[j], rangeVal, sheet.m_TypeLst[j]);
+                }
             }
              Ref_List_Add(m_lst, addItem);
         }
@@ -591,7 +601,7 @@ public class DataEditor
     /// </summary>
     /// <param name="colName"></param>
     /// <returns></returns>
-    static string GetNameFromCol(List<Var> varLst, string colName)
+    static string GetVarNameFromColName(List<Var> varLst, string colName)
     {
         foreach (var item in varLst)
         {
@@ -610,8 +620,9 @@ public class DataEditor
         string className = "";
         string xmlName = "";
         string excelName = "";
+        string regName = name+"3";//一般同名,不一样就是为了测试别的
         //
-        Dictionary<string, global::Lst> lstDic = ReadReg(name, ref excelName, ref xmlName, ref className); //读取结构
+        Dictionary<string, global::Lst> lstDic = ReadReg(regName, ref excelName, ref xmlName, ref className); //读取结构
         object _object = ClassName2Object(className);
 
 
@@ -804,15 +815,12 @@ public class DataEditor
                 else if (varLst[j].m_Type == "list") //列表里面是类，建立子表
                 {
                     global::Lst getLst = lstDic[varLst[j].m_SheetName_SelfList];
-                    string value = GetSplitStrList(item, varLst[j], getLst);
+                    string value = GetClassLst(item, varLst[j], getLst);
                     row.m_RowDataDic.Add(varLst[j].m_Col, value);
                 }
-                else if (varLst[j].m_Type == "listStr"
-                    || varLst[j].m_Type == "listFloat"
-                    || varLst[j].m_Type == "listInt"
-                    || varLst[j].m_Type == "listBool")              //单元格里是分隔符;
+                else if ( TypeNotListClass(varLst[j].m_Type)==true )              //单元格里是分隔符;
                 {
-                    string value = GetSpliteBaseList(item, varLst[j]);
+                    string value = GetBaseLst(item, varLst[j]);
                     row.m_RowDataDic.Add(varLst[j].m_Col, value);
                 }
                 else
@@ -850,13 +858,30 @@ public class DataEditor
         }
     }
 
+
+    /// <summary>
+    /// 不是类列表
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    static bool TypeNotListClass(string type)
+    {
+        return type == "listStr"
+            || type == "listFloat"
+            || type == "listInt"
+            || type == "listBool";
+    }
+
+
+
+    #region 列表xe
     /// <summary>
     /// 01 获取本身是一个类的列表，但是数据比较少
     /// 02 没办法确定父级结构的
     /// 00用分隔符方式转类列表。类之间用 \n，属性之间用;
     /// </summary>
     /// <returns></returns>
-    private static string GetSplitStrList(object _object, Var _var, global::Lst lst)
+    private static string GetClassLst(object _object, Var _var, global::Lst lst)
     {
 
         #region 示例
@@ -915,7 +940,7 @@ public class DataEditor
     /// <param name="_object">数据类</param>
     /// <param name="_var">结构类</param>
     /// <returns></returns>
-    private static string GetSpliteBaseList(object _object, Var _var)
+    private static string GetBaseLst(object _object, Var _var)
     {
 
         #region 示例
@@ -959,6 +984,72 @@ public class DataEditor
         }
         return str;
     }
+
+    static Type GetType(Var _var)
+    {
+        Type type = null;
+
+
+        switch (_var.m_Type)
+        {
+            case "listStr":
+                {
+                    type = typeof(string);
+                }
+                break;
+            case "listFloat":
+                {
+                    type = typeof(float);
+                }
+                break;
+            case "listInt":
+                {
+                    type = typeof(int);
+                }
+                break;
+            case "listBool":
+                {
+                    type = typeof(bool);
+                }
+                break;
+            default: break;
+        }
+
+        return  type;
+    }
+
+    /// <summary>
+    /// 基础List赋值
+    /// </summary>
+    /// <param name="_object"></param>
+    /// <param name="_var"></param>
+    /// <param name="value"></param>
+    private static void SetBaseLst(object _object, Var _var, string value)
+    {
+        object list = Ref_List_New( _var);
+        if (list == null)
+        {
+            Debug.LogErrorFormat("list为空：{0}",list );
+            return;
+        }
+        string[] rowArray = value.Split(new string[] { _var.m_SplitStr }, StringSplitOptions.None);//分割
+        for (int i = 0; i < rowArray.Length; i++)
+        {
+            object addItem = rowArray[i].Trim();
+            try
+            {
+                Ref_List_Add(list, addItem);
+            }
+            catch
+            {
+                Debug.LogFormat("{0}里 {1}列表添加失败！具体数值是：{2}" ,_var.m_SheetName_SelfList , list,addItem  );
+            }
+        }
+        Ref_Class_Member_SetValue(_object, _var.m_Name,list);
+     
+    }
+    #endregion
+
 
 
 
@@ -1058,7 +1149,11 @@ public class DataEditor
     }
 
 
-
+   /// <summary>
+   /// reg中的xml之一
+   /// </summary>
+   /// <param name="_xe"></param>
+   /// <returns></returns>
     static Var SetVar(XmlElement _xe)
     {
         global::Var _class = new global::Var()                      //list里面的varClass
@@ -1079,6 +1174,12 @@ public class DataEditor
         return _class;
     }
 
+
+    /// <summary>
+    /// reg中的xml之一
+    /// </summary>
+    /// <param name="_xe"></param>
+    /// <returns></returns>
     static global::Lst SetLst(XmlElement _xe, ref global::Var parentVar, int depth)
     {
         global::Lst _class = new global::Lst()     //lstClass               
@@ -1135,6 +1236,22 @@ public class DataEditor
 
     static object Ref_List_New(Type type)
     {
+        Type lstType = typeof(List<>);
+        Type finalType = lstType.MakeGenericType(new Type[] { type });
+        object lst = Activator.CreateInstance(finalType, new object[] { });
+
+        return lst;
+    }
+
+    static object Ref_List_New(Var _var)
+    {
+        Type type = GetType(_var);
+        if (type == null)
+        { 
+            Debug.LogErrorFormat("type为空：{0}",type );
+            return null;
+        }
+
         Type lstType = typeof(List<>);
         Type finalType = lstType.MakeGenericType(new Type[] { type });
         object lst = Activator.CreateInstance(finalType, new object[] { });
@@ -1434,8 +1551,8 @@ public class DataEditor
     /// <summary>
     /// 数量1，防止点错了，污染旧数据
     /// </summary>
-    /// <param name="name"></param>
-    static void Name2Class2Xml(string name)
+    /// <param name="name">既是类名，也是所选文件名</param>
+    static void Class2Xml(string name)
     {
         Type type = GetClassByClassName(name);
 
@@ -1447,7 +1564,7 @@ public class DataEditor
                 (temp as ExcelBase).Construction();
             }
             string xmlPath = m_Xml_InnerPath + name + ".xml";
-            FormatTool.Xml2Class(xmlPath, temp);
+            FormatTool.Class2Xml(xmlPath, temp);
             Debug.Log(name + "类转xml成功，xml路径为:" + xmlPath);
         }
     }

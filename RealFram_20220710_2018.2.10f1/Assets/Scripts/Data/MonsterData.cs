@@ -22,7 +22,6 @@ public class MonsterData : ExcelBase
     /// <summary>所有的怪物</summary>                 
     [XmlElement("m_MonsterLst")] //与xml相关，不改 //这个属性后来要对接Xml，所以统一
     public List<MonsterBase> m_MonsterLst { get; set; }  //反序列时填充，new会叠加
-    //public List<MonsterBase> m_MonsterLst { get; set; }   //反序列时填充，new会叠加
     #endregion
 
 
