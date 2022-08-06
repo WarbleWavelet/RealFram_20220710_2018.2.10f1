@@ -31,7 +31,7 @@ public class AppEditor
     static string m_appName = Constants.AppName;
 
     //[MenuItem(Constants.MenuItem + "/一键打包到外部", false, 82)]//因为脚本不能加AB的错误，不要一键了
-    [MenuItem(Constants.MenuItem + "/导出到外部", false, 82)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/导出到外部", false, 82)]//按钮在菜单栏的位置
     public static void Build()
     {
 

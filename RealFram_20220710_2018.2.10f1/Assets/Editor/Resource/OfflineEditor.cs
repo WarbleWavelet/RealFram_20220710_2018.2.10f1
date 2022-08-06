@@ -57,7 +57,7 @@ public class OfflineEditor
         EditorUtility.ClearProgressBar();
     }
 
-    [MenuItem(Constants.MenuItem_Offline + "Create All UIOfflineData", false, 102)]
+    [MenuItem(Constants.MenuItem_Offline + "Create UIOfflineData All", false, 102)]
     static void AssetsCreateAllUIOfflineData()
     {
         string[] guidArr = AssetDatabase.FindAssets(Constans_UIOfflineData.m_Type, new string[] { Constans_UIOfflineData.m_Path });
@@ -83,7 +83,7 @@ public class OfflineEditor
     }
 
 
-    [MenuItem(Constants.MenuItem_Offline + "Reset All UIOfflineData", false, 103)]
+    [MenuItem(Constants.MenuItem_Offline + "Reset UIOfflineData All", false, 103)]
     static void AssetsResetAllUIOfflineData()
     {
 
@@ -115,7 +115,7 @@ public class OfflineEditor
 
 
     #region ParticleOfflineData
- [MenuItem(Constants.MenuItem_Offline + "Create All ParticleOfflineData", false, 104)]
+ [MenuItem(Constants.MenuItem_Offline + "Create ParticleOfflineData All", false, 104)]
     static void AssetsCreateAllParticleOfflineData()
     {
 

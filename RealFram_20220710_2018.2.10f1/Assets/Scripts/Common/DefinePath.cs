@@ -54,6 +54,7 @@ public class DefinePath
     //public static string Cfg_MonsterData =Application.dataPath + "/GameData/Data/Bin/MonsterData.bytes";
     //public static string Cfg_BuffData = Application.dataPath + "/GameData/Data/Bin/BuffData.bytes";      
     public const string Cfg_MonsterData = "Assets/GameData/Data/Bin/MonsterData.bytes";
+    public const string Cfg_MonsterData_Inner = "Assets/GameData/Data/Bin/MonsterData.bytes";
     public const string Cfg_BuffData = "Assets/GameData/Data/Bin/BuffData.bytes";
     public const string Cfg_BuffData2 = "Assets/GameData/Data/Bin/BuffData2.bytes";
     #endregion

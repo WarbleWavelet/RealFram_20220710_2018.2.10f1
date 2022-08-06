@@ -198,7 +198,6 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         if (m_loadFromAB == false)
         {
-
             resItem = AssetBundleMgr.Instance.GetResItem(crc);//迷惑m_loadFromAB == false为什么还使用AssetBundleMgr
             if (resItem != null && resItem.m_Obj != null)
             {
@@ -206,14 +205,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
             }
             else
             {
-                if (resItem == null)
-                {
-                    resItem = new ResItem(crc);
-                }
-                 obj = LoadObjectByEditor<Object>(path);
+                NewObj(ref resItem, ref obj, path, crc);
             }
-           
-
         }
 #endif
        
@@ -686,10 +679,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
                     yield return new WaitForSeconds(0.5f);//模拟异步
 
                     resItem = AssetBundleMgr.Instance.GetResItem(para.m_Crc);
-                    if (resItem == null)//保护处理
-                    {
-                        resItem = new ResItem(para.m_Crc);
-                    }
+
+                    NewObj(ref resItem, para.m_Crc);
 #endif
                 }
 
@@ -806,7 +797,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         if (m_loadFromAB == false)
         {
 
-            resItem = AssetBundleMgr.Instance.GetResItem(crc);  //StreamAsset
+            resItem = AssetBundleMgr.Instance.GetResItem(crc);  //StreamAsset ,实际打包位置要外迁移到AssetBundle
             if (resItem != null && resItem.m_AB != null)
             {
                 if (resItem.m_Obj != null)
@@ -821,11 +812,9 @@ public class ResourceMgr : Singleton<ResourceMgr>
             }
             else
             {
-                if (resItem == null)
-                {
-                    resItem = new ResItem(crc);
-                }
-                obj = LoadObjectByEditor<T>(path);
+
+                NewObj(ref resItem, ref obj,path, crc);
+
             }
 
         }
@@ -851,6 +840,10 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         return obj;
     }
+
+
+
+
 
 
 
@@ -973,7 +966,23 @@ public class ResourceMgr : Singleton<ResourceMgr>
     }
     #endregion
 
-
+    #region 打包位移外迁，还要在编辑器下使用资源
+    private void NewObj<T>(ref ResItem resItem, ref T obj, string path, uint crc) where T : UnityEngine.Object
+    {
+        if (resItem == null)
+        {
+            resItem = new ResItem(crc);
+        }
+        obj = LoadObjectByEditor<T>(path);
+    }
+    private void NewObj(ref ResItem resItem, uint crc)
+    {
+        if (resItem == null)
+        {
+            resItem = new ResItem(crc);
+        }
+    }
+    #endregion
 }
 
 

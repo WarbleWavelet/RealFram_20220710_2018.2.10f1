@@ -39,14 +39,14 @@ public class AssetBundleEditor
 
 
     #region ABCfgSO
-    [MenuItem(Constants.MenuItem + "/定位标记数据的SO（除了配置表）", false, 0)] //Alt+R打开资源路径 ,Unity上的路径
+    [MenuItem(Constants.MenuItem_AB + "/定位标记数据的SO（除了配置表）", false, 0)] //Alt+R打开资源路径 ,Unity上的路径
     static void OpenResourcesUIPanel() 
     {
         Selection.activeObject = AssetDatabase.LoadAssetAtPath<ScriptableObject>(m_abCfgSOPath);
     }
 
 
-    [MenuItem(Constants.MenuItem + "/01 添加标记数据和Init类（除了配置表）", false, 1)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/01 添加标记数据和Init类（除了配置表）", false, 1)]//按钮在菜单栏的位置
     public static void InitABCfgSO() //文件夹
     {
         m_abCfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
@@ -61,7 +61,7 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(Constants.MenuItem + "/Clear ABCfgSO", false, 3)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/Clear ABCfgSO", false, 3)]//按钮在菜单栏的位置
     public static void ClearABCfgSO() 
     {
         m_abCfgSO =  AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
@@ -82,7 +82,7 @@ public class AssetBundleEditor
 
 
     #region 标记
-    [MenuItem(Constants.MenuItem + "/02 标记并初始内存",false,21)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/02 标记并初始内存",false,21)]//按钮在菜单栏的位置
     public static void MarkAB()
     {
         AssetDatabase.SaveAssets();
@@ -114,7 +114,7 @@ public class AssetBundleEditor
 
 
 
-    [MenuItem(Constants.MenuItem + "/清理标记", false,22)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/清理标记", false,22)]//按钮在菜单栏的位置
     public static void Unmark()
     {
         string[] oldNameArr = AssetDatabase.GetAllAssetBundleNames();
@@ -131,7 +131,7 @@ public class AssetBundleEditor
 
 
     #region 打包 删包
-    [MenuItem(Constants.MenuItem + "/04 打包", false,61)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/04 打包", false,61)]//按钮在菜单栏的位置
   public  static void BuildAB()
     {
         Common.TickPath(m_outputABPath);
@@ -167,7 +167,7 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(Constants.MenuItem + "/删包", false,62)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/删包", false,62)]//按钮在菜单栏的位置
     static void DeleteAB()
     {
         DirectoryInfo di = new DirectoryInfo(m_outputABPath);  //搜索该文件夹
@@ -204,7 +204,7 @@ public class AssetBundleEditor
     /// <path,ABName>
     /// </summary>
     /// <param name="dic"></param>
-    [MenuItem(Constants.MenuItem+"/03 生成Xml Bin", false,41)]
+    [MenuItem(Constants.MenuItem_AB+"/03 生成Xml Bin", false,41)]
     static void WriteData()
     {
 
@@ -259,7 +259,7 @@ public class AssetBundleEditor
     }
 
    
-    [MenuItem(Constants.MenuItem + "/删Xml Bin", false, 42)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/删Xml Bin", false, 42)]//按钮在菜单栏的位置
     static void DeleteData()
     {
         DirectoryInfo di = new DirectoryInfo(  Application.dataPath );
@@ -604,9 +604,10 @@ public class AssetBundleEditor
     /// </summary>
 
     //放在文件夹Editor下。相邻超过10为一组有分割线
-    [MenuItem(Constants.MenuItem + "/1234 一键打包到内部", false, 81)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_AB + "/1234 一键打包到内部", false, 81)]//按钮在菜单栏的位置
     public static void Build()
     {
+        DataEditor.Xml2BinAll();
         AssetBundleEditor.InitABCfgSO();
         AssetBundleEditor.MarkAB();
         AssetBundleEditor.WriteData();

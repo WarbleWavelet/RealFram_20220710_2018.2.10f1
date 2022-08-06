@@ -24,31 +24,19 @@ namespace Demo14
         AudioClip m_audioClip;
         public override void OnShow(params object[] paralist)
         {
-
-
-            m_MenuPanel = m_GameObject.AddComponent<MenuPanel>();
-            AddButtonClickListener(m_MenuPanel.m_BtnStart, OnBtnStartClick);
-            AddButtonClickListener(m_MenuPanel.m_BtnLoad, OnBtnLoadClick);
-            AddButtonClickListener(m_MenuPanel.m_BtnExit, OnBtnExitClick);
             BindUI();
-            //使用预加载的不可实例资源         
-            //m_audioClip = ResourceMgr.Instance.LoadResource<AudioClip>(Constants_Demo14.MP3_SenLin);
-            //Common.PlayBGMusic(m_audioSource, m_audioClip);
-
-            m_MenuPanel.m_BtnStopAndUnload.onClick.AddListener(() => {
-                m_audioSource.Stop();
-                m_audioSource.clip = null;
-                ResourceMgr.Instance.UnloadResItemByObject(m_audioClip, true);
-                //
-                m_audioClip = null;    //删引用
-            });
+            //      
 
 
-           // Test_PreloadAndInstaniate();
-          
-
+            //Test_UseResWhickIsPreload();
+            //Test_UnloadResWhichIsPrelaod();
+            // Test_PreloadAndInstaniate();
             Test_AsyncLoadSprite();
+            Test_LoadMonsterData();
         }
+
+
+
 
 
 
@@ -60,13 +48,15 @@ namespace Demo14
             ObjectMgr.Instance.UnloadGameObject(go, 0, true);
         }
         #endregion
+
+
         #region 异步加载图片
         void Test_AsyncLoadSprite()
         {
             string path = "Assets/GameData/Images/";
             bool isSprite = true;
-            bool setNativeSize=true;
-            ResourceMgr.Instance.AsyncLoadObject ( path + "fgBlue.png", OnLoadSpriteFinished, AsyncLoadResPriority.High, isSprite,  m_MenuPanel.m_Image01_01 , setNativeSize);
+            bool setNativeSize = true;
+            ResourceMgr.Instance.AsyncLoadObject(path + "fgBlue.png", OnLoadSpriteFinished, AsyncLoadResPriority.High, isSprite, m_MenuPanel.m_Image01_01, setNativeSize);
             ResourceMgr.Instance.AsyncLoadObject(path + "fgGray.png", OnLoadSpriteFinished, AsyncLoadResPriority.Middle, isSprite, m_MenuPanel.m_Image01_02, setNativeSize);
             ResourceMgr.Instance.AsyncLoadObject(path + "fgRed.png", OnLoadSpriteFinished, AsyncLoadResPriority.Low, isSprite, m_MenuPanel.m_Image02_01, setNativeSize);
             ResourceMgr.Instance.AsyncLoadObject(path + "fgYellow.png", OnLoadSpriteFinished, AsyncLoadResPriority.High, isSprite, m_MenuPanel.m_Image02_02, setNativeSize);
@@ -80,26 +70,33 @@ namespace Demo14
             if (obj != null)
             {
                 Sprite sprite = obj as Sprite;
-                          
-                Image image=para1 as Image;
+
+                Image image = para1 as Image;
                 if (para1 != null)
-                { 
+                {
                     image.sprite = sprite;
                 }
 
-                bool setNativeSize =(bool)para2 ;
-                if (para2 != null && setNativeSize==true)
+                bool setNativeSize = (bool)para2;
+                if (para2 != null && setNativeSize == true)
                 {
                     image.SetNativeSize();
                 }
 
-                
+
             }
         }
         #endregion
 
+
+
+        #region 辅助
         void BindUI()
         {
+            m_MenuPanel = m_GameObject.AddComponent<MenuPanel>();
+            AddButtonClickListener(m_MenuPanel.m_BtnStart, OnBtnStartClick);
+            AddButtonClickListener(m_MenuPanel.m_BtnLoad, OnBtnLoadClick);
+            AddButtonClickListener(m_MenuPanel.m_BtnExit, OnBtnExitClick);
             m_audioSource = m_MenuPanel.m_AudioSource;
         }
 
@@ -119,20 +116,42 @@ namespace Demo14
 
 
         }
+        #endregion
+
+
+
+        #region Test
+        void Test_LoadMonsterData()
+        {
+            MonsterData monsterData = CfgMgr.Instance.GetData<MonsterData>(DefinePath.Cfg_MonsterData_Inner);
+            for (int i = 0; i < monsterData.m_MonsterLst.Count; i++)
+            {
+                UnityEngine.Debug.LogFormat("{0} ", monsterData.m_MonsterLst[i].ToString());
+            }
+        }
+
+        /// <summary>
+        /// 使用预加载的不可实例资源   
+        /// </summary>
+        private void Test_UseResWhickIsPreload()
+        {
+            m_audioClip = ResourceMgr.Instance.LoadResource<AudioClip>(Constants_Demo14.MP3_SenLin);
+            Common.PlayBGMusic(m_audioSource, m_audioClip);
+        }
+
+        private void Test_UnloadResWhichIsPrelaod()
+        {
+            m_MenuPanel.m_BtnStopAndUnload.onClick.AddListener(() =>
+            {
+                m_audioSource.Stop();
+                m_audioSource.clip = null;
+                ResourceMgr.Instance.UnloadResItemByObject(m_audioClip, true);
+                //
+                m_audioClip = null;    //删引用
+            });
+        }
+        #endregion
+
+     
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-

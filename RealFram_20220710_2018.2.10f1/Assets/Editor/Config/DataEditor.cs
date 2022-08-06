@@ -85,7 +85,7 @@ public class DataEditor
     }
 
       [MenuItem(Constants.MenuItem_FormatTool + "Xml/Xml2BinAll", false, 1 + m_startIdx)]//按钮在菜单栏的位置
-    static void Xml2BinAll()
+   public static void Xml2BinAll()
     {
 
 

@@ -3,8 +3,8 @@
 public class Constants
 {
     public const float Demo01_Offset = 10f;
-    public const string MenuItem = "MyTools";
-    public const string MenuItem_Offline = "MyTools/离线数据/";
+    public const string MenuItem_AB = "打包";
+    public const string MenuItem_Offline = "离线数据/";
     public const string MenuItem_FormatTool = "数据转换/";
     public const int MenuItem_FormatTool_StartIdx = 0;
     public const string Assets = "My Assets/";

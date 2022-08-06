@@ -93,4 +93,18 @@ public class MonsterBase
     [XmlAttribute("Level")] public int Level { get; set; }              //怪物等级
     [XmlAttribute("Rare")] public int Rare { get; set; }                //怪物稀有度
     [XmlAttribute("Height")]  public float Height { get; set; }         //怪物高度
+
+
+    public override string ToString()
+    {
+        string str = "";
+        str += "\t" + Id;
+        str += "\t" + Name;
+        str += "\t" + OutLook;
+        str += "\t" + Level;
+        str += "\t" + Rare;
+        str += "\t" + Height;
+
+        return str;
+    }
 }
