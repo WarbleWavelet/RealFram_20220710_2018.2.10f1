@@ -20,7 +20,7 @@ using UnityEngine;
 public class DataEditor
 {
     const string m_Xml_InnerPath = "Assets/GameData/Data/Xml/";//xml数据
-    static string m_Xml_OutetrPath = DefinePath.ProjectRoot + "Data/Reg/"; //xml结构
+    static string m_Xml_OutetrPath = DefinePath.ProjectRoot + "Data/Reg/"; //xml结构 reg
     static string m_Excel_OutetrPath = DefinePath.ProjectRoot + "Data/Excel/";//excel数据
     static string m_Excel_InnerPath = "Assets/GameData/Data/Excel/";//没有的
     //
@@ -61,30 +61,9 @@ public class DataEditor
 
 
     #region Xml
-    [MenuItem(Constants.MenuItem_FormatTool + "Xml/Xml2Excel", false, 8 + m_startIdx)]//按钮在菜单栏的位置
-    static void MenuItem_Xml2Excel() //读取工程下xmlPath的xml
-    {
-
-        UnityEngine.Object[] objArr = Selection.objects;
-
-        for (int i = 0; i < objArr.Length; i++)
-        {
-            UnityEngine.Object obj = objArr[i];
-            string title = "正在转成Excel";
-            string info = "";
-            info += "正在转化" + obj.name + "....";
-            float prg = (1.0f * i) / objArr.Length; ;
-            EditorUtility.DisplayCancelableProgressBar(title, info, prg);
-            Xml2Excel(obj.name);
-        }
 
 
-        AssetDatabase.Refresh();
-        EditorUtility.ClearProgressBar();
-    }
-
-
-    [MenuItem(Constants.MenuItem_FormatTool + "Xml/Xml2Bin", false, 2 + m_startIdx)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Xml/Xml2Bin", false, 1 + m_startIdx)]//按钮在菜单栏的位置
     static void Xml2Bin()
     {
 
@@ -107,8 +86,8 @@ public class DataEditor
 
     }
 
-    [MenuItem(Constants.MenuItem_FormatTool + "Xml/AllXml2Bin", false, 3 + m_startIdx)]//按钮在菜单栏的位置
-    static void AllXml2Bin()
+      [MenuItem(Constants.MenuItem_FormatTool + "Xml/Xml2BinAll", false, 1 + m_startIdx)]//按钮在菜单栏的位置
+    static void Xml2BinAll()
     {
 
 
@@ -135,8 +114,33 @@ public class DataEditor
     }
 
 
+     [MenuItem(Constants.MenuItem_FormatTool + "Xml/Xml2Excel", false, 1 + m_startIdx)]//按钮在菜单栏的位置
+    static void MenuItem_Xml2Excel() //读取工程下xmlPath的xml
+    {
 
-    [MenuItem(Constants.MenuItem_FormatTool + "Xml/Test_ReadXml", false, 4 + m_startIdx)]//按钮在菜单栏的位置
+        UnityEngine.Object[] objArr = Selection.objects;
+
+        for (int i = 0; i < objArr.Length; i++)
+        {
+            UnityEngine.Object obj = objArr[i];
+            string title = "正在转成Excel";
+            string info = "";
+            info += "正在转化" + obj.name + "....";
+            float prg = (1.0f * i) / objArr.Length; ;
+            EditorUtility.DisplayCancelableProgressBar(title, info, prg);
+            Xml2Excel(obj.name);
+        }
+
+
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+    }
+
+
+
+
+
+    [MenuItem(Constants.MenuItem_FormatTool + "Xml/Test_ReadXml", false, 1+ m_startIdx)]//按钮在菜单栏的位置
     static void Test_ReadXml() //读取工程下xmlPath的xml
     {
 
@@ -216,27 +220,51 @@ public class DataEditor
     [MenuItem(Constants.MenuItem_FormatTool + "Excel/Excel2Xml", false, 5 + m_startIdx)]//按钮在菜单栏的位置
     static void MenuItem_Excel2Xml() //读取工程下xmlPath的xml
     {
-        //UnityEngine.Object[] objArr = Selection.objects;
+        UnityEngine.Object[] objArr = Selection.objects;
 
-        //for (int i = 0; i < objArr.Length; i++)
-        //{
-        //    UnityEngine.Object obj = objArr[i];
-        //    string title = "正在转成Xml";
-        //    string info = "";
-        //    info += "正在转化" + obj.name + "....";
-        //    float prg = (1.0f * i) / objArr.Length; ;
-        //    EditorUtility.DisplayCancelableProgressBar(title, info, prg);
-        //    //Excel2Xml(obj.name);
-        //    Excel2Xml(obj.name);
-        //}
+        for (int i = 0; i < objArr.Length; i++)
+        {
+            UnityEngine.Object obj = objArr[i];
+            string title = "正在转成Xml";
+            string info = "";
+            info += "正在转化" + obj.name + "....";
+            float prg = (1.0f * i) / objArr.Length; ;
+            EditorUtility.DisplayCancelableProgressBar(title, info, prg);
+            Excel2Xml(obj.name);
+        }
 
-
-        Excel2Xml("BuffData");
         AssetDatabase.Refresh();
         EditorUtility.ClearProgressBar();
     }
 
+    [MenuItem(Constants.MenuItem_FormatTool + "Excel/Excel2XmlAll", false, 5 + m_startIdx)]//按钮在菜单栏的位置
+    static void MenuItem_Excel2XmlAll() //读取工程下xmlPath的xml
+    {
+        bool findOnce = false;
+        string name = "";
+        string[] filePathArr = Directory.GetFiles(m_Xml_OutetrPath, "*", SearchOption.TopDirectoryOnly);//我需要保存一些以前用的在目录，所以top
+        for (int i = 0; i < filePathArr.Length; i++)
+        {
 
+
+            if (filePathArr[i].EndsWith(".xml") == false)
+            {
+                if (i >= filePathArr.Length - 1 && findOnce==false)
+                {
+                    Debug.LogErrorFormat("没有找到Reg，路径：{0}", m_Xml_OutetrPath);
+                }
+                continue;
+            }
+            EditorUtility.DisplayProgressBar("查找文件夹下的类", "正在扫描路径" + filePathArr[i] + "... ...", 1.0f / filePathArr.Length * i);
+            name=  Common.TrimName(filePathArr[i], TrimNameType.SlashAndPoint);
+            Excel2Xml( name );
+            findOnce = true;
+
+        }
+
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+    }
 
 
 
@@ -293,7 +321,7 @@ public class DataEditor
 
 
     #region Reflection
-    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_根据反射读取类的属性值", false, 6 + m_startIdx)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_根据反射读取类的属性值", false, 99 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_Reflection() //读取工程下xmlPath的xml
     {
         TestReflection testRef = new TestReflection
@@ -332,7 +360,7 @@ public class DataEditor
     }
 
 
-    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类", false, 7 + m_startIdx)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类", false, 99 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_ReflectionByData() //读取工程下xmlPath的xml
     {
         object obj = Ref_Class_New("TestReflection01");
@@ -349,7 +377,7 @@ public class DataEditor
     }
 
 
-    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类(浮点，枚举)", false, 4 + m_startIdx)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类(浮点，枚举)", false, 99 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_ReflectionByData_Float_Enum() //读取工程下xmlPath的xml
     {
         object obj = Ref_Class_New("TestReflection02");
@@ -366,7 +394,7 @@ public class DataEditor
 
     }
 
-    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类(列表)", false, 4 + m_startIdx)]//按钮在菜单栏的位置
+    [MenuItem(Constants.MenuItem_FormatTool + "Reflection/Test_数据反射成类(列表)", false, 99 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_ReflectionByData_Lst() //读取工程下xmlPath的xml
     {
         object _classObj = Ref_Class_New("TestReflection02");
@@ -429,8 +457,15 @@ public class DataEditor
         string excelName = "";
         Dictionary<string, Lst> lstDic = ReadReg(regName, ref excelName, ref xmlName, ref className);      //第一步，读取Reg文件，确定类的结构
 
-        
+
         string excelPath = m_Excel_OutetrPath + excelName;//第二步，读取excel里面的数据
+        if (File.Exists(excelPath) == false)
+        {
+            Debug.LogErrorFormat("没有表{0},路径：{1}",excelName, m_Excel_OutetrPath);
+            return;
+        }
+
+
         Dictionary<string, Sheet> sheetDic = new Dictionary<string, Sheet>();
         try  //读取Excel
         {
@@ -804,7 +839,6 @@ public class DataEditor
 
 
 
-
     /// <summary>
     /// 递归读取类里面的数据
     /// </summaryxml_VarClass
@@ -828,7 +862,7 @@ public class DataEditor
         List<Var> varLst = lst.m_VarList;
         Var _var = lst.m_ParentVar;//这个是AllMonster，只能统一
         //object var_NameLst = Ref_Class_List_Get(  _object, "m_MonsterLst",1  );//第一层var,类的属性名 MonsterData.m_MonsterLst
-        object var_NameLst = Ref_Class_Member_Get(_object, _var.m_Name);// 第一层var
+        object var_NameLst = Ref_Class_Member_Get(_object, Class2XmlChangeString( _var.m_Name) );// 第一层var
         int varCnt = Ref_List_Cnt(var_NameLst, 1);
         global::Sheet sheet = new global::Sheet();
 
@@ -1437,8 +1471,8 @@ public class DataEditor
     /// <param name="memberVal"></param>
     static void Ref_Class_Member_SetValue(object _object, string memberName, object memberVal)
     {
-        PropertyInfo pi = _object.GetType().GetProperty(memberName);
-        pi.SetValue(_object, memberVal);
+        PropertyInfo pi = _object.GetType().GetProperty( Class2XmlChangeString( memberName) );
+        pi.SetValue(_object, memberVal );
     }
 
     public static string[] SplitString(string _string, string splitStr)
@@ -1646,6 +1680,18 @@ public class DataEditor
 
 
         }
+    }
+
+    /// <summary>
+    /// 当xml命名风格和C#类命名风格冲突，转接表
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    static string Class2XmlChangeString(string name)
+    {
+        if (name == "m_MonsterLst") return "AllMonster";
+        if (name == "AllMonster") return "m_MonsterLst";
+        return name;
     }
 
 
