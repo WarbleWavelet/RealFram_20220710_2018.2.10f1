@@ -21,53 +21,6 @@ public class FormatTool
 
 
     #region Xml
-
-    /// <summary>
-    /// 编辑器是用的
-    /// </summary>
-    /// <param name="toPath"></param>
-    /// <param name="obj"></param>
-    /// <returns></returns>
-   public static bool Class2Xml(string toPath, System.Object obj)
-    {
-        if (File.Exists(toPath))
-        {
-            File.Delete(toPath);
-        }
-
-
-        try
-        {
-            using (FileStream fs = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)) //用完自动Close
-            {
-                using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))
-                {
-
-                   //XmlSerializerNamespaces xmlSerializerNamespaces = new XmlSerializerNamespaces();
-                   // xmlSerializerNamespaces.Add(string.Empty, string.Empty);
-                    XmlSerializer xml = new XmlSerializer(obj.GetType());
-                    xml.Serialize(sw, obj);
-
-                }
-            }
-            return true;
-
-
-        }
-        catch (System.Exception)
-        {
-
-            Debug.LogErrorFormat("Xml2Class，无该类{0}", obj.GetType());
-        }
-
-                               
-        return false;
-    }
-
-
-   
-
-
     /// <summary>
     /// 运行时使用的
     /// </summary>
@@ -126,29 +79,7 @@ public class FormatTool
 
 
     #region Bin
-    /// <summary>
-    /// 类转换成二进制
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="obj"></param>
-    /// <returns></returns>
-    public static bool Class2Bin(string path, System.Object obj)
-    {
-        try
-        {
-            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(fs, obj);
-            }
-            return true;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("此类无法转换成二进制 " + obj.GetType() + "," + e);
-        }
-        return false;
-    }
+
 
     /// <summary>
     /// 读取二进制
@@ -182,6 +113,78 @@ public class FormatTool
         }
         return t;
     }
+    #endregion
+
+
+
+    #region Class
+    /// <summary>
+    /// 类转换成二进制
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public static bool Class2Bin(string path, System.Object obj)
+    {
+        try
+        {
+            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(fs, obj);
+            }
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("此类无法转换成二进制 " + obj.GetType() + "," + e);
+        }
+        return false;
+    }
+
+
+    /// <summary>
+    /// 编辑器是用的
+    /// </summary>
+    /// <param name="toPath"></param>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public static bool Class2Xml(string toPath, System.Object obj)
+    {
+        if (File.Exists(toPath))
+        {
+            File.Delete(toPath);
+        }
+
+
+        try
+        {
+            using (FileStream fs = new FileStream(toPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)) //用完自动Close
+            {
+                using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))
+                {
+
+                    //XmlSerializerNamespaces xmlSerializerNamespaces = new XmlSerializerNamespaces();
+                    // xmlSerializerNamespaces.Add(string.Empty, string.Empty);
+                    XmlSerializer xml = new XmlSerializer(obj.GetType());
+                    xml.Serialize(sw, obj);
+
+                }
+            }
+            return true;
+
+
+        }
+        catch (System.Exception)
+        {
+
+            Debug.LogErrorFormat("Xml2Class，无该类{0}", obj.GetType());
+        }
+
+
+        return false;
+    }
+
     #endregion
 }
 

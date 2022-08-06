@@ -22,11 +22,9 @@ public class DataEditor
     const string m_Xml_InnerPath = "Assets/GameData/Data/Xml/";//xml数据
     static string m_Xml_OutetrPath = DefinePath.ProjectRoot + "Data/Reg/"; //xml结构 reg
     static string m_Excel_OutetrPath = DefinePath.ProjectRoot + "Data/Excel/";//excel数据
-    static string m_Excel_InnerPath = "Assets/GameData/Data/Excel/";//没有的
     //
-    const string m_path_Bin = "Assets/GameData/Data/Bin/";
-    const string m_path_Scripts = "Assets/Scripts/Data/";
-    const int m_startIdx = Constants.MenuItem_FormatTool_StartIdx;
+    const string m_Bin_InnerPath = "Assets/GameData/Data/Bin/";
+    const int m_startIdx = Constants.MenuItem_FormatTool_StartIdx;//调顺序，但因为二级难调
 
     #region MenuItem
 
@@ -255,7 +253,7 @@ public class DataEditor
                 }
                 continue;
             }
-            EditorUtility.DisplayProgressBar("查找文件夹下的类", "正在扫描路径" + filePathArr[i] + "... ...", 1.0f / filePathArr.Length * i);
+            EditorUtility.DisplayProgressBar("查找文件夹下的Excel", "正在扫描路径" + filePathArr[i] + "... ...", 1.0f / filePathArr.Length * i);
             name=  Common.TrimName(filePathArr[i], TrimNameType.SlashAndPoint);
             Excel2Xml( name );
             findOnce = true;
@@ -266,7 +264,35 @@ public class DataEditor
         EditorUtility.ClearProgressBar();
     }
 
+    [MenuItem(Constants.MenuItem_FormatTool + "Excel/Excel2BinAll", false, 5 + m_startIdx)]//按钮在菜单栏的位置
+    static void MenuItem_Excel2BinAll() //读取工程下xmlPath的xml
+    {
+        bool findOnce = false;
+        string name = "";
+        string[] filePathArr = Directory.GetFiles(m_Xml_OutetrPath, "*", SearchOption.TopDirectoryOnly);//我需要保存一些以前用的在目录，所以top
+        for (int i = 0; i < filePathArr.Length; i++)
+        {
 
+
+            if (filePathArr[i].EndsWith(".xml") == false)
+            {
+                if (i >= filePathArr.Length - 1 && findOnce == false)
+                {
+                    Debug.LogErrorFormat("没有找到Reg，路径：{0}", m_Xml_OutetrPath);
+                }
+                continue;
+            }
+            EditorUtility.DisplayProgressBar("查找文件夹下的Excel", "正在扫描路径" + filePathArr[i] + "... ...", 1.0f / filePathArr.Length * i);
+            name = Common.TrimName(filePathArr[i], TrimNameType.SlashAndPoint);
+            bool toBin = true;
+            Excel2Xml(name,toBin);
+            findOnce = true;
+
+        }
+
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+    }
 
     [MenuItem(Constants.MenuItem_FormatTool + "Excel/Test_WriteExcel", false, 5 + m_startIdx)]//按钮在菜单栏的位置
     static void Test_WriteExcel() //读取工程下xmlPath的xml
@@ -450,7 +476,7 @@ public class DataEditor
 
 
     #region 辅助
-    static void Excel2Xml(string regName)
+    static void Excel2Xml(string regName, bool toBin=false)
     {
         string className = "";
         string xmlName = "";
@@ -494,7 +520,7 @@ public class DataEditor
                             int colIdx = 0;
 
 
-                            if ( IsSubSheet(lst)==true)
+                            if ( IsSubSheet(lst)==true) //列表要拆分
                             {
 
                                string IDVal=  worksheet.Cells[rowIdx + 1, 1].Value.ToString().Trim();   
@@ -542,7 +568,18 @@ public class DataEditor
         object _object =  NewSetObjectByClassName(  className, lstDic,sheetDic);
         //
         FormatTool.Class2Xml(m_Xml_InnerPath + xmlName, _object);
-        Debug.LogFormat("{0}转{1}成功" ,excelName,xmlName);
+        if (toBin == false)
+        {
+            Debug.LogFormat("{0}转{1}成功", excelName, xmlName);
+        }
+        else
+        {
+            FormatTool.Class2Bin(m_Bin_InnerPath+className+".bytes" ,_object );
+            Debug.LogFormat("{0}转{1}成功", excelName, className + ".bytes");
+        }
+
+
+    
         AssetDatabase.Refresh();
     }
 
@@ -1709,7 +1746,7 @@ public class DataEditor
             if (type != null)
             {
                 string xmlPath = m_Xml_InnerPath + name + ".xml";
-                string binPath = m_path_Bin + name + ".bytes";
+                string binPath = m_Bin_InnerPath + name + ".bytes";
                 object obj = FormatTool.Xml2Class(xmlPath, type);
                 FormatTool.Class2Bin(binPath, obj);
                 Debug.Log(name + "xml转二进制成功，二进制路径为:" + binPath);
@@ -1837,6 +1874,7 @@ public class Row
 }
 
 #endregion
+
 
 #region 反射 测试类
 public class TestReflection
