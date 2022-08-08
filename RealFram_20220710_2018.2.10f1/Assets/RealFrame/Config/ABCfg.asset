@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42bb9f07c0f354d41b619361e2e0f394, type: 3}
+  m_Name: ABCfg
+  m_EditorClassIdentifier: 
+  m_PrefabPathLst:
+  - Assets/GameData/Prefabs
+  m_FolderPathLst:
+  - m_ABName: sound
+    m_Path: Assets/GameData/Sounds
+  - m_ABName: shader
+    m_Path: Assets/GameData/Shaders
+  - m_ABName: image
+    m_Path: Assets/GameData/Images
+  - m_ABName: ugui
+    m_Path: Assets/GameData/UGUI
+  - m_ABName: bytes
+    m_Path: Assets/GameData/Data/Bin

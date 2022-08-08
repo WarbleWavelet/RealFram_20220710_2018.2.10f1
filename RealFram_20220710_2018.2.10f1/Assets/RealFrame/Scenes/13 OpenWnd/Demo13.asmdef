@@ -1,0 +1,13 @@
+{
+    "name": "Demo13",
+    "references": [
+        "Common",
+        "Manager"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

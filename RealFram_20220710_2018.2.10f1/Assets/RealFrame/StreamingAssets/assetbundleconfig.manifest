@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 229045366
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b18b303006948bb2ab4b6650c290c8bf
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/RealFrame/GameData/Data/ABData/AssetBundleConfig.bytes
+Dependencies: []

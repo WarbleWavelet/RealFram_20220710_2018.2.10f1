@@ -1,0 +1,11 @@
+{
+    "name": "Manager",
+    "references": [
+        "Common",
+        "Data"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

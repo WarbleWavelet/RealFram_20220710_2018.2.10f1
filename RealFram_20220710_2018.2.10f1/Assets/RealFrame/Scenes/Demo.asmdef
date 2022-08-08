@@ -1,0 +1,14 @@
+{
+    "name": "Demo",
+    "references": [
+        "Common",
+        "Manager",
+        "Data"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
