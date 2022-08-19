@@ -27,6 +27,7 @@ public class DefinePath
     public const string MenuItem_AB = "AB";
     public const string MenuItem_Offline = "离线数据/";
     public const string MenuItem_FormatTool = "数据转换/";
+    public const string MenuItem_Jenkins = "Jenkins/";
     public const int MenuItem_FormatTool_StartIdx = 0;
     public const string Assets_MyAssets = "My Assets/";
     #endregion

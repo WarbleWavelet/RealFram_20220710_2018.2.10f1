@@ -8,10 +8,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 524ef109595071343854c6f0632bd34c, type: 3}
+  m_Script: {fileID: 11500000, guid: 567ea2cd90ca8234b9bdd1bad4ad3465, type: 3}
   m_Name: RealFrameCfg
   m_EditorClassIdentifier: 
-  m_ABBinPath: Assets/RealFrame/GameData/Data/ABData/
-  m_XmlPath: Assets/RealFrame/GameData/Data/Xml/
-  m_BinPath: Assets/RealFrame/GameData/Data/Bin/
-  m_ScriptsPath: Assets/RealFrame/Scripts/SO/
+  m_ABBinPath: 
+  m_XmlPath: 
+  m_BinPath: 
+  m_ScriptsPath: 
