@@ -18,14 +18,38 @@ public class JenkinsEditor : Editor
     [MenuItem(DefinePath.MenuItem_Jenkins + "写入txt当前日期", false, 100)]
     static void MenuItem_WriteTxt()
     {
-        FileInfo fi = new FileInfo(DefinePath.RealFrameRoot+ "输出可删除/Test_Jenkins_写入txt当前日期.txt");
-        StreamWriter sw = fi.CreateText();
-        sw.WriteLine(System.DateTime.Now);
-
-        sw.Close();
-        sw.Dispose();
-
-        AssetDatabase.Refresh();
+        WriteTxt(DefinePath.RealFrameRoot + "输出可删除/Test_Jenkins_写入txt当前日期.txt", System.DateTime.Now.ToString());
     }
 
+    [MenuItem(DefinePath.MenuItem_Jenkins + "压缩程序包", false, 100)]
+    static void MenuItem_Build_PC()
+    {
+        string compressedPackageName = GetCompressedPackageName();
+        WriteTxt(DefinePath.AppBuildPath + "buildname.txt", compressedPackageName);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="filePath">全写，包括文件名和后缀</param>
+    /// <param name="fileContent"></param>
+    static void WriteTxt(string filePath,string fileContent)
+    {
+        FileInfo fi = new FileInfo( filePath );
+        StreamWriter sw = fi.CreateText();
+        sw.WriteLine( fileContent );
+
+        sw.Close();
+        sw.Dispose(); 
+    }
+
+    /// <summary>
+    ///  压缩包的名字
+    /// </summary>
+    /// <returns></returns>
+    public static string GetCompressedPackageName()
+    {
+        return AppEditor.GetABFolderName();
+
+    }
 }

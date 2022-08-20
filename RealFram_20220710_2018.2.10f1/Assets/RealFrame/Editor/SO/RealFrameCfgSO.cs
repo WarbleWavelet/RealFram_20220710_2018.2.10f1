@@ -3,7 +3,7 @@
 	作者：lenovo
     邮箱: 
     日期：2022/8/7 13:33:21
-	功能： RealFrame总的路径配置
+	功能：RealFrame总的路径配置
 *****************************************************/
 
 using System.Collections;
@@ -14,7 +14,7 @@ using UnityEditor;
 
 
 
-[CreateAssetMenu(fileName = "RealFrameCfgSO", menuName = DefinePath.Assets_MyAssets + "Create RealFrameCfg", order = 0)] //Constants.MenuAssets="My Assets"
+[CreateAssetMenu(fileName = "RealFrameCfg", menuName = DefinePath.Assets_MyAssets + "Create RealFrameCfg", order = 0)] //Constants.MenuAssets="My Assets"
 public class RealFrameCfgSO : ScriptableObject
 {
     //打包时生成AB包配置表的二进制路径
@@ -28,7 +28,7 @@ public class RealFrameCfgSO : ScriptableObject
 }
 
 [CustomEditor(typeof(RealFrameCfgSO))]
-public class RealFramConfigInspector : UnityEditor.Editor
+public class RealFramConfigInspector : Editor
 {
     public SerializedProperty m_ABBinPath;
     public SerializedProperty m_XmlPath;
@@ -62,7 +62,7 @@ public class RealFramConfigInspector : UnityEditor.Editor
 
 public class RealFrameCfg
 {
-    private const string RealFramPath = "Assets/RealFrame/Config/RealFrameCfg.asset";
+    private const string RealFramPath = DefinePath.RealFrameCfgSOPath;
 
     public static RealFrameCfgSO GetRealFram()
     {

@@ -27,6 +27,7 @@ public class DefinePath
     public const string MenuItem_AB = "AB";
     public const string MenuItem_Offline = "离线数据/";
     public const string MenuItem_FormatTool = "数据转换/";
+    public const string MenuItem_RealFrame = "RealFrame配置/";
     public const string MenuItem_Jenkins = "Jenkins/";
     public const int MenuItem_FormatTool_StartIdx = 0;
     public const string Assets_MyAssets = "My Assets/";
@@ -65,7 +66,7 @@ public class DefinePath
      public static string abCfg_Bytes = "Assets/"+DefinePath.RealFrame+"/GameData/Data/ABData/AssetBundleConfig.bytes"; //bytes
 
 
-
+    public static string AppBuildPath = Application.dataPath + "/../BuildTarget/";
     public static string AppBuildPath_Andriod = Application.dataPath + "/../BuildTarget/Android/"; 
     public static string AppBuildPath_IOS = Application.dataPath + "/../BuildTarget/IOS/";
     public static string AppBuildPath_Windows = Application.dataPath + "/../BuildTarget/Windows/";

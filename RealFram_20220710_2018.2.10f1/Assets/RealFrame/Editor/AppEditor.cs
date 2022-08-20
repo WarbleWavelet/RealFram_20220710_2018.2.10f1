@@ -17,21 +17,37 @@ using UnityEngine;
 
 public class AppEditor
 {
-  static  string m_appBuildPath_Android = DefinePath.AppBuildPath_Andriod;
-  static  string m_appBuildPath_IOS = DefinePath.AppBuildPath_IOS;
-  static  string m_appBuildPath_Windows = DefinePath.AppBuildPath_Windows; 
-    //
-    static  string m_abBuildPath_Android = DefinePath.ABBuildPath_Andriod + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
-  static  string m_abBuildPath_IOS = DefinePath.ABBuildPath_IOS + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
-  static  string m_abBuildPath_Windows = DefinePath.ABBuildPath_Windows + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
-   //
-  static  string m_OutputABInnerPath = DefinePath.OutputABInnerPath;
-  static  string m_OutputABOutterPath = DefinePath.OutputABOutterPath +"Windows/" + EditorUserBuildSettings.activeBuildTarget.ToString()+"/";
 
-    static string m_appName = PlayerSettings.productName;
+    #region 字属
+    static string m_appBuildPath_Android = DefinePath.AppBuildPath_Andriod;
+    static string m_appBuildPath_IOS = DefinePath.AppBuildPath_IOS;
+    static string m_appBuildPath_Windows = DefinePath.AppBuildPath_Windows;
+    //
+    static string m_abBuildPath_Android = DefinePath.ABBuildPath_Andriod + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    static string m_abBuildPath_IOS = DefinePath.ABBuildPath_IOS + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    static string m_abBuildPath_Windows = DefinePath.ABBuildPath_Windows + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    //
+    static string m_OutputABInnerPath = DefinePath.OutputABInnerPath;
+    static string m_OutputABOutterPath = DefinePath.OutputABOutterPath + "Windows/" + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+
+    static string m_appName = PlayerSettings.productName;//注意设为RealFrame
+    #endregion
+    [MenuItem(DefinePath.MenuItem_AB + "/5 外部生成执行程序", false, 82)]//按钮在菜单栏的位置
+    public static void BuildApp()
+    {
+
+        BuildPipeline.BuildPlayer(
+            GetAllEnabledScenes(), //打工程包
+            GetExecutableProgramPath(),
+            EditorUserBuildSettings.activeBuildTarget,
+            BuildOptions.None
+        );
+
+        Debug.LogFormat("导出到外部成功：{0}", m_OutputABOutterPath);
+    }
 
     //[MenuItem(Constants.MenuItem + "/一键打包到外部", false, 82)]//因为脚本不能加AB的错误，不要一键了
-    [MenuItem(DefinePath.MenuItem_AB + "/5导出到外部", false, 82)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "/5 外导包 生成执行程序", false, 82)]//按钮在菜单栏的位置
     public static void Output()
     {
 
@@ -40,18 +56,19 @@ public class AppEditor
         Copy(m_OutputABInnerPath   , m_OutputABOutterPath); //外部AB包
 
 
-        BuildPipeline.BuildPlayer( GetAllEnabledScenes(), //打工程包
-            GetSavePath(),
+        BuildPipeline.BuildPlayer( 
+            GetAllEnabledScenes(), //打工程包
+            GetExecutableProgramPath(),
             EditorUserBuildSettings.activeBuildTarget,
             BuildOptions.None
-            );
+        );
 
-       DeleteAllFileInPath( m_OutputABInnerPath);
+        DeleteAllPackInPath(m_OutputABInnerPath);//删除内部的包
 
         Debug.LogFormat("导出到外部成功：{0}", m_OutputABOutterPath);
     }
 
-    [MenuItem(DefinePath.MenuItem_AB + "/12345一键生成并且导出到外部", false, 82)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "/12345一键生成、外导包和生成执行程序", false, 82)]//按钮在菜单栏的位置
     public static void BuildAndOutput()
     {
 
@@ -60,22 +77,23 @@ public class AppEditor
         Copy(m_OutputABInnerPath, m_OutputABOutterPath); //外部AB包
 
 
-        BuildPipeline.BuildPlayer(GetAllEnabledScenes(), //打工程包
-            GetSavePath(),
+        BuildPipeline.BuildPlayer(
+            GetAllEnabledScenes(), //打工程包
+            GetExecutableProgramPath(),
             EditorUserBuildSettings.activeBuildTarget,
             BuildOptions.None
-            );
+        );
 
-        DeleteAllFileInPath(m_OutputABInnerPath);
+        DeleteAllPackInPath(m_OutputABInnerPath);//删除内部的包
         Debug.LogFormat("一键生成并且导出到外部成功：{0}", m_OutputABOutterPath);
     }
 
     #region 辅助
     /// <summary>
-    /// 根据平台得到工程输出路径
+    /// 根据平台得到工程输出路径 (全写，包括后缀名)
     /// </summary>
     /// <returns></returns>
-    static string GetSavePath()
+    static string GetExecutableProgramPath()
     {
         string savePath = "";
         string last = "";
@@ -84,37 +102,52 @@ public class AppEditor
         {
             case BuildTarget.Android:
                 {
-                    savePath = m_appBuildPath_Android;
+                    savePath += m_appBuildPath_Android;
                     last = ".apk";
                 }
                 break;
             case BuildTarget.iOS:
                 {
-                    savePath = m_appBuildPath_IOS;
-
+                    savePath += m_appBuildPath_IOS;
+                    last = ".ipa"; //IOS系统软件的后缀名是IPA
                 }
                 break;
             case BuildTarget.StandaloneWindows64:
                 {
-                    savePath = m_appBuildPath_Windows;
+                    savePath += m_appBuildPath_Windows;
                     last = ".exe";
                 }
                 break;
             case BuildTarget.StandaloneWindows:
                 {
-                    savePath = m_appBuildPath_Windows;
+                    savePath += m_appBuildPath_Windows;
                     last = ".exe";
                 }
                 break;
             default: { } break;
         }
         savePath += m_appName;
-        savePath += "_" + EditorUserBuildSettings.activeBuildTarget;
-        savePath += "_" + string.Format("{0:yyyy_MM_dd_HH_mm}", DateTime.Now);
+        savePath += "_"+EditorUserBuildSettings.activeBuildTarget;
+        savePath += "_" + string.Format("{0:yyyy_MM_dd_HH_mm}",System.DateTime.Now);
         savePath += "/" + m_appName;
         savePath += last;
+
+
         return savePath;
     }
+
+
+    /// <summary>
+    /// 输出AB文件夹的名字
+    /// </summary>
+    /// <returns></returns>
+    public static string GetABFolderName()
+    {
+        return string.Format("{0}_{1}_{2:yyyy_MM_dd_HH_mm}",m_appName,EditorUserBuildSettings.activeBuildTarget,DateTime.Now);
+
+    }
+
+
 
 
     /// <summary>
@@ -191,7 +224,7 @@ public class AppEditor
     /// <summary>
     /// 删除文件夹下的所有文件
     /// </summary>
-    static void DeleteAllFileInPath( string path)
+    static void DeleteAllPackInPath( string path)
     {
         try
         {
