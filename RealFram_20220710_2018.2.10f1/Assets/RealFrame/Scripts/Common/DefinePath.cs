@@ -34,6 +34,8 @@ public class DefinePath
     #endregion
 
 
+
+    #region 资源
     public const string Shader_BengHuai = "Custom/benghuai";
 
 
@@ -46,6 +48,10 @@ public class DefinePath
     public const string Demo10_Prefab_Attack = "Assets/" + DefinePath.RealFrame + "/GameData/Prefabs/Attack.prefab";
     public const string Demo11_Prefab_Attack = "Assets/" + DefinePath.RealFrame + "/GameData/Prefabs/Attack.prefab";
     public const string Demo14_MP3_SenLin = "Assets/" + DefinePath.RealFrame + "/GameData/Sounds/senlin.mp3";
+    public const string Demo14_Images_PathPreFixed = "Assets/" + DefinePath.RealFrame + "/GameData/Images/";
+    #endregion  
+
+
 
 
     #region ScriptObject
@@ -107,10 +113,12 @@ public class DefinePath_Demo14
     public const string Scene_Empty = "Empty14";
     //
     private const string PanelPath = "Assets/" + DefinePath.RealFrame + "/GameData/Prefabs/UGUI/Panel/Demo14/";
+    private const string PanelPath1 = "Assets/" + DefinePath.RealFrame + "/GameData/UGUI/";
     public const string Prefab_LoadPanel = PanelPath + "Demo14LoadPanel.prefab";
     public const string Prefab_MenuPanel = PanelPath + "Demo14MenuPanel.prefab";
     public const string Prefab_Attack = "Assets/" + DefinePath.RealFrame + "/GameData/Prefabs/Attack.prefab";
     public const string MP3_SenLin = "Assets/" + DefinePath.RealFrame + "/GameData/Sounds/senlin.mp3";
+
 }
 #endregion  
 

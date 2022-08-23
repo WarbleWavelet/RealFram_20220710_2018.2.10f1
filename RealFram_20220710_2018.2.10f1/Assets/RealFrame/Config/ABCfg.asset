@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Name: ABCfg
   m_EditorClassIdentifier: 
   m_PrefabPathLst:
-  - Assets/GameData/Prefabs
+  - Assets/RealFrame/GameData/Prefabs
   m_FolderPathLst:
   - m_ABName: sound
-    m_Path: Assets/GameData/Sounds
+    m_Path: Assets/RealFrame/GameData/Sounds
   - m_ABName: shader
-    m_Path: Assets/GameData/Shaders
+    m_Path: Assets/RealFrame/GameData/Shaders
   - m_ABName: image
-    m_Path: Assets/GameData/Images
+    m_Path: Assets/RealFrame/GameData/Images
   - m_ABName: ugui
-    m_Path: Assets/GameData/UGUI
+    m_Path: Assets/RealFrame/GameData/UGUI
   - m_ABName: bytes
-    m_Path: Assets/GameData/Data/Bin
+    m_Path: Assets/RealFrame/GameData/Data/Bin

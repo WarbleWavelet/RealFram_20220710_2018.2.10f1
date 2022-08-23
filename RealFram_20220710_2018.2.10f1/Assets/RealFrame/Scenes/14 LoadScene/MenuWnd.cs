@@ -31,7 +31,7 @@ namespace Demo14
             Test_UseResWhickIsPreload();
             //Test_UnloadResWhichIsPrelaod();
             // Test_PreloadAndInstaniate();
-            //Test_AsyncLoadSprite();
+            Test_AsyncLoadSprite();
            // Test_LoadMonsterData();
         }
 
@@ -53,7 +53,7 @@ namespace Demo14
         #region 异步加载图片
         void Test_AsyncLoadSprite()
         {
-            string path = "Assets/GameData/Images/";
+            string path = DefinePath.Demo14_Images_PathPreFixed;
             bool isSprite = true;
             bool setNativeSize = true;
             ResourceMgr.Instance.AsyncLoadObject(path + "fgBlue.png", OnLoadSpriteFinished, AsyncLoadResPriority.High, isSprite, m_MenuPanel.m_Image01_01, setNativeSize);

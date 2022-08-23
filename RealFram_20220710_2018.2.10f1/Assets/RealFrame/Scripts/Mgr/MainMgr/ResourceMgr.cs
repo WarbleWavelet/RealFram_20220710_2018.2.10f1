@@ -228,6 +228,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
             {
                 resItem = new ResItem(crc);
 
+                throw new System.Exception("AB包中加载不到资源");
             }
         }
    

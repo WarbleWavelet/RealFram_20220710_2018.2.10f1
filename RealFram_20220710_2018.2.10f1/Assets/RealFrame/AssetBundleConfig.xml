@@ -25,6 +25,30 @@
     <AssetName>Assets/RealFrame/GameData/Data/Bin/MonsterData.bytes</AssetName>
   </ABLst>
   <ABLst>
+    <Path>Assets/RealFrame/GameData/Prefabs/Cube.prefab</Path>
+    <Crc>3395372420</Crc>
+    <ABName>cube</ABName>
+    <AssetName>Assets/RealFrame/GameData/Prefabs/Cube.prefab</AssetName>
+  </ABLst>
+  <ABLst>
+    <Path>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo13/Demo13MenuPanel.prefab</Path>
+    <Crc>2109894560</Crc>
+    <ABName>demo13menupanel</ABName>
+    <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo13/Demo13MenuPanel.prefab</AssetName>
+  </ABLst>
+  <ABLst>
+    <Path>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo14/Demo14LoadPanel.prefab</Path>
+    <Crc>1739701272</Crc>
+    <ABName>demo14loadpanel</ABName>
+    <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo14/Demo14LoadPanel.prefab</AssetName>
+  </ABLst>
+  <ABLst>
+    <Path>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo14/Demo14MenuPanel.prefab</Path>
+    <Crc>3212063898</Crc>
+    <ABName>demo14menupanel</ABName>
+    <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo14/Demo14MenuPanel.prefab</AssetName>
+  </ABLst>
+  <ABLst>
     <Path>Assets/RealFrame/GameData/Images/fgBlue.png</Path>
     <Crc>1269563433</Crc>
     <ABName>image</ABName>

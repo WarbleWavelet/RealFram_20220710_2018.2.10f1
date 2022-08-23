@@ -34,7 +34,7 @@ namespace Demo14
 		public Button btnPlay;
 		AudioClip clip;
 		AudioSource source;
-		bool state = true;
+	public	bool LoadFromAB = true;
 		#endregion
 
 		#region 生命
@@ -43,8 +43,8 @@ namespace Demo14
 			base.Awake();
 			GameObject.DontDestroyOnLoad(gameObject);
 			//
-			 state = true;
-			ResourceMgr.Instance.SetLoadFromAB(state);
+
+			ResourceMgr.Instance.SetLoadFromAB(LoadFromAB);
 			InitMgr();
 			RegisterUI();
 			BindUI();
@@ -83,8 +83,8 @@ namespace Demo14
 
 			#region Mgr中资源的加载方式、切场景
 												
-			toggle.GetComponentInChildren<Text>().text = 	state.ToString();
-			toggle.isOn = state;
+			toggle.GetComponentInChildren<Text>().text = LoadFromAB.ToString();
+			toggle.isOn = LoadFromAB;
 			toggle.onValueChanged.AddListener((bool _state) =>
 			{
 				ResourceMgr.Instance.SetLoadFromAB(_state);
@@ -192,7 +192,7 @@ namespace Demo14
         #region 辅助
         void InitMgr()
 		{
-			bool log = false;
+			bool log = true;
 			AssetBundleMgr.Instance.InitMgr(log);
 			ResourceMgr.Instance.InitMgr(this);
 

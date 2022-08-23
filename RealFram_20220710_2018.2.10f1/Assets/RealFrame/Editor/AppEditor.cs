@@ -30,7 +30,7 @@ public class AppEditor
     static string m_OutputABInnerPath = DefinePath.OutputABInnerPath;
     static string m_OutputABOutterPath = DefinePath.OutputABOutterPath + "Windows/" + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
 
-    static string m_appName = PlayerSettings.productName;//注意设为RealFrame
+    public  static string m_appName = PlayerSettings.productName;//注意设为RealFrame
     #endregion
     [MenuItem(DefinePath.MenuItem_AB + "/5 外部生成执行程序", false, 82)]//按钮在菜单栏的位置
     public static void BuildApp()

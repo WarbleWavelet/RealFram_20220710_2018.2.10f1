@@ -2546,6 +2546,7 @@ MonoBehaviour:
   btnPreload: {fileID: 250245142}
   btnPreloadResObj: {fileID: 40752671}
   btnPlay: {fileID: 236186122}
+  LoadFromAB: 1
 --- !u!81 &1772943727
 AudioListener:
   m_ObjectHideFlags: 0
