@@ -27,6 +27,8 @@ public class JenkinsEditor : Editor
     {
         //string compressedPackageName = GetCompressedPackageNameByUnity();//用unity的参数
         string compressedPackageName = GetCompressedPackageNameByJenkins(); //用Jenkins的参数
+        string savePath = AppEditor.GetExecutableProgramPath("PC");
+        AppEditor.BuildApp();
         WriteTxt(DefinePath.AppBuildPath + "buildname.txt", compressedPackageName);
     }
 
@@ -38,14 +40,14 @@ public class JenkinsEditor : Editor
     /// </summary>
     /// <param name="filePath">全写，包括文件名和后缀</param>
     /// <param name="fileContent"></param>
-    static void WriteTxt(string filePath,string fileContent)
+    static void WriteTxt(string filePath, string fileContent)
     {
-        FileInfo fi = new FileInfo( filePath );
+        FileInfo fi = new FileInfo(filePath);
         StreamWriter sw = fi.CreateText();
-        sw.WriteLine( fileContent );
+        sw.WriteLine(fileContent);
 
         sw.Close();
-        sw.Dispose(); 
+        sw.Dispose();
     }
     #endregion
 
@@ -66,7 +68,7 @@ public class JenkinsEditor : Editor
     {
 
         JenkinsBuildSettings settings = GetJenkinsBuildSettings();
-        return  AppEditor.m_appName +"_PC_" + GetUnityBuildSetings(settings) + string.Format("{0:yyyy_MM_dd_HH_mm}", DateTime.Now);
+        return AppEditor.m_appName + "_PC_" + GetUnityBuildSetings(settings) + string.Format("{0:yyyy_MM_dd_HH_mm}", DateTime.Now);
 
     }
     #endregion
@@ -160,8 +162,8 @@ public class JenkinsEditor : Editor
 /// </summary>
 public class JenkinsBuildSettings
 {
-    public string Version =""   ;   //版本号
+    public string Version = "";   //版本号
     public string Name = "";   //打包的名字
     public string Build = "";    //build次数
-    public bool Debug  =true     ;  //？调试
+    public bool Debug = true;  //？调试
 }
