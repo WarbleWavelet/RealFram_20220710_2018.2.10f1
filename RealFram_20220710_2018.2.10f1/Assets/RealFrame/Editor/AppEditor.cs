@@ -91,7 +91,7 @@ public class AppEditor
     #region 辅助
 
 
-    static void BuildApp(string path)
+   public static void BuildApp(string path)
     {
 
         BuildPipeline.BuildPlayer(

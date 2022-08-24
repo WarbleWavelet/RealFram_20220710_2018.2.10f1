@@ -27,8 +27,8 @@ public class JenkinsEditor : Editor
     {
         //string compressedPackageName = GetCompressedPackageNameByUnity();//用unity的参数
         string compressedPackageName = GetCompressedPackageNameByJenkins(); //用Jenkins的参数
-        string savePath = AppEditor.GetExecutableProgramPath("PC");
-        AppEditor.BuildApp();
+        string savePath = AppEditor.GetExecutableProgramPath(compressedPackageName );
+        AppEditor.BuildApp(savePath);
         WriteTxt(DefinePath.AppBuildPath + "buildname.txt", compressedPackageName);
     }
 
