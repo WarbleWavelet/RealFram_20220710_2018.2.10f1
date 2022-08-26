@@ -1,0 +1,20 @@
+CommandInvokationFailure: Failed to sign APK package.
+D:\Android\Sdk\build-tools\33.0.0\apksigner.bat sign --ks "D:/Data/Projects/Unity/Jenkins_Android/trunk/RealFram_20220710_2018.2.10f1/realframe.keystore" --ks-pass stdin  --ks-key-alias "realframe.keystore" --key-pass stdin  "D:\Data\Projects\Unity\Jenkins_Android\trunk\RealFram_20220710_2018.2.10f1\Temp/StagingArea/Package.apk"
+
+stderr[
+Failed to load signer "signer #1": D:/Data/Projects/Unity/Jenkins_Android/trunk/RealFram_20220710_2018.2.10f1/realframe.keystore entry "realframe.keystore" does not contain a key
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+]
+stdout[
+Keystore password for signer #1: 
+]
+exit code: 2
+UnityEditor.Android.Command.WaitForProgramToRun (UnityEditor.Utils.Program p, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) (at <acbbe3074be5443d996688f942697676>:0)
+UnityEditor.Android.Command.RunWithStdin (System.Diagnostics.ProcessStartInfo psi, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg, System.String[] input) (at <acbbe3074be5443d996688f942697676>:0)
+UnityEditor.Android.PostProcessor.Tasks.TasksCommon.Exec (System.String command, System.String args, System.String workingdir, System.String errorMsg, System.String[] stdin) (at <acbbe3074be5443d996688f942697676>:0)
+UnityEditor.Android.PostProcessor.Tasks.BuildAPK.SignPackage (UnityEditor.Android.PostProcessor.PostProcessorContext context, System.String abi) (at <acbbe3074be5443d996688f942697676>:0)
+UnityEditor.Android.PostProcessor.Tasks.BuildAPK.Execute (UnityEditor.Android.PostProcessor.PostProcessorContext context) (at <acbbe3074be5443d996688f942697676>:0)
+UnityEditor.Android.PostProcessor.PostProcessRunner.RunAllTasks (UnityEditor.Android.PostProcessor.PostProcessorContext context) (at <acbbe3074be5443d996688f942697676>:0)
+UnityEditor.BuildPipeline:BuildPlayer(String[], String, BuildTarget, BuildOptions)
+AppEditor:BuildApp(String) (at Assets/RealFrame/Editor/AppEditor.cs:97)
+JenkinsEditor:MenuItem_Build_Android() (at Assets/RealFrame/Editor/JenkinsEditor.cs:45)

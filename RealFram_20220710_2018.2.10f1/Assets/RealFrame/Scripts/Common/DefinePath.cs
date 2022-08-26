@@ -5,13 +5,13 @@ public class DefinePath
 {
     /// <summary>工程跟目录</summary>
     public static string ProjectRoot = Application.dataPath.Replace("Assets", "");
-    public static string RealFrameRoot = Application.dataPath+"/" +DefinePath.RealFrame+"/";
+    public static string RealFrameRoot = Application.dataPath + "/" + DefinePath.RealFrame + "/";
     public const string RealFrame = "RealFrame"; //Top文件夹
 
     //   /"+DefinePath.RealFrame+"
 
     #region Demo
-     public static string Demo01_Bytes_Attack = "Assets/" + DefinePath.RealFrame +"/StreamingAssets/attack";
+    public static string Demo01_Bytes_Attack = "Assets/" + DefinePath.RealFrame + "/StreamingAssets/attack";
     public const string Demo01_Prefab_Attack = "Assets/" + DefinePath.RealFrame + "/GameData/Prefabs/Attack.prefab";
     public static string Demo02_Xml = RealFrameRoot + "Scenes/02 Class2Xml/Demo02_test.xml";
     public static string Demo03_WriteBytes = RealFrameRoot + "Scenes/03 Class2Bin/Demo03_test.bytes";
@@ -25,6 +25,7 @@ public class DefinePath
 
     #region 拓展
     public const string MenuItem_AB = "AB";
+    public const string MenuItem_App = "App/";
     public const string MenuItem_Offline = "离线数据/";
     public const string MenuItem_FormatTool = "数据转换/";
     public const string MenuItem_RealFrame = "RealFrame配置/";
@@ -60,7 +61,9 @@ public class DefinePath
     #endregion
 
     #region 打包相关
-    public static string OutputABInnerPath = RealFrameRoot + "StreamingAssets/";
+
+
+
     //public static string OutputABOutterPath =  Application.dataPath + "/../AssetBundle/";//放到外面，不生成meta   ,失败
 
     public static string OutputXml = RealFrameRoot + "AssetBundleConfig.xml";//XML可视化，随便删
@@ -69,11 +72,12 @@ public class DefinePath
 
     public static string abCfg_Path = "Assets/" + DefinePath.RealFrame + "/GameData/Data/ABData/"; //bytes
     public const string abCfg_Name = "assetbundleconfig"; //bytes
-     public static string abCfg_Bytes = "Assets/"+DefinePath.RealFrame+"/GameData/Data/ABData/AssetBundleConfig.bytes"; //bytes
+    public static string abCfg_Bytes = "Assets/" + DefinePath.RealFrame + "/GameData/Data/ABData/AssetBundleConfig.bytes"; //bytes
 
 
     public static string AppBuildPath = Application.dataPath + "/../BuildTarget/";
-    public static string AppBuildPath_Andriod = Application.dataPath + "/../BuildTarget/Android/"; 
+    // public static string AppBuildPath_Andriod = Application.dataPath + "/../BuildTarget/Android/"; 
+    public static string AppBuildPath_Andriod = DefinePath.ProjectRoot + "BuildTarget/Android/";
     public static string AppBuildPath_IOS = Application.dataPath + "/../BuildTarget/IOS/";
     public static string AppBuildPath_Windows = Application.dataPath + "/../BuildTarget/Windows/";
 
@@ -81,7 +85,9 @@ public class DefinePath
     public static string ABBuildPath_IOS = Application.dataPath + "/../AssetBundle/IOS/";
     public static string ABBuildPath_Windows = Application.dataPath + "/../AssetBundle/Windows/";
 
-    public static string OutputABOutterPath = Common.TrimName(Application.dataPath, TrimNameType.SlashPre) + "/AssetBundle/";//Assets的上一级
+
+    public static string OutputAB_InnerPath = RealFrameRoot + "StreamingAssets/";
+    public static string OutputAB_OutterPath = Common.TrimName(Application.dataPath, TrimNameType.SlashPre) + "/AssetBundle/";//Assets的上一级
     #endregion
 
     //ab.LoadAssets                     assetbundleconfig                

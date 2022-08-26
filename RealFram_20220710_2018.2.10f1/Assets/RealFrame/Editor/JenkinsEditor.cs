@@ -15,81 +15,150 @@ using UnityEngine;
 
 public class JenkinsEditor : Editor
 {
+    public const string m_appName = DefinePath.RealFrame;
+
+    #region MenuItem
+
 
     [MenuItem(DefinePath.MenuItem_Jenkins + "写入txt当前日期", false, 100)]
     static void MenuItem_WriteTxt()
     {
-        WriteTxt(DefinePath.RealFrameRoot + "输出可删除/Test_Jenkins_写入txt当前日期.txt", System.DateTime.Now.ToString());
+        Common.Text_Write(DefinePath.RealFrameRoot + "输出可删除/Test_Jenkins_写入txt当前日期.txt", System.DateTime.Now.ToString());
     }
 
-    [MenuItem(DefinePath.MenuItem_Jenkins + "压缩程序包", false, 100)]
-    static void MenuItem_Build_PC()
+
+
+
+    #region Jenkins
+
+
+    [MenuItem(DefinePath.MenuItem_Jenkins + "打Jenkins的PC包", false, 100)]
+    static void MenuItem_Jenkins_BuildApp_PC()
     {
-        //string compressedPackageName = GetCompressedPackageNameByUnity();//用unity的参数
-        string compressedPackageName = GetCompressedPackageNameByJenkins(); //用Jenkins的参数
-        string savePath = AppEditor.GetExecutableProgramPath(compressedPackageName );
+        //AssetBundleEditor.BuildAB_RootOutter(); //AB包
+
+        PlayerSettings.Android.keyaliasName = Constants.Android_keyaliasName;//密钥
+        PlayerSettings.Android.keystoreName = Constants.Android_keystoreName;
+        PlayerSettings.Android.keyaliasPass = Constants.Android_keyaliasPass;
+        PlayerSettings.Android.keystorePass = Constants.Android_keystorePass;
+
+        string completedName = GetName_Completed(PackType.Jenkins_PC); //程序包
+        string programPath = AppEditor.GetName_Program(completedName);
+        Common.File_Clear(DefinePath.ABBuildPath_Windows);
+        AppEditor.BuildApp(programPath);
+        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
+    }
+
+
+    [MenuItem(DefinePath.MenuItem_Jenkins + "打Jenkins的安卓包", false, 100)]
+    static void MenuItem_Jenkins_BuildApp_Android()
+    {
+        //AssetBundleEditor.BuildAB_RootOutter(); //AB包
+
+        PlayerSettings.Android.keyaliasName = Constants.Android_keyaliasName;//密钥
+        PlayerSettings.Android.keystoreName = Constants.Android_keystoreName;
+        PlayerSettings.Android.keyaliasPass = Constants.Android_keyaliasPass;
+        PlayerSettings.Android.keystorePass = Constants.Android_keystorePass;
+
+        string completedName = GetName_Completed(PackType.Jenkins_Android); //程序包
+        string programPath = AppEditor.GetName_Program(completedName);
+        Common.File_Clear(DefinePath.AppBuildPath_Andriod);
+        AppEditor.BuildApp(programPath);
+        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
+    }
+
+
+    [MenuItem(DefinePath.MenuItem_Jenkins + "打Jenkins的IOS包", false, 100)]
+    static void MenuItem_Jenkins_BuildApp_IOS()
+    {
+        string compressedPackageName = GetName_Completed(PackType.Jenkins_IOS); //用Jenkins的参数
+        string savePath = AppEditor.GetName_Program();
         AppEditor.BuildApp(savePath);
-        WriteTxt(DefinePath.AppBuildPath + "buildname.txt", compressedPackageName);
+        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", compressedPackageName);
     }
 
+    #endregion
 
 
-    #region 辅助
-    /// <summary>
-    /// 向filePath写入fileContent
-    /// </summary>
-    /// <param name="filePath">全写，包括文件名和后缀</param>
-    /// <param name="fileContent"></param>
-    static void WriteTxt(string filePath, string fileContent)
-    {
-        FileInfo fi = new FileInfo(filePath);
-        StreamWriter sw = fi.CreateText();
-        sw.WriteLine(fileContent);
-
-        sw.Close();
-        sw.Dispose();
-    }
     #endregion
 
 
 
-    #region 程序压缩的包的命名
+
+
+
+    #region 打包的名字
     /// <summary>
-    ///  压缩包的名字
+    /// 压缩包的名字 || 文件夹的名字 || apk ipa的名字， 看怎么用
     /// </summary>
+    /// <param name="type"></param>
     /// <returns></returns>
-    public static string GetCompressedPackageNameByUnity()
+    public static string GetName_Completed(PackType type)
     {
-        return AppEditor.GetABFolderName();
+
+        string typeStr = "";
+        switch (type)
+        {
+
+            case PackType.Jenkins_PC:
+                {
+                    BuildSettings_Jenkins_PC settings = GetBuildSettings_Jenkins_PC();
+                    typeStr = "PC_" + SetBuildSetings_Jenkins_PC(settings);
+                }
+                break;
+            case PackType.Jenkins_Android:
+                {
+                    BuildSettings_Jenkins_Android settings = GetBuildSettings_Jenkins_Android();
+                    typeStr = "Android_" + SetBuildSetings_Jenkins_Android(settings);
+                }
+                break;
+            case PackType.Jenkins_IOS:
+                {
+                    typeStr = "IOS_";
+                }
+                break;
+            default: break;
+        }
+
+
+        string str = string.Format("{0}_{1}_{2:yyyy_MM_dd_HH_mm}", m_appName, typeStr, DateTime.Now);
+        return str;
 
     }
 
-    public static string GetCompressedPackageNameByJenkins()
-    {
-
-        JenkinsBuildSettings settings = GetJenkinsBuildSettings();
-        return AppEditor.m_appName + "_PC_" + GetUnityBuildSetings(settings) + string.Format("{0:yyyy_MM_dd_HH_mm}", DateTime.Now);
-
-    }
     #endregion
+
+
+
+
+
 
 
 
 
 
     #region 获取设置 Jenkins参数
+
+
+
+
+
+    #region SetBuildSetings
+
+
+
     /// <summary>
     /// 从设置读取一个压缩包的命名前缀
     /// </summary>
     /// <param name="settings"></param>
     /// <returns></returns>
-    static string GetUnityBuildSetings(JenkinsBuildSettings settings)
+    static string SetBuildSetings_Jenkins_PC(BuildSettings_Jenkins_PC settings)
     {
         string fix = "";
         if (String.IsNullOrEmpty(settings.Version) == false)
         {
             PlayerSettings.bundleVersion = settings.Version;
-            fix += settings.Version;
+            fix += settings.Version + "_";
         }
         if (String.IsNullOrEmpty(settings.Build) == false)
         {
@@ -115,36 +184,132 @@ public class JenkinsEditor : Editor
 
     }
 
+
+    /// <summary>
+    /// 从设置读取一个压缩包的命名前缀
+    /// </summary>
+    /// <param name="setting"></param>
+    /// <returns></returns>
+    static string SetBuildSetings_Jenkins_Android(BuildSettings_Jenkins_Android setting)
+    {
+        string fix = "";
+
+        if (setting.Canal != Canal.None)//渠道
+        {
+            string symbol = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android);
+
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, symbol + ";" + setting.Canal.ToString());
+            fix += setting.Canal.ToString();
+        }
+
+
+
+        if (String.IsNullOrEmpty(setting.Version) == false)
+        {
+            PlayerSettings.bundleVersion = setting.Version;
+            fix += "_" + setting.Version;
+        }
+        if (String.IsNullOrEmpty(setting.Build) == false)
+        {
+            PlayerSettings.macOS.buildNumber = setting.Build;
+            fix += "_" + setting.Build;
+        }
+        if (String.IsNullOrEmpty(setting.Name) == false)
+        {
+            PlayerSettings.productName = setting.Name;
+            // PlayerSettings.applicationIdentifier =Constants.Android_applicationIdentifierFix + setting.Name; //com.xxx.xxx
+        }
+        PlayerSettings.MTRendering = setting.MultithreadRendering; //多渠道渲染
+        if (setting.MultithreadRendering == true)
+        {
+            fix += "_MTR";
+        }
+
+        if (setting.IL2CPP == true) //IL2CPP
+        {
+            fix += "_IL2CPP";
+            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+        }
+        else
+        {
+            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
+        }
+        if (setting.Debug == true)
+        {
+            EditorUserBuildSettings.development = true;
+            EditorUserBuildSettings.connectProfiler = true;
+            fix += "_Debug";
+        }
+        else
+        {
+            EditorUserBuildSettings.development = false;
+        }
+
+
+        return fix;
+
+    }
+    #endregion
+
+
+
+    #region Get  BuildSettings
+
+
     /// <summary>
     /// 从cmd读取Jenkins的参数设置
     /// </summary>
     /// <returns></returns>
-    static JenkinsBuildSettings GetJenkinsBuildSettings()
+    static BuildSettings_Jenkins_PC GetBuildSettings_Jenkins_PC()
     {
         string[] strArr = Environment.GetCommandLineArgs();
-        JenkinsBuildSettings setting = new JenkinsBuildSettings();
+        BuildSettings_Jenkins_PC setting = new BuildSettings_Jenkins_PC();
         foreach (var item in strArr)
         {
             setting.Version = GetVal(item, "Version");
             setting.Build = GetVal(item, "Build");
             setting.Name = GetVal(item, "Name");
-            setting.Debug = GetVal(item, "Debug") == "true" ? true : false;
+            setting.Debug = Common.String2Bool(GetVal(item, "Debug"));
+
         }
 
         return setting;
     }
 
+
+
     /// <summary>
-    /// Version=0.1  =>  0.1
+    /// 从cmd读取Jenkins的参数设置
     /// </summary>
-    /// <param name="item"></param>
-    /// <param name="property"></param>
     /// <returns></returns>
-    static string GetVal(string item, string property)
+    static BuildSettings_Jenkins_Android GetBuildSettings_Jenkins_Android()
     {
-        if (item.StartsWith(property))
+        string[] paraArr = Environment.GetCommandLineArgs();
+        BuildSettings_Jenkins_Android setting = new BuildSettings_Jenkins_Android();
+        foreach (string item in paraArr)
         {
-            string[] pairArr = item.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+
+
+            if (Common.String2Enum<Canal>(GetVal(item, "Canal")) != null)
+            {
+                setting.Canal = (Canal)Common.String2Enum<Canal>(GetVal(item, "Canal"));
+            }
+
+            setting.Version = GetVal(item, "Version");
+            setting.Build = GetVal(item, "Build");
+            setting.Name = GetVal(item, "Name");
+            setting.Debug = Common.Try_String2Bool(GetVal(item, "Debug"));
+            setting.MultithreadRendering = Common.Try_String2Bool(GetVal(item, "MultithreadRendering"));
+            setting.IL2CPP = Common.Try_String2Bool(GetVal(item, "IL2CPP"));
+        }
+        return setting;
+    }
+
+    static string GetVal(string pair, string property)
+    {
+        if (pair.StartsWith(property))
+        {
+            string[] pairArr = pair.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
             if (pairArr.Length == 2)//Version 0.1
             {
                 return pairArr[1].Trim();
@@ -155,15 +320,87 @@ public class JenkinsEditor : Editor
     #endregion
 
 
+
+
+    /// <summary>
+    /// Version=0.1  =>  0.1
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="property"></param>
+    /// <returns></returns>
+
+
+    //if (str.StartsWith("Place"))
+    //{
+    //    var tempParam = str.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+    //    if (tempParam.Length == 2)
+    //    {
+    //        buildSetting.Place = (Place)Enum.Parse(typeof(Place), tempParam[1], true);
+    //    }
+    //}
+    #endregion
+
+
 }
+
+
+
+#region BuildSettings
 
 /// <summary>
 /// Jenkins 自定义部署的参数 (接受Jenkins传来的参数)
 /// </summary>
-public class JenkinsBuildSettings
+public class BuildSettings_Jenkins_PC
 {
     public string Version = "";   //版本号
     public string Name = "";   //打包的名字
     public string Build = "";    //build次数
     public bool Debug = true;  //？调试
+}
+
+
+/// <summary>
+/// Jenkins 自定义部署的参数 (接受Jenkins传来的参数)
+/// </summary>
+public class BuildSettings_Jenkins_Android
+{
+    public string Version = "";   //版本号
+    public string Name = "";   //打包的名字
+    public string Build = "";    //build次数
+    public bool Debug = true;  //？调试
+    public bool MultithreadRendering = true;  //？多线程渲染
+    public bool IL2CPP = true;  //？Scripting Backed是否IL2CPP(需要NDK)
+    public Canal Canal = Canal.None;
+}
+
+#endregion
+
+
+
+/// <summary>
+/// 打包方式
+/// </summary>
+public enum PackType
+{
+    None,
+    Unity_PC,
+    Unity_Android,
+    Unity_IOS,
+    Jenkins_PC,
+    Jenkins_IOS,
+    Jenkins_Android
+}
+
+
+/// <summary>
+/// 发布渠道
+/// </summary>
+public enum Canal
+{
+    None = 0,
+    Xiaomi,
+    Meizu,
+    Huawei,
+    Weixin,
+    Bilibili
 }

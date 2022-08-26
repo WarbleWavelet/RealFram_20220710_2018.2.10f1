@@ -14,7 +14,7 @@ public class AssetBundleEditor
     #region 字属
 
 
-    static AssetBundleWriter abWriter;
+    static ABWriter abWriter;
     //
     /// <summary><包名,path></summary>
     static Dictionary<string, string> m_floderDic = new Dictionary<string, string>();
@@ -31,7 +31,8 @@ public class AssetBundleEditor
     static ABCfgSO m_abCfgSO;
     static string m_abCfgSOPath = DefinePath.ABCfgSOPath;
     /// <summary>AB的生成位置</summary>
-    static string m_AB_InnerPath = DefinePath.OutputABInnerPath;
+    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath;
+    static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath;
     static string m_ab_Xml = DefinePath.OutputXml;
     static string m_assetbundleconfig_Path = DefinePath.abCfg_Path;
 
@@ -52,22 +53,13 @@ public class AssetBundleEditor
 
     //放在文件夹Editor下。相邻超过10为一组有分割线
     [MenuItem(DefinePath.MenuItem_AB + "/1234 一键打包到内部", false, 81)]//按钮在菜单栏的位置
-    public static void Build()
+    static void MenuItem_BuildAB_RootInner()
     {
-        //DataEditor.Xml2BinAll();
-        //AssetBundleEditor.InitABCfgSO();
-        //AssetBundleEditor.MarkAB();
-        //AssetBundleEditor.WriteBinAndXml();
-        //AssetBundleEditor.BuildAB(m_AB_InnerPath);
-        //
-        DataEditor.Xml2BinAll();    //Bin下需要的二进制
-        InitABCfgSO();
-        MarkAB();             //第一次跳过assetbundleconfig
-        WriteBin();         //生成assetbundleconfig
-        MarkAB();             //第二次包括assetbundleconfig
-        WriteBinAndXml();
-        BuildAB(m_AB_InnerPath);
+
+        BuildAB_RootInner();
     }
+
+
 
 
     #region ABCfgSO
@@ -88,7 +80,7 @@ public class AssetBundleEditor
         m_abCfgSO.m_FolderPathLst.Clear();
         string path = "Assets/" + DefinePath.RealFrame;
 
-       m_abCfgSO.m_PrefabPathLst.Add(path + "/GameData/Prefabs");//不用加/
+        m_abCfgSO.m_PrefabPathLst.Add(path + "/GameData/Prefabs");//不用加/
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "sound", m_Path = path + "/GameData/Sounds" });//不用加/
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "shader", m_Path = path + "/GameData/Shaders" });
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "image", m_Path = path + "/GameData/Images" });
@@ -121,7 +113,7 @@ public class AssetBundleEditor
 
     static ABCfgSO GetABCfgSO()
     {
-        return AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath); 
+        return AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
     }
     #endregion
 
@@ -136,19 +128,19 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "/0203 标记并初始内存(先打包了assetbundleconfig)",false,21)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "/0203 标记并初始内存(先打包了assetbundleconfig)", false, 21)]//按钮在菜单栏的位置
     public static void MenuItem_MarkAB()
     {
-        MarkAB( );
+        MarkAB();
         isFirstMarkAB = false;
         WriteBin(); //生成assetbundleconfig
-        MarkAB( );
+        MarkAB();
         WriteBinAndXml();
     }
 
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "/清理标记", false,22)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "/清理标记", false, 22)]//按钮在菜单栏的位置
     public static void Unmark()
     {
         string[] oldNameArr = AssetDatabase.GetAllAssetBundleNames();
@@ -157,16 +149,18 @@ public class AssetBundleEditor
         {
             AssetDatabase.RemoveAssetBundleName(oldNameArr[i], true);
         }
-        
+
         AssetDatabase.Refresh();
     }
     #endregion
 
 
 
-        #region 打包 删包
-        [MenuItem(DefinePath.MenuItem_AB + "/04 打包", false,61)]//按钮在菜单栏的位置
-     public  static void MenuItem_BuildAB()
+    #region 打包 删包
+
+
+    [MenuItem(DefinePath.MenuItem_AB + "/04 打包", false, 61)]//按钮在菜单栏的位置
+    public static void MenuItem_BuildAB()
     {
         BuildAB(m_AB_InnerPath);
     }
@@ -174,75 +168,65 @@ public class AssetBundleEditor
     [MenuItem(DefinePath.MenuItem_AB + "/删包（RealFrame\\StreamingAssets）", false, 61)]//按钮在菜单栏的位置
     public static void MenuItem_DeleteAB()
     {
-        DeleteAB(m_AB_InnerPath);
+        Common.AB_Clear(m_AB_InnerPath);
     }
 
 
-
-
-
-    static void DeleteAB(string path)
+    [MenuItem(DefinePath.MenuItem_AB + "/_1234 一键清除内部打包", false, 83)]//按钮在菜单栏的位置
+    static void MenuItem_ClearAB_InnerPath()
     {
-        DirectoryInfo di = new DirectoryInfo(path);  //搜索该文件夹
-        FileInfo[] fiArr = di.GetFiles("*", SearchOption.AllDirectories);
-
-        for (int i = 0; i < fiArr.Length; i++)//全删除
-        {
-            string fileFullName = fiArr[i].FullName;    // A/B/c.xxx
-
-                if (File.Exists(fileFullName))
-                {
-                    File.Delete(fileFullName);//删除本身
-                }
-                if (File.Exists(fileFullName + ".manifest"))
-                {
-                    File.Delete(fileFullName + ".manifest");//删除他的manifest
-                }
-            
-        }
-
-        AssetDatabase.Refresh();
+        ClearAB_RootInner();
     }
+
+
+    [MenuItem(DefinePath.MenuItem_AB + "/_1234 一键清除外部打包", false, 83)]//按钮在菜单栏的位置
+    static void MenuItem_ClearAB_OutterPath()
+    {
+        ClearAB_RootOutter();
+    }
+
+
+
     #endregion
-   
+
 
 
 
     #region 生成Xml Bin
-  
-    
-    [MenuItem(DefinePath.MenuItem_AB+"/03 生成Bin(Bin也要标记打包)", false,41)]
+
+
+    [MenuItem(DefinePath.MenuItem_AB + "/03 生成Bin(Bin也要标记打包)", false, 41)]
     static void MenuItem_WriteBin()
     {
         WriteBin();
-    
-    }       
-    
-    [MenuItem(DefinePath.MenuItem_AB+"/03 生成Xml", false,41)]
+
+    }
+
+    [MenuItem(DefinePath.MenuItem_AB + "/03 生成Xml", false, 41)]
     static void MenuItem_WriteXml()
     {
         WriteXml();
-    
+
     }
 
     /// <summary>
     /// <path,ABName>
     /// </summary>
     /// <param name="dic"></param>
-    [MenuItem(DefinePath.MenuItem_AB+"/03 生成Xml Bin(Bin也要标记打包)", false,41)]
+    [MenuItem(DefinePath.MenuItem_AB + "/03 生成Xml Bin(Bin也要标记打包)", false, 41)]
     static void MenuItem_WriteBytesAndXml()
     {
         WriteBinAndXml();
-    
-    }   
+
+    }
 
 
     [MenuItem(DefinePath.MenuItem_AB + "/删Xml Bin(RealFrame\\xml和RealFrame\\GameData\\Data\\ABData\\bytes)", false, 42)]//按钮在菜单栏的位置
     static void MenuItem_DeleteBytesAndXml()
     {
 
-        DeleteData( Application.dataPath ,m_ab_Xml );
-        DeleteData( Application.dataPath ,m_abCfg_Bytes );
+        DeleteData(Application.dataPath, m_ab_Xml);
+        DeleteData(Application.dataPath, m_abCfg_Bytes);
 
     }
 
@@ -254,17 +238,63 @@ public class AssetBundleEditor
     #region 集合
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "/_1234 一键清除内部打包", false, 83)]//按钮在菜单栏的位置
-    public static void Clear()
-    {   
+
+
+
+
+    public static void ClearAB_RootInner()
+    {
         ClearABCfgSO();
         DeleteData(Application.dataPath, m_ab_Xml);
         DeleteData(Application.dataPath, m_abCfg_Bytes);
-        DeleteAB(m_AB_InnerPath);
+        Common.AB_Clear(m_AB_InnerPath);
         Unmark();
-     
+
 
         Debug.Log("一键清除内部打包成功！");
+    }
+
+    public static void ClearAB_RootOutter()
+    {
+
+        Common.AB_Clear(m_AB_OutterPath);
+        BuildAB_RootInner();
+
+        Debug.Log("一键清除外部打包成功！");
+    }
+
+
+
+    /// <summary>
+    /// 一键打AB包到内部
+    /// </summary>
+    public static void BuildAB_RootInner()
+    {
+        DataEditor.Xml2BinAll();    //Bin下需要的二进制
+        InitABCfgSO();
+        MarkAB();             //第一次跳过assetbundleconfig
+        WriteBin();         //生成assetbundleconfig
+        MarkAB();             //第二次包括assetbundleconfig
+        WriteBinAndXml();
+        BuildAB(m_AB_InnerPath);
+    }
+
+
+
+    /// <summary>
+    /// 一键打AB包到外部
+    /// </summary>
+    public static void BuildAB_RootOutter()
+    {
+        Common.File_Clear(m_AB_OutterPath);
+        Common.File_Clear(m_AB_InnerPath);
+
+        BuildAB_RootInner();
+        Common.File_Copy(m_AB_InnerPath, m_AB_OutterPath); //外部AB包
+
+        Common.File_Clear(m_AB_InnerPath);
+
+
     }
     #endregion
     #endregion
@@ -310,25 +340,25 @@ public class AssetBundleEditor
     static Dictionary<string, string> GetAllAssetBundlesDic()
     {
         Dictionary<string, string> abDic = new Dictionary<string, string>();
-        string[] abNameArr = AssetDatabase.GetAllAssetBundleNames(); 
-         abDic = new Dictionary<string, string>();
+        string[] abNameArr = AssetDatabase.GetAllAssetBundleNames();
+        abDic = new Dictionary<string, string>();
         for (int i = 0; i < abNameArr.Length; i++)//所有ab名
         {
             string[] pathArr = AssetDatabase.GetAssetPathsFromAssetBundle(abNameArr[i]);
             for (int j = 0; j < pathArr.Length; j++)//所有ab路径
             {
                 string path = pathArr[j];
-                if (path.EndsWith(".cs")==true )//过滤脚本
+                if (path.EndsWith(".cs") == true)//过滤脚本
                 {
                     continue;
                 }
 
                 //Debug.Log("AB包 \"" + abNameArr[i] + "\" 包含的资源的路径：" + path);
-                if (ValidPath(path)==true)//存储起来
-                { 
-                    abDic.Add(path, abNameArr[i]);    
+                if (ValidPath(path) == true)//存储起来
+                {
+                    abDic.Add(path, abNameArr[i]);
                 }
-               
+
             }
         }
 
@@ -378,11 +408,11 @@ public class AssetBundleEditor
 
 
     static void SetABName(string abName, string path)
-    { 
-        AssetImporter ai=AssetImporter.GetAtPath(path);
+    {
+        AssetImporter ai = AssetImporter.GetAtPath(path);
         if (ai == null)
         {
-            Debug.LogErrorFormat("路径{0}下资源{1}为空",path,abName);
+            Debug.LogErrorFormat("路径{0}下资源{1}为空", path, abName);
         }
         else
         {
@@ -397,9 +427,9 @@ public class AssetBundleEditor
             //}
             //finally
             //{
-                ai.assetBundleName = abName;       
-            
-       
+            ai.assetBundleName = abName;
+
+
         }
     }
 
@@ -421,13 +451,13 @@ public class AssetBundleEditor
     /// <param name="fliter_floderLst"></param>
     /// <param name="fliter_pathLst"></param>
     static void InitFloderDic(AB2Path[] folderPathLst,
-         Dictionary<string,string> m_floderDic,
+         Dictionary<string, string> m_floderDic,
          List<string> fliter_floderLst,
          List<string> fliter_pathLst)
     {
         foreach (var item in folderPathLst)
         {
-            Debug.LogFormat("包：{0}\t\t\t\t路径：{1}",item.m_ABName ,item.m_Path);
+            Debug.LogFormat("包：{0}\t\t\t\t路径：{1}", item.m_ABName, item.m_Path);
             string abName = item.m_ABName;
             string path = item.m_Path;
             //
@@ -439,7 +469,7 @@ public class AssetBundleEditor
             {
                 m_floderDic.Add(abName, path);
                 fliter_floderLst.Add(path);
-                fliter_pathLst .Add(path);
+                fliter_pathLst.Add(path);
             }
         }
 
@@ -451,16 +481,16 @@ public class AssetBundleEditor
         Common.TickPath(outputABPath);
         DeleteUselessAB(m_AB_InnerPath);
 
-       //
-        abWriter = new AssetBundleWriter()  //打包
+        //
+        abWriter = new ABWriter()  //打包
         {
             m_OutputPath = outputABPath,//输出位置
-            m_BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression,
+            m_BuildABOptions = BuildAssetBundleOptions.ChunkBasedCompression,
             m_BuildTarget = EditorUserBuildSettings.activeBuildTarget
         };
         AssetBundleManifest mft = BuildPipeline.BuildAssetBundles(   //目录，模式，平台
              abWriter.m_OutputPath,
-             abWriter.m_BuildAssetBundleOptions,
+             abWriter.m_BuildABOptions,
              abWriter.m_BuildTarget
          );
 
@@ -546,18 +576,18 @@ public class AssetBundleEditor
     /// 预制体的asset
     /// </summary>
     /// <param name="assetPathLst"></param>
-    static void  InitPrefabDic(string[] assetPathLst,
+    static void InitPrefabDic(string[] assetPathLst,
          Dictionary<string, List<string>> prefabDic,
          List<string> fliter_floderLst,
          List<string> fliter_pathLst)
     {
         for (int i = 0; i < assetPathLst.Length; i++)
         {
-            string path = assetPathLst[i];                
+            string path = assetPathLst[i];
             fliter_pathLst.Add(path);
             EditorUtility.DisplayProgressBar("查找Prefab", "Prefab:" + path, i * 1.0f / assetPathLst.Length);
 
-            if (ContainPath(fliter_floderLst,path) == false)
+            if (ContainPath(fliter_floderLst, path) == false)
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 string[] dependArr = AssetDatabase.GetDependencies(path);
@@ -569,7 +599,7 @@ public class AssetBundleEditor
                     string depend = dependArr[j];
                     //Debug.Log("依赖路径：" + depend);
 
-                    if (ContainPath(fliter_floderLst,depend) == false
+                    if (ContainPath(fliter_floderLst, depend) == false
                         && depend.EndsWith(".cs") == false)
                     {
                         fliter_floderLst.Add(depend);
@@ -578,13 +608,13 @@ public class AssetBundleEditor
                     }
                 }
                 //fliter相同预制体
-                if (prefabDic.ContainsKey(prefab.name) == true )
+                if (prefabDic.ContainsKey(prefab.name) == true)
                 {
                     Debug.LogError("存在相同预制体：" + prefab.name);
                 }
                 else
                 {
-                  
+
                     prefabDic.Add(prefab.name, prefab_dependLst);
                 }
                 Debug.LogFormat("包：{0}\t\t\t\t路径：{1}", prefab.name, path);
@@ -597,7 +627,7 @@ public class AssetBundleEditor
     /// <summary>
     /// 删除没用的文件
     /// </summary>
-    static void DeleteUselessAB(string outputABPath, string fileDontDelete="")
+    static void DeleteUselessAB(string outputABPath, string fileDontDelete = "")
     {
 
         DirectoryInfo di = new DirectoryInfo(outputABPath);  //搜索该文件夹
@@ -610,7 +640,7 @@ public class AssetBundleEditor
             if (IsPackedAB(fileName)
                 || fileName.EndsWith(".meta")
                 || fileName.EndsWith(".manifest") //manifest里面是资源依赖和标识符等，会重写，防止慢就不删了
-               // || fileName.EndsWith(fileDontDelete)//Editor演示要用到，就不自动删了
+                                                  // || fileName.EndsWith(fileDontDelete)//Editor演示要用到，就不自动删了
                 )
             {
                 continue;
@@ -634,9 +664,9 @@ public class AssetBundleEditor
 
     static bool ContainPath(List<string> pathLst, string path)
     {
-        for (int i = 0; i < pathLst.Count ; i++)
+        for (int i = 0; i < pathLst.Count; i++)
         {
-            if (pathLst[i] == path || ( path.Contains(pathLst[i])&& path.Replace( pathLst[i],"")[0]== '/'))//  Test/a  TestTT/a => /a  TT/a
+            if (pathLst[i] == path || (path.Contains(pathLst[i]) && path.Replace(pathLst[i], "")[0] == '/'))//  Test/a  TestTT/a => /a  TT/a
             {
                 return true;
             }
@@ -647,7 +677,7 @@ public class AssetBundleEditor
 
 
     #region assetBundleConfig的bin和xml
-  static void WriteBinAndXml()
+    static void WriteBinAndXml()
     {
         ABCfg abCfg = WriteData(m_abMarkDic);
 
@@ -674,7 +704,7 @@ public class AssetBundleEditor
     }
 
     #endregion
-  
+
 
     /// <summary>
     /// 文件夹下文件名 == AB名？
@@ -682,7 +712,7 @@ public class AssetBundleEditor
     /// <param name="abName"></param>
     /// <returns></returns>
 
-    static bool ContainABName(string[] arr,string abName)
+    static bool ContainABName(string[] arr, string abName)
     {
         for (int i = 0; i < arr.Length; i++)
         {
@@ -715,17 +745,17 @@ public class AssetBundleEditor
         SetABName(m_floderDic, m_prefabDic);
         try
         {
-               SetABName(m_abCfg_Name, m_abCfg_Bytes);//cfg
+            SetABName(m_abCfg_Name, m_abCfg_Bytes);//cfg
         }
         catch (Exception)
         {
 
 
-            throw new System.Exception("第一次生成AB失败"+ m_abCfg_Name+","+ m_abCfg_Bytes);
+            throw new System.Exception("第一次生成AB失败" + m_abCfg_Name + "," + m_abCfg_Bytes);
         }
-           
-        
-      
+
+
+
 
 
 
@@ -739,16 +769,16 @@ public class AssetBundleEditor
 
     void SomeTypeRecord()
     {
-        abWriter = new AssetBundleWriter()
+        abWriter = new ABWriter()
         {
             m_OutputPath = "AssetBundles",
-            m_BuildAssetBundleOptions = BuildAssetBundleOptions.None,
+            m_BuildABOptions = BuildAssetBundleOptions.None,
             m_BuildTarget = BuildTarget.StandaloneWindows64
         };
-        abWriter = new AssetBundleWriter()
+        abWriter = new ABWriter()
         {
             m_OutputPath = Application.streamingAssetsPath,//StreamingAssets
-            m_BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression,
+            m_BuildABOptions = BuildAssetBundleOptions.ChunkBasedCompression,
             m_BuildTarget = EditorUserBuildSettings.activeBuildTarget
         };
 
@@ -766,8 +796,8 @@ public class AssetBundleEditor
         {
             if (path.Contains(item))
             {
-                
-                return true ;
+
+                return true;
             }
         }
 
@@ -806,13 +836,13 @@ public class AssetBundleEditor
         for (int i = 0; i < guidArr.Length; i++)
         {
 
-                string prefabPath = AssetDatabase.GUIDToAssetPath(guidArr[i]);
-                assetPathLst.Add(prefabPath);
+            string prefabPath = AssetDatabase.GUIDToAssetPath(guidArr[i]);
+            assetPathLst.Add(prefabPath);
 
         }
 
 
-     
+
 
         return assetPathLst.ToArray();
     }
@@ -825,25 +855,25 @@ public class AssetBundleEditor
     {
 
 
-            //Alt+R打开资源路径
-           // [MenuItem("HSJ/快捷方式/打开UI预制路径 &R")]
-            static void OpenResourcesUIPanel()
-            {
-                Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Prefab/Panel/LoginPanel.prefab");
-            }
-            //Alt+S打开脚本路径
-         //   [MenuItem("HSJ/快捷方式/打开Panel脚本路径 &S")]
-            static void OpenScript()
-            {
-                Selection.activeObject = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Scripts/MessageBoxPanel.cs");
-            }
-            //Alt+S打开指定文件夹路径
-          // [MenuItem("HSJ/快捷方式/打开工程目录 &O")]
-            private static void OpenProjectFolder()
-            {
-                EditorUtility.RevealInFinder(Application.dataPath);
-            }
-      
+        //Alt+R打开资源路径
+        // [MenuItem("HSJ/快捷方式/打开UI预制路径 &R")]
+        static void OpenResourcesUIPanel()
+        {
+            Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Prefab/Panel/LoginPanel.prefab");
+        }
+        //Alt+S打开脚本路径
+        //   [MenuItem("HSJ/快捷方式/打开Panel脚本路径 &S")]
+        static void OpenScript()
+        {
+            Selection.activeObject = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Scripts/MessageBoxPanel.cs");
+        }
+        //Alt+S打开指定文件夹路径
+        // [MenuItem("HSJ/快捷方式/打开工程目录 &O")]
+        private static void OpenProjectFolder()
+        {
+            EditorUtility.RevealInFinder(Application.dataPath);
+        }
+
     }
     #endregion
 
@@ -854,12 +884,12 @@ public class AssetBundleEditor
 /// <summary>
 /// 自定义的写入AB的几个参数配置
 /// </summary>
-public class AssetBundleWriter
+public class ABWriter
 {
     /// <summary>目录</summary>
     public string m_OutputPath;
     /// <summary>模式</summary>
-    public BuildAssetBundleOptions m_BuildAssetBundleOptions;
+    public BuildAssetBundleOptions m_BuildABOptions;
     /// <summary>buildTarget</summary>
     public BuildTarget m_BuildTarget;
 

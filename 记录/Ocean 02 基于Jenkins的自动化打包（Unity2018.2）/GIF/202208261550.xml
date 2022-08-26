@@ -1,0 +1,102 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>RealFrame_Android打包</description>
+  <displayName>RealFrame_Android</displayName>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>30</daysToKeep>
+        <numToKeep>30</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>WorkPath</name>
+          <description>工程目录</description>
+          <defaultValue>D:\Data\Projects\Unity\Jenkins_Android\trunk\RealFram_20220710_2018.2.10f1</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>Version</name>
+          <description>版本号</description>
+          <defaultValue>0.1</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>Name</name>
+          <description>打包出来的工程名</description>
+          <defaultValue>RealFrame</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>Build</name>
+          <description>Build次数</description>
+          <defaultValue>0</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>Debug</name>
+          <description>是否调试模式，打开profile调试</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>MultithreadRendering</name>
+          <description>多线程渲染</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>IL2CPP</name>
+          <description>Scripting Backed是否IL2CPP(需要NDK)</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>D:\Data\Projects\Unity\Jenkins_Android\trunk\RealFram_20220710_2018.2.10f1</customWorkspace>
+  <builders>
+    <hudson.tasks.BatchFile>
+      <command>svn cleanup %WorkPath%&#xd;
+svn revert %WorkPath%&#xd;
+svn update %WorkPath% --username lenovo --password 123</command>
+      <configuredLocalRules/>
+    </hudson.tasks.BatchFile>
+    <org.jenkinsci.plugins.unity3d.Unity3dBuilder plugin="unity3d-plugin@1.3">
+      <unity3dName>Unity2018.2.10f1</unity3dName>
+      <argLine>-projectpath %WorkPath% -quit -batchmode -executeMethod JenkinsEditor.MenuItem_Build_Android Version=$Version Name=$Name Build=$Build Debug=$Debug  MultithreadRendering=￥MultithreadRendering IL2CPP=$IL2CPP -logFile &quot;D:\Documents\Desktop\log.txt&quot;</argLine>
+      <unstableReturnCodes></unstableReturnCodes>
+    </org.jenkinsci.plugins.unity3d.Unity3dBuilder>
+    <hudson.tasks.BatchFile>
+      <command>@echo off&#xd;
+d:&#xd;
+for /f &quot;delims=&quot; %%i in (%WorkPath%\BuildTarget\buildname.txt) do set name=%%i&#xd;
+cd D:\Program Files\WinRAR&#xd;
+WinRAR.exe a -r -ep1 &quot;%WorkPath%\BuildTarget\Android\%name%.rar&quot; &quot;%WorkPath%\BuildTarget\%name%&quot;&#xd;
+pause</command>
+      <configuredLocalRules/>
+    </hudson.tasks.BatchFile>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>BuildTarget\Android\*.apk</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+      <followSymlinks>false</followSymlinks>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>
