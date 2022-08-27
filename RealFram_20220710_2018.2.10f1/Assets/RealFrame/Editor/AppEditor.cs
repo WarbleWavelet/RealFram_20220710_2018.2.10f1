@@ -46,7 +46,7 @@ public class AppEditor
         // AssetBundleEditor.BuildAB_RootOutter(); //AB包
 
         string completedName = GetName_Completed(PackType.Unity_PC);//用unity的参数
-        string programPath = GetName_Program(completedName);
+        string programPath = GetName_App(completedName);
         BuildApp(programPath);
         Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
@@ -65,9 +65,24 @@ public class AppEditor
 
 
         string compressedPackageName = GetName_Completed(PackType.Unity_Android);//用unity的参数
-        string programPath = GetName_Program(compressedPackageName);
+        string programPath = GetName_App(compressedPackageName);
         BuildApp(programPath);
         Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", compressedPackageName);
+    }
+
+
+    [MenuItem(DefinePath.MenuItem_App + "打Unity的IOS包", false, 100)]
+    static void MenuItem_App_BuildApp_IOS()
+    {
+
+        // AssetBundleEditor.BuildAB_RootOutter(); //AB包
+
+        Common.File_Clear(m_appBuildPath_IOS);
+        string completedName = GetName_Completed(PackType.Unity_IOS);//用unity的参数
+        string programPath = GetName_App(completedName);
+
+        BuildApp(programPath);
+        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
     #endregion
 
@@ -90,7 +105,7 @@ public class AppEditor
 
         BuildPipeline.BuildPlayer(
             GetScenes_Enabled(), //打工程包
-            GetName_Program(),
+            GetName_App(),
             EditorUserBuildSettings.activeBuildTarget,
             BuildOptions.None
         );
@@ -111,7 +126,7 @@ public class AppEditor
 
         BuildPipeline.BuildPlayer(
             GetScenes_Enabled(), //打工程包
-            GetName_Program(),
+            GetName_App(),
             EditorUserBuildSettings.activeBuildTarget,
             BuildOptions.None
         );
@@ -148,7 +163,7 @@ public class AppEditor
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public static string GetName_Program(string path = "")
+    public static string GetName_App(string path = "")
     {
         switch (EditorUserBuildSettings.activeBuildTarget)
         {
@@ -158,7 +173,7 @@ public class AppEditor
                 }
             case BuildTarget.iOS:
                 {
-                    return string.Format("{0}{1}{2}%", m_appBuildPath_IOS, path, ".ipa"); //IOS系统软件的后缀名是IPA
+                    return string.Format("{0}{1}", m_appBuildPath_IOS, path); //IOS系统软件的后缀名是IPA
                 }
             case BuildTarget.StandaloneWindows64:
                 {
