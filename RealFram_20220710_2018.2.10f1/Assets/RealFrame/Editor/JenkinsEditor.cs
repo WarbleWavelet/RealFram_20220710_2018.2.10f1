@@ -15,7 +15,7 @@ using UnityEngine;
 
 public class JenkinsEditor : Editor
 {
-    public const string m_appName = DefinePath.RealFrame;
+    public const string m_appName = DefinePath.RealFrameName;
 
     #region MenuItem
 
@@ -23,7 +23,7 @@ public class JenkinsEditor : Editor
     [MenuItem(DefinePath.MenuItem_Jenkins + "写入txt当前日期", false, 100)]
     static void MenuItem_WriteTxt()
     {
-        Common.Text_Write(DefinePath.RealFrameRoot + "输出可删除/Test_Jenkins_写入txt当前日期.txt", System.DateTime.Now.ToString());
+        Common.Text_Write(DefinePath.RealFramePath + "输出可删除/Test_Jenkins_写入txt当前日期.txt", System.DateTime.Now.ToString());
     }
 
 

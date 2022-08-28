@@ -18,7 +18,7 @@ public class RealFrameEditor : Editor
     #region 字属
     public static string m_realFrameCfgSOPath = DefinePath.RealFrameCfgSOPath;
     static RealFrameCfgSO m_realFrameCfgSO;
-    const string m_realFrame = DefinePath.RealFrame;
+    const string m_realFrame = DefinePath.RealFrameName;
     #endregion
 
 

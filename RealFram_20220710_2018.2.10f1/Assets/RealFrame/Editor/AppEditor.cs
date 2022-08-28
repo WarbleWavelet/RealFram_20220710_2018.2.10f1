@@ -29,8 +29,8 @@ public class AppEditor
     static string m_abBuildPath_IOS = DefinePath.ABBuildPath_IOS + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
     static string m_abBuildPath_Windows = DefinePath.ABBuildPath_Windows + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
     //
-    static string m_OutputABInnerPath = DefinePath.OutputAB_InnerPath;
-    static string m_OutputABOutterPath = DefinePath.OutputAB_OutterPath + "Windows/" + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath;
+    static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath + "Windows/" + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
 
     public static string m_appName = PlayerSettings.productName;//注意设为RealFrame
     #endregion
@@ -43,6 +43,8 @@ public class AppEditor
     [MenuItem(DefinePath.MenuItem_App + "打Unity的PC包", false, 100)]
     static void MenuItem_App_BuildApp_PC()
     {
+
+       // WriteVersion();
         // AssetBundleEditor.BuildAB_RootOutter(); //AB包
 
         string completedName = GetName_Completed(PackType.Unity_PC);//用unity的参数
@@ -55,7 +57,7 @@ public class AppEditor
     [MenuItem(DefinePath.MenuItem_App + "打Unity的安卓包", false, 100)]
     static void MenuItem_App_BuildApp_Android()
     {
-
+        // WriteVersion();
         // AssetBundleEditor.BuildAB_RootOutter(); //AB包
 
         PlayerSettings.Android.keyaliasName = Constants.Android_keyaliasName;//密钥
@@ -74,7 +76,7 @@ public class AppEditor
     [MenuItem(DefinePath.MenuItem_App + "打Unity的IOS包", false, 100)]
     static void MenuItem_App_BuildApp_IOS()
     {
-
+        // WriteVersion();
         // AssetBundleEditor.BuildAB_RootOutter(); //AB包
 
         Common.File_Clear(m_appBuildPath_IOS);
@@ -84,6 +86,15 @@ public class AppEditor
         BuildApp(programPath);
         Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
+
+    [MenuItem(DefinePath.MenuItem_App + "(测试)写入版本信息（RealFrame\\Resources\\Version.txt）", false, 100)]
+    static void MenuItem_App_WriteVersion()
+    {
+        WriteVersion();
+
+        AssetDatabase.Refresh();
+    }
+
     #endregion
 
 
@@ -100,7 +111,7 @@ public class AppEditor
 
         //AssetBundleEditor.Build();  //内部AB包
 
-        Common.File_Copy(m_OutputABInnerPath, m_OutputABOutterPath); //外部AB包
+        Common.File_Copy(m_AB_InnerPath, m_AB_OutterPath); //外部AB包
 
 
         BuildPipeline.BuildPlayer(
@@ -110,9 +121,9 @@ public class AppEditor
             BuildOptions.None
         );
 
-        Common.File_Clear(m_OutputABInnerPath);//删除内部的包
+        Common.File_Clear(m_AB_InnerPath);//删除内部的包
 
-        Debug.LogFormat("导出到外部成功：{0}", m_OutputABOutterPath);
+        Debug.LogFormat("导出到外部成功：{0}", m_AB_OutterPath);
     }
 
     [MenuItem(DefinePath.MenuItem_App + "12345一键生成、外导包和生成执行程序", false, 82)]//按钮在菜单栏的位置
@@ -121,7 +132,7 @@ public class AppEditor
 
         AssetBundleEditor.BuildAB_RootInner();  //内部AB包
 
-        Common.File_Copy(m_OutputABInnerPath, m_OutputABOutterPath); //外部AB包
+        Common.File_Copy(m_AB_InnerPath, m_AB_OutterPath); //外部AB包
 
 
         BuildPipeline.BuildPlayer(
@@ -131,8 +142,8 @@ public class AppEditor
             BuildOptions.None
         );
 
-        Common.File_Clear(m_OutputABInnerPath);//删除内部的包
-        Debug.LogFormat("一键生成并且导出到外部成功：{0}", m_OutputABOutterPath);
+        Common.File_Clear(m_AB_InnerPath);//删除内部的包
+        Debug.LogFormat("一键生成并且导出到外部成功：{0}", m_AB_OutterPath);
     }
 
 
@@ -140,7 +151,53 @@ public class AppEditor
 
     #region 辅助
 
+    static void WriteVersion()
+    {
+        WriteVersion(PlayerSettings.bundleVersion, PlayerSettings.applicationIdentifier);
+    }
 
+    /// <summary>
+    /// 保存版本信息(只写，修改第一行)
+    /// </summary>
+    /// <param name="version"></param>
+    /// <param name="package"></param>
+    static void WriteVersion(string version, string package)
+    {
+        string content = string.Format("Version|{0};PackageName|{1};", version, package);
+        string savePath = string.Format("{0}Resources/Version.txt", DefinePath.RealFramePath);
+        string firstLine = ""; //第一行
+        string allLine = "";
+        using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+        {
+            using (StreamReader reader = new StreamReader(fs, System.Text.Encoding.UTF8))
+            {
+                allLine = reader.ReadToEnd();
+                firstLine = allLine.Split('\r')[0]; // 13 回车
+            }
+        }
+        using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
+        {
+            using (StreamWriter reader = new StreamWriter(fs, System.Text.Encoding.UTF8))
+            {
+                if (string.IsNullOrEmpty(allLine))
+                {
+                    allLine = content;
+                }
+                else
+                {
+                    allLine = allLine.Replace(firstLine, content);
+                }
+                reader.Write(allLine);
+            }
+        }
+    }
+
+
+
+    /// <summary>
+    /// 打程序包
+    /// </summary>
+    /// <param name="path"></param>
     public static void BuildApp(string path)
     {
         //打工程包
@@ -151,7 +208,7 @@ public class AppEditor
             BuildOptions.None
         );
 
-        Debug.LogFormat("导出到外部成功：{0}", m_OutputABOutterPath);
+        Debug.LogFormat("导出到外部成功：{0}", m_AB_OutterPath);
 
 
     }

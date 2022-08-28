@@ -170,12 +170,25 @@ public class Common
             throw;
         }
     }
-    #endregion
 
 
-    #region Guid
-    /// <summary>异步的Guid，为了可以取消该异步</summary> 
-    static long m_asyncGuid = 0;
+    /// <summary>
+    /// 删除该文件
+    /// </summary>
+    /// <param name="path"></param>
+    public static void File_Delete(string path)
+    {
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+    }
+        #endregion
+
+
+        #region Guid
+        /// <summary>异步的Guid，为了可以取消该异步</summary> 
+        static long m_asyncGuid = 0;
     /// <summary>异步的Guid，为了可以取消该异步</summary>
     public static long CreateGuid()
     {

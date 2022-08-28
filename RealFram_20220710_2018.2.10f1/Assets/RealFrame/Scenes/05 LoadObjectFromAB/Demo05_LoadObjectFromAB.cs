@@ -56,11 +56,11 @@ namespace Demo05
           
               for (int i = 0; i < abBase.ABDependce.Count; i++)  //加载依赖
             {                                        
-                AssetBundle.LoadFromFile(Application.dataPath + "/" + DefinePath.RealFrame + "/StreamingAssets/" + abBase.ABDependce[i]);
+                AssetBundle.LoadFromFile(Application.dataPath + "/" + DefinePath.RealFrameName + "/StreamingAssets/" + abBase.ABDependce[i]);
             }
 
 
-            AssetBundle ab = AssetBundle.LoadFromFile(Application.dataPath+"/"+DefinePath.RealFrame + "/StreamingAssets/" + abBase.ABName);
+            AssetBundle ab = AssetBundle.LoadFromFile(Application.dataPath+"/"+DefinePath.RealFrameName + "/StreamingAssets/" + abBase.ABName);
             return ab.LoadAsset<Object>(objectName);//注意加载的是ab，不是预制体，所以都小写
 
         }

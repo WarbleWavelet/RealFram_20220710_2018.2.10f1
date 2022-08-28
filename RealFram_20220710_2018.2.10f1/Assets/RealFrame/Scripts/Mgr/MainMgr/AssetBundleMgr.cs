@@ -45,7 +45,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     string LoadABPath
     {
-        get { return DefinePath.RealFrameRoot + "StreamingAssets/"; }
+        get { return DefinePath.RealFramePath + "StreamingAssets/"; }
         set { }
     }
 

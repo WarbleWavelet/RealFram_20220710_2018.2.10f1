@@ -20,8 +20,8 @@ using UnityEngine;
 public class DataEditor
 {
     const string m_Xml_InnerPath = "Assets/RealFrame/GameData/Data/Xml/";//xml数据
-    static string m_Xml_OutetrPath = DefinePath.ProjectRoot + "Data/Reg/"; //xml结构 reg
-    static string m_Excel_OutetrPath = DefinePath.ProjectRoot + "Data/Excel/";//excel数据
+    static string m_Xml_OutetrPath = DefinePath.ProjectPath + "Data/Reg/"; //xml结构 reg
+    static string m_Excel_OutetrPath = DefinePath.ProjectPath + "Data/Excel/";//excel数据
     //
     const string m_Bin_InnerPath = "Assets/RealFrame/GameData/Data/Bin/";
     const int m_startIdx = DefinePath.MenuItem_FormatTool_StartIdx;//调顺序，但因为二级难调
@@ -92,7 +92,7 @@ public class DataEditor
 
 
 
-        string xmlPath = DefinePath.ProjectRoot + m_Xml_InnerPath;
+        string xmlPath = DefinePath.ProjectPath + m_Xml_InnerPath;
         string[] pathArr = Directory.GetFiles(xmlPath, "*.*", SearchOption.AllDirectories);
 
 

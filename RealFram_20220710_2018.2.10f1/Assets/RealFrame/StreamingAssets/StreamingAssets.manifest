@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3659550065
+CRC: 2119817412
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -15,19 +15,19 @@ AssetBundleManifest:
       Name: bytes
       Dependencies: {}
     Info_4:
-      Name: demo14loadpanel
-      Dependencies: {}
-    Info_5:
-      Name: demo14menupanel
-      Dependencies: {}
-    Info_6:
       Name: attack
       Dependencies: {}
-    Info_7:
+    Info_5:
       Name: cube
       Dependencies: {}
-    Info_8:
+    Info_6:
       Name: demo13menupanel
+      Dependencies: {}
+    Info_7:
+      Name: demo14loadpanel
+      Dependencies: {}
+    Info_8:
+      Name: demo14menupanel
       Dependencies: {}
     Info_9:
       Name: assetbundleconfig
