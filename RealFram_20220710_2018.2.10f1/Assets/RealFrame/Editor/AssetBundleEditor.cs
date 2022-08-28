@@ -33,7 +33,8 @@ public class AssetBundleEditor
     /// <summary>AB的生成位置</summary>
     static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath;
     static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath;
-    static string m_Version_OutterPath = DefinePath.OutputAB_OutterPath;
+    static string m_ABMD5_InnerPath = DefinePath.RealFramePath+"Resources/";
+    static string m_ABMD5_OutterPath = DefinePath.OutputVersionMD5_OutterPath+ EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
     static string m_ab_Xml = DefinePath.OutputXml;
     static string m_assetbundleconfig_Path = DefinePath.abCfg_Path;
 
@@ -355,15 +356,13 @@ public class AssetBundleEditor
                 abmd5.ABMD5Lst.Add(abmd5Base);
             }
         }
-        string ABMD5Path = string.Format("{0}Resources/ABMD5.bytes", DefinePath.RealFramePath);
-        Class2Bin(abmd5, ABMD5Path );
+        string innerPath = string.Format("{0}ABMD5.bytes", m_ABMD5_InnerPath); //内部生成
+        Class2Bin(abmd5, innerPath );
 
-        Common.TickPath(m_Version_OutterPath);//将打版的版本拷贝到外部进行储存
-        string targetPath = string.Format("{0}/ABMD5_{1}.bytes", m_Version_OutterPath, PlayerSettings.bundleVersion);
-
-        Common.File_Delete(targetPath);
-
-        File.Copy(ABMD5Path, targetPath);
+        Common.TickPath(m_ABMD5_OutterPath);//外部拷贝
+        string outterPath = string.Format("{0}ABMD5_{1}.bytes", m_ABMD5_OutterPath, PlayerSettings.bundleVersion);
+        Common.File_Delete(outterPath); //清空
+        File.Copy(innerPath, outterPath);
     }
 
 
@@ -543,7 +542,6 @@ public class AssetBundleEditor
 
     public static void BuildAB(string outputABPath)
     {
-        WriteABMD5();
         Common.TickPath(outputABPath);
         DeleteUselessAB(m_AB_InnerPath);
 

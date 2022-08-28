@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 
 public class DefinePath
 {
@@ -88,7 +87,7 @@ public class DefinePath
 
     public static string OutputAB_InnerPath = RealFramePath + "StreamingAssets/";
     public static string OutputAB_OutterPath = ProjectPath + "AssetBundle/";//Assets的上一级
-    public static string OutputVersion_OutterPath = ProjectPath + "Version/";//Assets的上一级
+    public static string OutputVersionMD5_OutterPath = ProjectPath + "Version/";//Assets的上一级
     #endregion
 
     //ab.LoadAssets                     assetbundleconfig                
