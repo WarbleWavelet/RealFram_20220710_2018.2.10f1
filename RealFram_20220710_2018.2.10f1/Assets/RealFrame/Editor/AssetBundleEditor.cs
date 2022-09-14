@@ -33,8 +33,7 @@ public class AssetBundleEditor
     /// <summary>AB的生成位置</summary>
     static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath;
     static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath;
-    static string m_ABMD5_InnerPath = DefinePath.ABMD5_InnerPath;
-    static string m_ABMD5_OutterPath = DefinePath.ABMD5_OutterPath+ EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+
     static string m_ab_Xml = DefinePath.OutputXml;
     static string m_assetbundleconfig_Path = DefinePath.abCfg_Path;
 
@@ -43,8 +42,7 @@ public class AssetBundleEditor
     static string m_abCfg_Bytes = DefinePath.abCfg_Bytes;
     static bool isFirstMarkAB = true;
 
-    static Dictionary<string, ABMD5Base> m_abMD5Dic = new Dictionary<string, ABMD5Base>(); //MD5
-   static string m_Hot_OutterPath = DefinePath.Hot_OutterPath+ EditorUserBuildSettings.activeBuildTarget.ToString();
+
     #endregion
 
 
@@ -221,7 +219,7 @@ public class AssetBundleEditor
     [MenuItem(DefinePath.MenuItem_AB + "1234 一键打包到内部", false, 80)]//按钮在菜单栏的位置
     public static void MenuItem_BuildAB_InnerPath()
     {
-        WriteABMD5();
+        AssetBundleHotFixEditor.WriteABMD5();
         BuildAB_RootInner();
 
         Debug.LogFormat("导出到内部成功：{0}", m_AB_InnerPath);
@@ -231,7 +229,7 @@ public class AssetBundleEditor
     [MenuItem(DefinePath.MenuItem_AB + "12345 一键打包到外部", false, 80)]//按钮在菜单栏的位置
     public static void MenuItem_BuildAB_OutterPath()
     {
-        WriteABMD5(); 
+        AssetBundleHotFixEditor.WriteABMD5(); 
         BuildAB_RootOutter();
 
         Debug.LogFormat("导出到外部成功：{0}", m_AB_OutterPath);
@@ -404,42 +402,6 @@ public class AssetBundleEditor
     }
 
 
-    /// <summary>
-    /// 为了可视化
-    /// </summary>
-    /// <exception cref="NotImplementedException"></exception>
-    private static void Class2Xml<T>(T cfg, string outputPath)
-    {
-        if (File.Exists(outputPath))
-        {
-            File.Delete(outputPath);
-        }
-        FileStream fs = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
-        StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8);
-        XmlSerializer xml = new XmlSerializer(cfg.GetType());
-        xml.Serialize(sw, cfg);
-        sw.Close();
-        fs.Close();
-
-        AssetDatabase.Refresh();
-    }
-
-
-    /// <summary>
-    /// 将类对象cfg转Bin，放在path下
-    /// </summary>
-    /// <exception cref="NotImplementedException"></exception>
-    private static void Class2Bin<T>(T cfg, string path)
-    {
-        FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
-        fs.Seek(0, SeekOrigin.Begin);//清空
-        fs.SetLength(0);
-        BinaryFormatter bf = new BinaryFormatter();
-        bf.Serialize(fs, cfg);
-        fs.Close();
-
-
-    }
 
 
 
@@ -552,24 +514,7 @@ public class AssetBundleEditor
     }
 
 
-     /// <summary>
-     /// 
-     /// </summary>
-     /// <param name="hotfix">是否热更</param>
-     /// <param name="abMD5Path"></param>
-     /// <param name="hotCnt">热更次数</param>
-    public static void BuildAB(bool hotfix = false, string abMD5Path = "", string hotCnt = "1")
-    {
-        if (hotfix)
-        {
-            ReadMD5Com(abMD5Path, hotCnt);
-        }
-        else
-        {
-            WriteABMD5();
-        }
 
-    }
 
 
 
@@ -752,8 +697,8 @@ public class AssetBundleEditor
     {
         ABCfg abCfg = WriteData(m_abMarkDic);
 
-        Class2Xml(abCfg, m_ab_Xml); //生成Xml
-        Class2Bin(abCfg, m_abCfg_Bytes); //生成bytes
+        Common.Class2Xml(abCfg, m_ab_Xml); //生成Xml
+        Common.Class2Bin(abCfg, m_abCfg_Bytes); //生成bytes
         AssetDatabase.Refresh();
 
     }
@@ -761,7 +706,7 @@ public class AssetBundleEditor
     {
         ABCfg abCfg = WriteData(m_abMarkDic);
 
-        Class2Bin(abCfg, m_abCfg_Bytes); //生成bytes
+        Common.Class2Bin(abCfg, m_abCfg_Bytes); //生成bytes
         AssetDatabase.Refresh();
 
     }
@@ -769,7 +714,7 @@ public class AssetBundleEditor
     {
         ABCfg abCfg = WriteData(m_abMarkDic);
 
-        Class2Xml(abCfg, m_ab_Xml); //生成Xml
+        Common.Class2Xml(abCfg, m_ab_Xml); //生成Xml
         AssetDatabase.Refresh();
 
     }
@@ -955,126 +900,6 @@ public class AssetBundleEditor
 
 
 
-    #region MD5
-
-
-
-    /// <summary>
-    /// 写入MD5（RealFrame/Resources/ABMD5.bytes）
-    /// </summary>
-    static void WriteABMD5()
-    {
-        DirectoryInfo di = new DirectoryInfo(m_AB_OutterPath);
-        FileInfo[] fiArr = di.GetFiles("*", SearchOption.AllDirectories);
-        ABMD5 abmd5 = new ABMD5();
-        abmd5.ABMD5Lst = new List<ABMD5Base>();
-        for (int i = 0; i < fiArr.Length; i++)
-        {
-            if (fiArr[i].Name.EndsWith(".meta") == false && fiArr[i].Name.EndsWith(".manifest") == false)
-            {
-                ABMD5Base abmd5Base = new ABMD5Base
-                {
-                    Name = fiArr[i].Name,
-                    MD5 = MD5Mgr.Instance.BuildFileMD5(fiArr[i].FullName),
-                    Size = fiArr[i].Length / 1024.0f // KB
-                };
-
-
-                abmd5.ABMD5Lst.Add(abmd5Base);
-            }
-        }
-        string innerPath = string.Format("{0}ABMD5.bytes", m_ABMD5_InnerPath); //内部生成
-        Class2Bin(abmd5, innerPath);
-
-        Common.TickPath(m_ABMD5_OutterPath);//外部拷贝
-        string outterPath = string.Format("{0}ABMD5_{1}.bytes", m_ABMD5_OutterPath, PlayerSettings.bundleVersion);
-        Common.File_Delete(outterPath); //清空
-        File.Copy(innerPath, outterPath);
-    }
-
-
-    static void ReadMD5Com(string abmd5Path, string hotCnt)
-    {
-        m_abMD5Dic.Clear();
-        using (FileStream fileStream = new FileStream(abmd5Path, FileMode.Open, FileAccess.Read))
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            ABMD5 abmd5 = bf.Deserialize(fileStream) as ABMD5;
-            foreach (ABMD5Base abmd5Base in abmd5.ABMD5Lst)
-            {
-                m_abMD5Dic.Add(abmd5Base.Name, abmd5Base);
-            }
-        }
-
-        List<string> changeList = new List<string>();
-        DirectoryInfo directory = new DirectoryInfo(m_AB_OutterPath);
-        FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
-        for (int i = 0; i < files.Length; i++)
-        {
-            if (!files[i].Name.EndsWith(".meta") && !files[i].Name.EndsWith(".manifest"))
-            //if (Common.NotEndsWith(files[i].Name, ".meta", ".manifest"))
-            {
-                string name = files[i].Name;
-                string md5 = MD5Mgr.Instance.BuildFileMD5(files[i].FullName);
-                ABMD5Base abMD5Base = null;
-                if (m_abMD5Dic.ContainsKey(name) == false)//新AB
-                {
-                    changeList.Add(name);
-                }
-                else
-                {
-                    if (m_abMD5Dic.TryGetValue(name, out abMD5Base))
-                    {
-                        if (md5 != abMD5Base.MD5)//发生变化
-                        {
-                            changeList.Add(name);
-                        }
-                    }
-                }
-            }
-        }
-
-        CopyABAndGeneratXml(changeList, hotCnt); //拷贝
-    }
-
-    /// <summary>
-    /// 拷贝筛选的AB包及自动生成服务器配置表
-    /// </summary>
-    /// <param name="changeLst"></param>
-    /// <param name="hotCount"></param>
-    static void CopyABAndGeneratXml(List<string> changeLst, string hotCount)
-    {
-
-        Common.TickPath(m_Hot_OutterPath );
-        Common.Folder_ClearWithout_NotRecursive(m_Hot_OutterPath);
-
-        foreach (string str in changeLst)
-        {
-            if (!str.EndsWith(".manifest"))
-            {
-                File.Copy(m_AB_OutterPath + "/" + str, m_Hot_OutterPath  + "/" + str);
-            }
-        }
-
-        //生成服务器Patch
-        //DirectoryInfo directory = new DirectoryInfo(m_Hot_OutterPath );
-        //FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
-        //Pathces pathces = new Pathces();
-        //pathces.Version = 1;
-        //pathces.Files = new List<Patch>();
-        //for (int i = 0; i < files.Length; i++)
-        //{
-        //    Patch patch = new Patch();
-        //    patch.Md5 = MD5Manager.Instance.BuildFileMd5(files[i].FullName);
-        //    patch.Name = files[i].Name;
-        //    patch.Size = files[i].Length / 1024.0f;
-        //    patch.Platform = EditorUserBuildSettings.activeBuildTarget.ToString();
-        //    patch.Url = "http://127.0.0.1/AssetBundle/" + PlayerSettings.bundleVersion + "/" + hotCount + "/" + files[i].Name;
-        //    pathces.Files.Add(patch);
-        //}
-        //BinarySerializeOpt.Xmlserialize(m_Hot_OutterPath  + "/Patch.xml", pathces);
-    }
-    #endregion
 
 }
 

@@ -18,23 +18,14 @@ public class AssetBundleHotFixEWnd : EditorWindow
     #region 字属
 
     string m_abMD5_OutterPath="";
-    string m_hotCnt = "1";
+    string m_hotCnt = "1"; //热更次数
     OpenFileName m_OpenFileName = null;
 
 
     #endregion
 
 
-    public class AssetBundleHotFixEditor
-    {
 
-        [MenuItem(DefinePath.MenuItem_AB + "AB热更编辑器", false, 100)]
-        static void MenuItem_AB_Init()
-        {
-            AssetBundleHotFixEWnd window = (AssetBundleHotFixEWnd)GetWindow(typeof(AssetBundleHotFixEWnd), false, "热更包界面", true);
-            window.Show();
-        }
-    }
 
     private void OnGUI()
     {
@@ -68,7 +59,7 @@ public class AssetBundleHotFixEWnd : EditorWindow
         {
             if (false==string.IsNullOrEmpty(m_abMD5_OutterPath) && true==m_abMD5_OutterPath.EndsWith(".bytes"))
             {
-                AssetBundleEditor.BuildAB(true, m_abMD5_OutterPath, m_hotCnt);
+                AssetBundleHotFixEditor.BuildAB(true, m_abMD5_OutterPath, m_hotCnt);
             }
         }
     }

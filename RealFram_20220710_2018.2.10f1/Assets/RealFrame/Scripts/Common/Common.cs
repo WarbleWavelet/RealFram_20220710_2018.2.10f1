@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -370,6 +373,47 @@ public class Common
     {
         return val.Trim().Replace(" ", "");
     }
+
+
+
+    #region 转格式
+    /// <summary>
+    /// 为了可视化
+    /// </summary>
+    /// <exception cref="NotImplementedException"></exception>
+    public static void Class2Xml<T>(T cfg, string outputPath)
+    {
+        if (File.Exists(outputPath))
+        {
+            File.Delete(outputPath);
+        }
+        FileStream fs = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+        StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8);
+        XmlSerializer xml = new XmlSerializer(cfg.GetType());
+        xml.Serialize(sw, cfg);
+        sw.Close();
+        fs.Close();
+
+       
+    }
+
+
+    /// <summary>
+    /// 将类对象cfg转Bin，放在path下
+    /// </summary>
+    /// <exception cref="NotImplementedException"></exception>
+    public static void Class2Bin<T>(T cfg, string path)
+    {
+        FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+        fs.Seek(0, SeekOrigin.Begin);//清空
+        fs.SetLength(0);
+        BinaryFormatter bf = new BinaryFormatter();
+        bf.Serialize(fs, cfg);
+        fs.Close();
+
+
+    }
+    #endregion  
 }
 
 
