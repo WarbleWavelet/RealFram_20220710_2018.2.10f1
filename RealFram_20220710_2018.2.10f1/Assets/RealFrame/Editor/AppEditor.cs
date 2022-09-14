@@ -79,7 +79,7 @@ public class AppEditor
         // WriteVersion();
         // AssetBundleEditor.BuildAB_RootOutter(); //AB包
 
-        Common.File_Clear(m_appBuildPath_IOS);
+        Common.Folder_Clear_Recursive(m_appBuildPath_IOS);
         string completedName = GetName_Completed(PackType.Unity_IOS);//用unity的参数
         string programPath = GetName_App(completedName);
 
@@ -121,7 +121,7 @@ public class AppEditor
             BuildOptions.None
         );
 
-        Common.File_Clear(m_AB_InnerPath);//删除内部的包
+        Common.Folder_Clear_Recursive(m_AB_InnerPath);//删除内部的包
 
         Debug.LogFormat("导出到外部成功：{0}", m_AB_OutterPath);
     }
@@ -142,7 +142,7 @@ public class AppEditor
             BuildOptions.None
         );
 
-        Common.File_Clear(m_AB_InnerPath);//删除内部的包
+        Common.Folder_Clear_Recursive(m_AB_InnerPath);//删除内部的包
         Debug.LogFormat("一键生成并且导出到外部成功：{0}", m_AB_OutterPath);
     }
 

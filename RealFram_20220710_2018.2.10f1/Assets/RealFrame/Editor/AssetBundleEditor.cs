@@ -33,8 +33,8 @@ public class AssetBundleEditor
     /// <summary>AB的生成位置</summary>
     static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath;
     static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath;
-    static string m_ABMD5_InnerPath = DefinePath.RealFramePath+"Resources/";
-    static string m_ABMD5_OutterPath = DefinePath.OutputVersionMD5_OutterPath+ EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    static string m_ABMD5_InnerPath = DefinePath.ABMD5_InnerPath;
+    static string m_ABMD5_OutterPath = DefinePath.ABMD5_OutterPath+ EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
     static string m_ab_Xml = DefinePath.OutputXml;
     static string m_assetbundleconfig_Path = DefinePath.abCfg_Path;
 
@@ -43,28 +43,19 @@ public class AssetBundleEditor
     static string m_abCfg_Bytes = DefinePath.abCfg_Bytes;
     static bool isFirstMarkAB = true;
 
-
+    static Dictionary<string, ABMD5Base> m_abMD5Dic = new Dictionary<string, ABMD5Base>(); //MD5
+   static string m_Hot_OutterPath = DefinePath.Hot_OutterPath+ EditorUserBuildSettings.activeBuildTarget.ToString();
     #endregion
 
 
 
     #region MenuItem
-    /// <summary>
-    /// 一键打包
-    /// </summary>
-
-    //放在文件夹Editor下。相邻超过10为一组有分割线
-    [MenuItem(DefinePath.MenuItem_AB + "1234 一键打包到内部", false, 81)]//按钮在菜单栏的位置
-    static void MenuItem_BuildAB_RootInner()
-    {
-
-        BuildAB_RootInner();
-    }
 
 
 
 
-    #region ABCfgSO
+
+    #region 00 ABCfgSO
 
 
     [MenuItem(DefinePath.MenuItem_AB + "定位标记数据的SO（除了配置表）", false, 0)] //Alt+R打开资源路径 ,Unity上的路径
@@ -74,7 +65,7 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "01 添加标记数据和Init类（除了配置表）", false, 1)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "01 添加标记数据和Init类（除了配置表）", false, 0)]//按钮在菜单栏的位置
     public static void InitABCfgSO() //文件夹
     {
         m_abCfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
@@ -93,7 +84,7 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "Clear ABCfgSO", false, 3)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "Clear ABCfgSO", false, 0)]//按钮在菜单栏的位置
     public static void ClearABCfgSO()
     {
         m_abCfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
@@ -113,16 +104,13 @@ public class AssetBundleEditor
     }
     #endregion
 
-    static ABCfgSO GetABCfgSO()
-    {
-        return AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
-    }
+
     #endregion
 
 
 
-    #region 标记
-    [MenuItem(DefinePath.MenuItem_AB + "02 标记", false, 21)]//按钮在菜单栏的位置
+    #region 20 标记
+    [MenuItem(DefinePath.MenuItem_AB + "02 标记", false, 20)]//按钮在菜单栏的位置
     public static void MenuItem_MarkABOnly()
     {
         MarkAB();
@@ -130,7 +118,7 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "0203 标记并初始内存(先打包了assetbundleconfig)", false, 21)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "0203 标记并初始内存(先打包了assetbundleconfig)", false, 20)]//按钮在菜单栏的位置
     public static void MenuItem_MarkAB()
     {
         MarkAB();
@@ -142,7 +130,7 @@ public class AssetBundleEditor
 
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "清理标记", false, 22)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "清理标记", false, 20)]//按钮在菜单栏的位置
     public static void Unmark()
     {
         string[] oldNameArr = AssetDatabase.GetAllAssetBundleNames();
@@ -158,10 +146,52 @@ public class AssetBundleEditor
 
 
 
-    #region 打包 删包
+    #region 40 生成Xml Bin
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "04 对标记进行打包", false, 61)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "03 生成Bin(Bin也要标记打包)", false, 40)]
+    static void MenuItem_WriteBin()
+    {
+        WriteBin();
+
+    }
+
+    [MenuItem(DefinePath.MenuItem_AB + "03 生成Xml", false, 40)]
+    static void MenuItem_WriteXml()
+    {
+        WriteXml();
+
+    }
+
+    /// <summary>
+    /// <path,ABName>
+    /// </summary>
+    /// <param name="dic"></param>
+    [MenuItem(DefinePath.MenuItem_AB + "03 生成Xml Bin(Bin也要标记打包)", false, 40)]
+    static void MenuItem_WriteBytesAndXml()
+    {
+        WriteBinAndXml();
+
+    }
+
+
+    [MenuItem(DefinePath.MenuItem_AB + "删Xml Bin(RealFrame\\xml和RealFrame\\GameData\\Data\\ABData\\bytes)", false, 40)]//按钮在菜单栏的位置
+    static void MenuItem_DeleteBytesAndXml()
+    {
+
+        DeleteData(Application.dataPath, m_ab_Xml);
+        DeleteData(Application.dataPath, m_abCfg_Bytes);
+
+    }
+
+    #endregion
+
+
+
+    #region 60 打包 删包
+
+
+    [MenuItem(DefinePath.MenuItem_AB + "04 对标记进行打包", false, 60)]//按钮在菜单栏的位置
     public static void MenuItem_BuildAB()
     {
         BuildAB(m_AB_InnerPath);
@@ -169,14 +199,26 @@ public class AssetBundleEditor
         Debug.LogFormat("导出到内部成功：{0}", m_AB_InnerPath);
     }
 
-    [MenuItem(DefinePath.MenuItem_AB + "删包（RealFrame\\StreamingAssets）", false, 61)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "删包（RealFrame\\StreamingAssets）", false, 60)]//按钮在菜单栏的位置
     public static void MenuItem_DeleteAB()
     {
         Common.AB_Clear(m_AB_InnerPath);
     }
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "1234 一键打包到内部", false, 83)]//按钮在菜单栏的位置
+    #endregion
+
+
+
+    #region 80 一键打包
+
+
+    /// <summary>
+    /// 一键打包
+    /// </summary>
+
+    //放在文件夹Editor下。相邻超过10为一组有分割线
+    [MenuItem(DefinePath.MenuItem_AB + "1234 一键打包到内部", false, 80)]//按钮在菜单栏的位置
     public static void MenuItem_BuildAB_InnerPath()
     {
         WriteABMD5();
@@ -186,7 +228,7 @@ public class AssetBundleEditor
     }
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "12345 一键打包到外部", false, 83)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "12345 一键打包到外部", false, 80)]//按钮在菜单栏的位置
     public static void MenuItem_BuildAB_OutterPath()
     {
         WriteABMD5(); 
@@ -198,66 +240,27 @@ public class AssetBundleEditor
 
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "_1234 一键清除内部打包", false, 83)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "_1234 一键清除内部打包", false, 80)]//按钮在菜单栏的位置
     static void MenuItem_ClearAB_InnerPath()
     {
         ClearAB_RootInner();
     }
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "_12345 一键清除外部打包", false, 83)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "_12345 一键清除外部打包", false, 80)]//按钮在菜单栏的位置
     static void MenuItem_ClearAB_OutterPath()
     {
         ClearAB_RootOutter();
     }
-
-
-
     #endregion
 
 
 
 
-    #region 生成Xml Bin
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "03 生成Bin(Bin也要标记打包)", false, 41)]
-    static void MenuItem_WriteBin()
-    {
-        WriteBin();
-
-    }
-
-    [MenuItem(DefinePath.MenuItem_AB + "03 生成Xml", false, 41)]
-    static void MenuItem_WriteXml()
-    {
-        WriteXml();
-
-    }
-
-    /// <summary>
-    /// <path,ABName>
-    /// </summary>
-    /// <param name="dic"></param>
-    [MenuItem(DefinePath.MenuItem_AB + "03 生成Xml Bin(Bin也要标记打包)", false, 41)]
-    static void MenuItem_WriteBytesAndXml()
-    {
-        WriteBinAndXml();
-
-    }
-
-
-    [MenuItem(DefinePath.MenuItem_AB + "删Xml Bin(RealFrame\\xml和RealFrame\\GameData\\Data\\ABData\\bytes)", false, 42)]//按钮在菜单栏的位置
-    static void MenuItem_DeleteBytesAndXml()
-    {
-
-        DeleteData(Application.dataPath, m_ab_Xml);
-        DeleteData(Application.dataPath, m_abCfg_Bytes);
-
-    }
 
     #endregion
-
 
 
 
@@ -312,58 +315,29 @@ public class AssetBundleEditor
     /// </summary>
     public static void BuildAB_RootOutter()
     {
-        Common.File_Clear(m_AB_OutterPath);
-        Common.File_Clear(m_AB_InnerPath);
+        Common.Folder_Clear_Recursive(m_AB_OutterPath);
+        Common.Folder_Clear_Recursive(m_AB_InnerPath);
 
         BuildAB_RootInner();
         Common.File_Copy(m_AB_InnerPath, m_AB_OutterPath); //外部AB包
 
-        Common.File_Clear(m_AB_InnerPath);
+        Common.Folder_Clear_Recursive(m_AB_InnerPath);
 
 
     }
-    #endregion
-
-
     #endregion
 
 
 
     #region 辅助
 
-
-    /// <summary>
-    /// 写入MD5（RealFrame/Resources/ABMD5.bytes）
-    /// </summary>
-    static void WriteABMD5()
+    static ABCfgSO GetABCfgSO()
     {
-        DirectoryInfo di = new DirectoryInfo( m_AB_OutterPath );
-        FileInfo[] fiArr = di.GetFiles("*", SearchOption.AllDirectories);
-        ABMD5 abmd5 = new ABMD5();
-        abmd5.ABMD5Lst = new List<ABMD5Base>();
-        for (int i = 0; i < fiArr.Length; i++)
-        {
-            if (fiArr[i].Name.EndsWith(".meta")==false && fiArr[i].Name.EndsWith(".manifest")==false)
-            {
-                ABMD5Base abmd5Base = new ABMD5Base
-                {
-                    Name = fiArr[i].Name,
-                    MD5 = MD5Mgr.Instance.BuildFileMd5(fiArr[i].FullName),
-                    Size = fiArr[i].Length / 1024.0f // KB
-                };
-
-
-                abmd5.ABMD5Lst.Add(abmd5Base);
-            }
-        }
-        string innerPath = string.Format("{0}ABMD5.bytes", m_ABMD5_InnerPath); //内部生成
-        Class2Bin(abmd5, innerPath );
-
-        Common.TickPath(m_ABMD5_OutterPath);//外部拷贝
-        string outterPath = string.Format("{0}ABMD5_{1}.bytes", m_ABMD5_OutterPath, PlayerSettings.bundleVersion);
-        Common.File_Delete(outterPath); //清空
-        File.Copy(innerPath, outterPath);
+        return AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
     }
+
+
+
 
 
 
@@ -540,6 +514,10 @@ public class AssetBundleEditor
     }
 
 
+    /// <summary>
+    /// 打AB
+    /// </summary>
+    /// <param name="outputABPath"></param>
     public static void BuildAB(string outputABPath)
     {
         Common.TickPath(outputABPath);
@@ -564,11 +542,40 @@ public class AssetBundleEditor
         }
         else
         {
-
             Debug.Log("AB打包完毕");
         }
+
+
+
+
         AssetDatabase.Refresh();//有时耗时长，不要到处使用
     }
+
+
+     /// <summary>
+     /// 
+     /// </summary>
+     /// <param name="hotfix">是否热更</param>
+     /// <param name="abMD5Path"></param>
+     /// <param name="hotCnt">热更次数</param>
+    public static void BuildAB(bool hotfix = false, string abMD5Path = "", string hotCnt = "1")
+    {
+        if (hotfix)
+        {
+            ReadMD5Com(abMD5Path, hotCnt);
+        }
+        else
+        {
+            WriteABMD5();
+        }
+
+    }
+
+
+
+
+
+
 
     /// <summary>
     /// 根据 abMarkDic去除依赖生成ABCfg
@@ -770,6 +777,9 @@ public class AssetBundleEditor
     #endregion
 
 
+
+
+
     /// <summary>
     /// 文件夹下文件名 == AB名？
     /// </summary>
@@ -941,6 +951,130 @@ public class AssetBundleEditor
     }
     #endregion
 
+
+
+
+
+    #region MD5
+
+
+
+    /// <summary>
+    /// 写入MD5（RealFrame/Resources/ABMD5.bytes）
+    /// </summary>
+    static void WriteABMD5()
+    {
+        DirectoryInfo di = new DirectoryInfo(m_AB_OutterPath);
+        FileInfo[] fiArr = di.GetFiles("*", SearchOption.AllDirectories);
+        ABMD5 abmd5 = new ABMD5();
+        abmd5.ABMD5Lst = new List<ABMD5Base>();
+        for (int i = 0; i < fiArr.Length; i++)
+        {
+            if (fiArr[i].Name.EndsWith(".meta") == false && fiArr[i].Name.EndsWith(".manifest") == false)
+            {
+                ABMD5Base abmd5Base = new ABMD5Base
+                {
+                    Name = fiArr[i].Name,
+                    MD5 = MD5Mgr.Instance.BuildFileMD5(fiArr[i].FullName),
+                    Size = fiArr[i].Length / 1024.0f // KB
+                };
+
+
+                abmd5.ABMD5Lst.Add(abmd5Base);
+            }
+        }
+        string innerPath = string.Format("{0}ABMD5.bytes", m_ABMD5_InnerPath); //内部生成
+        Class2Bin(abmd5, innerPath);
+
+        Common.TickPath(m_ABMD5_OutterPath);//外部拷贝
+        string outterPath = string.Format("{0}ABMD5_{1}.bytes", m_ABMD5_OutterPath, PlayerSettings.bundleVersion);
+        Common.File_Delete(outterPath); //清空
+        File.Copy(innerPath, outterPath);
+    }
+
+
+    static void ReadMD5Com(string abmd5Path, string hotCnt)
+    {
+        m_abMD5Dic.Clear();
+        using (FileStream fileStream = new FileStream(abmd5Path, FileMode.Open, FileAccess.Read))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            ABMD5 abmd5 = bf.Deserialize(fileStream) as ABMD5;
+            foreach (ABMD5Base abmd5Base in abmd5.ABMD5Lst)
+            {
+                m_abMD5Dic.Add(abmd5Base.Name, abmd5Base);
+            }
+        }
+
+        List<string> changeList = new List<string>();
+        DirectoryInfo directory = new DirectoryInfo(m_AB_OutterPath);
+        FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
+        for (int i = 0; i < files.Length; i++)
+        {
+            if (!files[i].Name.EndsWith(".meta") && !files[i].Name.EndsWith(".manifest"))
+            //if (Common.NotEndsWith(files[i].Name, ".meta", ".manifest"))
+            {
+                string name = files[i].Name;
+                string md5 = MD5Mgr.Instance.BuildFileMD5(files[i].FullName);
+                ABMD5Base abMD5Base = null;
+                if (m_abMD5Dic.ContainsKey(name) == false)//新AB
+                {
+                    changeList.Add(name);
+                }
+                else
+                {
+                    if (m_abMD5Dic.TryGetValue(name, out abMD5Base))
+                    {
+                        if (md5 != abMD5Base.MD5)//发生变化
+                        {
+                            changeList.Add(name);
+                        }
+                    }
+                }
+            }
+        }
+
+        CopyABAndGeneratXml(changeList, hotCnt); //拷贝
+    }
+
+    /// <summary>
+    /// 拷贝筛选的AB包及自动生成服务器配置表
+    /// </summary>
+    /// <param name="changeLst"></param>
+    /// <param name="hotCount"></param>
+    static void CopyABAndGeneratXml(List<string> changeLst, string hotCount)
+    {
+
+        Common.TickPath(m_Hot_OutterPath );
+        Common.Folder_ClearWithout_NotRecursive(m_Hot_OutterPath);
+
+        foreach (string str in changeLst)
+        {
+            if (!str.EndsWith(".manifest"))
+            {
+                File.Copy(m_AB_OutterPath + "/" + str, m_Hot_OutterPath  + "/" + str);
+            }
+        }
+
+        //生成服务器Patch
+        //DirectoryInfo directory = new DirectoryInfo(m_Hot_OutterPath );
+        //FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
+        //Pathces pathces = new Pathces();
+        //pathces.Version = 1;
+        //pathces.Files = new List<Patch>();
+        //for (int i = 0; i < files.Length; i++)
+        //{
+        //    Patch patch = new Patch();
+        //    patch.Md5 = MD5Manager.Instance.BuildFileMd5(files[i].FullName);
+        //    patch.Name = files[i].Name;
+        //    patch.Size = files[i].Length / 1024.0f;
+        //    patch.Platform = EditorUserBuildSettings.activeBuildTarget.ToString();
+        //    patch.Url = "http://127.0.0.1/AssetBundle/" + PlayerSettings.bundleVersion + "/" + hotCount + "/" + files[i].Name;
+        //    pathces.Files.Add(patch);
+        //}
+        //BinarySerializeOpt.Xmlserialize(m_Hot_OutterPath  + "/Patch.xml", pathces);
+    }
+    #endregion
 
 }
 

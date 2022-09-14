@@ -87,6 +87,9 @@ public class Common
     }
 
 
+    #region 说明
+
+    #endregion
 
 
     /// <summary>
@@ -141,16 +144,16 @@ public class Common
 
 
     /// <summary>
-    /// 删除文件夹下的所有文件
+    /// 删除文件夹下的所有文件,递归删除
     /// </summary>
-    public static void File_Clear(string path)
+    public static void Folder_Clear_Recursive(string path)
     {
         try
         {
             DirectoryInfo di = new DirectoryInfo(path);
-            FileSystemInfo[] fiArr = di.GetFileSystemInfos();
+            FileSystemInfo[] fsiArr = di.GetFileSystemInfos();
 
-            foreach (var fsi in fiArr)
+            foreach (var fsi in fsiArr)
             {
                 if (fsi is DirectoryInfo)
                 {
@@ -161,6 +164,34 @@ public class Common
                 {
                     File.Delete(fsi.FullName);
                 }
+            }
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// 删除文件夹下的所有文件,除了后缀是lst的任一个 ,不递归删除
+    /// </summary>
+    public static void Folder_ClearWithout_NotRecursive(string path,params string[] lst)
+    {
+        try
+        {
+            DirectoryInfo di = new DirectoryInfo(path);
+            FileSystemInfo[] fsiArr = di.GetFiles("*",SearchOption.AllDirectories);
+
+            foreach (var fsi in fsiArr)
+            {
+                if (EndsWith(path, lst))
+                {
+                    continue;
+                }
+                 
+                File.Delete(fsi.FullName);
             }
 
         }
@@ -205,7 +236,12 @@ public class Common
     }
 
 
-    public static string TrimName(string path, TrimNameType type)
+
+    #region 字符串处理
+
+
+
+ public static string TrimName(string path, TrimNameType type)
     {
         switch (type)
         {
@@ -234,6 +270,38 @@ public class Common
 
 
     }
+
+
+
+    public static bool NotEndsWith(string str, params string[] lst)
+    {
+        foreach (var item in lst)
+        {
+            if (str.EndsWith(item))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    public static bool EndsWith(string str, params string[] lst)
+    {
+        foreach (var item in lst)
+        {
+            if (str.EndsWith(item))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    #endregion
+
+   
 
 
     #region 辅助
@@ -290,6 +358,7 @@ public class Common
         {
             Directory.CreateDirectory(path);
         }
+
     }
 
     /// <summary>

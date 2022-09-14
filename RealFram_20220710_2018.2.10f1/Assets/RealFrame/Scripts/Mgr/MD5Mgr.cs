@@ -18,9 +18,9 @@ public class MD5Mgr : Singleton<MD5Mgr>
 {
 
     //储存Md5码，filePath为文件路径，md5SavePath为储存md5码路径
-    public void SaveMd5(string filePath, string md5SavePath)
+    public void SaveMD5(string filePath, string md5SavePath)
     {
-        string md5 = BuildFileMd5(filePath);
+        string md5 = BuildFileMD5(filePath);
         string name = filePath + "_md5.dat";
         Common.File_Delete(name);
         StreamWriter sw = new StreamWriter(name, false, Encoding.UTF8);
@@ -33,9 +33,9 @@ public class MD5Mgr : Singleton<MD5Mgr>
     }
 
     //储存Md5码，filePath为文件路径
-    public void SaveMd5(string filePath)
+    public void SaveMD5(string filePath)
     {
-        string md5 = BuildFileMd5(filePath);
+        string md5 = BuildFileMD5(filePath);
         string name = filePath + "_md5.dat";
         Common.File_Delete(name);
         StreamWriter sw = new StreamWriter(name, false, Encoding.UTF8);
@@ -48,7 +48,7 @@ public class MD5Mgr : Singleton<MD5Mgr>
     }
 
     //获取之前储存的Md5码
-    public string GetMd5(string path)
+    public string GetMD5(string path)
     {
         string name = path + "_md5.dat";
         try
@@ -70,7 +70,7 @@ public class MD5Mgr : Singleton<MD5Mgr>
     /// </summary>
     /// <param name="fliePath"></param>
     /// <returns></returns>
-    public string BuildFileMd5(string fliePath)
+    public string BuildFileMD5(string fliePath)
     {
         string filemd5 = null;
         try

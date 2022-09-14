@@ -44,7 +44,7 @@ public class JenkinsEditor : Editor
 
         string completedName = GetName_Completed(PackType.Jenkins_PC); //程序包
         string programPath = AppEditor.GetName_App(completedName);
-        Common.File_Clear(DefinePath.ABBuildPath_Windows);
+        Common.Folder_Clear_Recursive(DefinePath.ABBuildPath_Windows);
         AppEditor.BuildApp(programPath);
         Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
@@ -54,7 +54,7 @@ public class JenkinsEditor : Editor
     static void MenuItem_Jenkins_BuildApp_Android()
     {
         //AssetBundleEditor.BuildAB_RootOutter(); //AB包
-        Common.File_Clear(DefinePath.AppBuildPath_Andriod);
+        Common.Folder_Clear_Recursive(DefinePath.AppBuildPath_Andriod);
 
         PlayerSettings.Android.keyaliasName = Constants.Android_keyaliasName;//密钥
         PlayerSettings.Android.keystoreName = Constants.Android_keystoreName;
@@ -71,7 +71,7 @@ public class JenkinsEditor : Editor
     [MenuItem(DefinePath.MenuItem_Jenkins + "打Jenkins的IOS包（未完成）", false, 100)]
     static void MenuItem_Jenkins_BuildApp_IOS()
     {
-        Common.File_Clear(DefinePath.AppBuildPath_Andriod);
+        Common.Folder_Clear_Recursive(DefinePath.AppBuildPath_Andriod);
 
 
         //AssetBundleEditor.BuildAB_RootOutter(); //AB包

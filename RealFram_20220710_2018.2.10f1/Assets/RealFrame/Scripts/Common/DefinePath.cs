@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
+
 
 public class DefinePath
 {
     /// <summary>工程跟目录</summary>
     public static string ProjectPath = Application.dataPath.Replace("Assets", "");
+    //public static string ProjectPath = Common.TrimName(Application.dataPath, TrimNameType.SlashAfter) ;
     public static string RealFramePath = Application.dataPath + "/" + DefinePath.RealFrameName + "/";
     public const string RealFrameName = "RealFrame"; //Top文件夹
 
@@ -85,9 +88,11 @@ public class DefinePath
     public static string ABBuildPath_Windows = Application.dataPath + "/../AssetBundle/Windows/";
 
 
+
     public static string OutputAB_InnerPath = RealFramePath + "StreamingAssets/";
     public static string OutputAB_OutterPath = ProjectPath + "AssetBundle/";//Assets的上一级
-    public static string OutputVersionMD5_OutterPath = ProjectPath + "Version/";//Assets的上一级
+    public static string ABMD5_InnerPath = RealFramePath + "Resources/";
+    public static string ABMD5_OutterPath = ProjectPath + "Version/";//Assets的上一级
     #endregion
 
     //ab.LoadAssets                     assetbundleconfig                
@@ -101,6 +106,12 @@ public class DefinePath
     public const string Cfg_BuffData = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/Bin/BuffData.bytes";
     public const string Cfg_BuffData2 = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/Bin/BuffData2.bytes";
     public const string Cfg_UIPrefabPath = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/";
+    #endregion
+
+
+
+    #region 热更
+    public static string Hot_OutterPath = Application.dataPath + "/../Hot/" ;
     #endregion
 }
 
