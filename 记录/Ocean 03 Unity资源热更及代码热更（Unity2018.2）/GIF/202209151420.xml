@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServerInfo Version="0.1">
+  <GameVersion Version="1" Des="测试热更">
+    <Pathces Version="1">
+      <Files Name="image" Url="http://127.0.0.1/AssetBundle/0.1/1/image" Platform="StandaloneWindows64" Md5="25925f17e67aaa08aa80dff09a1e87d5" Size="5.42773438" />
+      <Files Name="StandaloneWindows64" Url="http://127.0.0.1/AssetBundle/0.1/1/StandaloneWindows64" Platform="StandaloneWindows64" Md5="bd254a0eb7f6ea9ada10e8c9d03d556a" Size="1.75878906" />
+    </Pathces>
+  </GameVersion>
+</ServerInfo>

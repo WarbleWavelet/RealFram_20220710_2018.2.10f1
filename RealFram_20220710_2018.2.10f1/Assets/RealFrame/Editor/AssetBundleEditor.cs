@@ -31,7 +31,7 @@ public class AssetBundleEditor
     static ABCfgSO m_abCfgSO;
     static string m_abCfgSOPath = DefinePath.ABCfgSOPath;
     /// <summary>AB的生成位置</summary>
-    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath;
+    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath+ EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
     static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath;
 
     static string m_ab_Xml = DefinePath.OutputXml;
@@ -200,8 +200,12 @@ public class AssetBundleEditor
     [MenuItem(DefinePath.MenuItem_AB + "删包（RealFrame\\StreamingAssets）", false, 60)]//按钮在菜单栏的位置
     public static void MenuItem_DeleteAB()
     {
-        Common.AB_Clear(m_AB_InnerPath);
+
+            Common.AB_Clear(m_AB_InnerPath);
+    
     }
+
+
 
 
     #endregion
@@ -274,7 +278,9 @@ public class AssetBundleEditor
         ClearABCfgSO();
         DeleteData(Application.dataPath, m_ab_Xml);
         DeleteData(Application.dataPath, m_abCfg_Bytes);
-        Common.AB_Clear(m_AB_InnerPath);
+                Common.AB_Clear(m_AB_InnerPath);
+ 
+      
         Unmark();
 
 
@@ -479,7 +485,7 @@ public class AssetBundleEditor
     /// <summary>
     /// 打AB
     /// </summary>
-    /// <param name="outputABPath"></param>
+    /// <param name="outputABPath">打包到内部的文件夹，一般是AssetStreaming，但我看到Ocean的叫</param>
     public static void BuildAB(string outputABPath)
     {
         Common.TickPath(outputABPath);
@@ -786,6 +792,9 @@ public class AssetBundleEditor
     }
 
 
+    /// <summary>
+    /// 记录而已
+    /// </summary>
     void SomeTypeRecord()
     {
         abWriter = new ABWriter()

@@ -163,6 +163,7 @@ public class AssetBundleHotFixEditor
             patch.Name = files[i].Name;
             patch.Size = files[i].Length / 1024.0f;
             patch.Platform = EditorUserBuildSettings.activeBuildTarget.ToString();
+            //Apache D:\ProgramFilesTrim\Apache\Apache24\htdocs\AssetBundle\0.1\1\...
             patch.Url = "http://127.0.0.1/AssetBundle/" + PlayerSettings.bundleVersion + "/" + hotCnt + "/" + files[i].Name;
             pathces.Files.Add(patch);
         }

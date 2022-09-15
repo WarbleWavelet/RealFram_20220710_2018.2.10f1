@@ -69,6 +69,13 @@ public class Common
 
     public static void AB_Clear(string path)
     {
+        if (Folder_Exits(path) == false)
+        {
+
+            Debug.LogErrorFormat("该路径不存在：{0}", path);
+            return;
+        }
+
         DirectoryInfo di = new DirectoryInfo(path);  //搜索该文件夹
         FileInfo[] fiArr = di.GetFiles("*", SearchOption.AllDirectories);
 
@@ -90,9 +97,7 @@ public class Common
     }
 
 
-    #region 说明
 
-    #endregion
 
 
     /// <summary>
@@ -203,6 +208,28 @@ public class Common
 
             throw;
         }
+    }
+
+
+    /// <summary>
+    /// 存在文件夹（带/也可以）
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static  bool Folder_Exits(string path)
+    {
+        return Directory.Exists(path);
+    }
+
+
+    /// <summary>
+    /// 存在文件
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static bool File_Exits(string path)
+    {
+        return File.Exists(path);
     }
 
 
