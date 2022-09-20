@@ -89,7 +89,7 @@ public class DefinePath
 
 
 
-    public static string OutputAB_InnerPath = RealFramePath + "StreamingAssets/";
+    public static string OutputAB_InnerPath = RealFramePath + "StreamingAssets/";//打包时总包名是平台名
     public static string OutputAB_OutterPath = ProjectPath + "AssetBundle/";//Assets的上一级
     public static string ABMD5_InnerPath = RealFramePath + "Resources/";
     public static string ABMD5_OutterPath = ProjectPath + "Version/";//Assets的上一级
@@ -137,7 +137,33 @@ public class DefinePath_Demo14
     public const string MP3_SenLin = "Assets/" + DefinePath.RealFrameName + "/GameData/Sounds/senlin.mp3";
 
 }
-#endregion  
+
+public class DefinePath_Demo15
+{
+    //界面名称
+
+
+    //场景名称
+    public const string Scene_Menu = "Menu15";
+    public const string Scene_Start = "Start15";
+    public const string Scene_Empty = "Empty15";
+
+   
+    public const string ATTACK = "Assets/GameData/Prefabs/Attack.prefab";   //临时prefab路径
+
+ 
+    public const string MENUSOUND = "Assets/GameData/Sounds/menusound.mp3";    //临时音乐资源
+    public const string Prefab_Attack = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/Attack.prefab";
+    private const string PanelPath = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/UGUI/Panel/Demo15/";
+
+
+
+    public const string Prefab_CommonConfirm = PanelPath + "CommonConfirm.prefab";
+    public const string CommonConfirm =  "CommonConfirm";
+    public const string Prefab_HotfixPanel = PanelPath + "HotfixPanel.prefab";      
+    public const string Hotfix = "HotfixPanel.prefab";
+}
+#endregion
 
 
 

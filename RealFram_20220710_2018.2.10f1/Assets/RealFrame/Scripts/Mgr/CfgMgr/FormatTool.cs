@@ -68,7 +68,7 @@ public class FormatTool
         }
         catch (Exception e)
         {
-            Debug.LogError("此xml无法转成二进制: " + xmlPath + "," + e);
+            Debug.LogError("此xml无法转成二进制（可能xml为空）: " + xmlPath + "," + e);
         }
 
         return obj;

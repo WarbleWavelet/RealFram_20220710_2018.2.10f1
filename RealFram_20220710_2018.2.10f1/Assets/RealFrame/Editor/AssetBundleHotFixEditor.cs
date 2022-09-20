@@ -17,11 +17,11 @@ public class AssetBundleHotFixEditor
 {
 
     static Dictionary<string, ABMD5Base> m_abMD5Dic = new Dictionary<string, ABMD5Base>(); //MD5
-    static string m_Hot_OutterPath = DefinePath.Hot_OutterPath + EditorUserBuildSettings.activeBuildTarget.ToString();
-    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath;
+    static string m_Hot_OutterPath = DefinePath.Hot_OutterPath + Common_Editor.BuildTarget;
+    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath + Common_Editor.BuildTarget + "/";
     static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath;
     static string m_ABMD5_InnerPath = DefinePath.ABMD5_InnerPath;
-    static string m_ABMD5_OutterPath = DefinePath.ABMD5_OutterPath + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    static string m_ABMD5_OutterPath = DefinePath.ABMD5_OutterPath + Common_Editor.BuildTarget + "/";
 
 
     [MenuItem(DefinePath.MenuItem_AB + "AB热更编辑器", false, 100)]

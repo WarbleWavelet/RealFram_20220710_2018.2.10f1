@@ -85,6 +85,12 @@
     <AssetName>Assets/RealFrame/GameData/Images/fgYellow.png</AssetName>
   </ABLst>
   <ABLst>
+    <Path>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo15/LoadFromABOrEditor.prefab</Path>
+    <Crc>2142617931</Crc>
+    <ABName>loadfromaboreditor</ABName>
+    <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo15/LoadFromABOrEditor.prefab</AssetName>
+  </ABLst>
+  <ABLst>
     <Path>Assets/RealFrame/GameData/Shaders/Skybox.shader</Path>
     <Crc>549263140</Crc>
     <ABName>shader</ABName>

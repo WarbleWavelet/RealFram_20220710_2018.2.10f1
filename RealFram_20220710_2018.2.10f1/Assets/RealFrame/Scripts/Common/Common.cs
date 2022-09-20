@@ -49,14 +49,16 @@ public class Common
 
     #endregion
 
+
+
     #region 文件操作
 
     /// <summary>
-    /// 向filePath写入fileContent
+    /// 新建并且向filePath写入fileContent（StreamWriter）
     /// </summary>
     /// <param name="filePath">全写，包括文件名和后缀</param>
     /// <param name="fileContent"></param>
-    public static void Text_Write(string filePath, string fileContent)
+    public static void File_Create_Write(string filePath, string fileContent)
     {
         FileInfo fi = new FileInfo(filePath);
         StreamWriter sw = fi.CreateText();
@@ -65,6 +67,25 @@ public class Common
         sw.Close();
         sw.Dispose();
     }
+
+    /// <summary>
+    /// 新建并且向filePath写入bytes（Stream）
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <param name="bytes"></param>
+    public static void File_Create_Write(string filePath, byte[] bytes)
+    {
+        File_Delete(filePath);
+        //
+        FileInfo fi = new FileInfo(filePath);
+        Stream stream = fi.Create();
+
+        stream.Write(bytes, 0, bytes.Length);
+        stream.Close();
+
+        stream.Dispose();
+    }
+
 
 
     public static void AB_Clear(string path)
@@ -96,6 +117,10 @@ public class Common
 
     }
 
+    public static void File_Move(string from, string to)
+    {
+        File.Move(from, to);
+    }
 
 
 
@@ -185,12 +210,12 @@ public class Common
     /// <summary>
     /// 删除文件夹下的所有文件,除了后缀是lst的任一个 ,不递归删除
     /// </summary>
-    public static void Folder_ClearWithout_NotRecursive(string path,params string[] lst)
+    public static void Folder_ClearWithout_NotRecursive(string path, params string[] lst)
     {
         try
         {
             DirectoryInfo di = new DirectoryInfo(path);
-            FileSystemInfo[] fsiArr = di.GetFiles("*",SearchOption.AllDirectories);
+            FileSystemInfo[] fsiArr = di.GetFiles("*", SearchOption.AllDirectories);
 
             foreach (var fsi in fsiArr)
             {
@@ -198,7 +223,7 @@ public class Common
                 {
                     continue;
                 }
-                 
+
                 File.Delete(fsi.FullName);
             }
 
@@ -216,7 +241,7 @@ public class Common
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public static  bool Folder_Exits(string path)
+    public static bool Folder_Exits(string path)
     {
         return Directory.Exists(path);
     }
@@ -244,12 +269,37 @@ public class Common
             File.Delete(path);
         }
     }
-        #endregion
 
 
-        #region Guid
-        /// <summary>异步的Guid，为了可以取消该异步</summary> 
-        static long m_asyncGuid = 0;
+
+    public static string File_Name_Suffix(string path)
+    {
+        return Path.GetExtension(path);
+    }
+
+
+
+    public static string File_Name_WithoutSuffix(string path)
+    {
+        return Path.GetFileNameWithoutExtension(path);
+    }
+
+
+    /// <summary>有就好，没有就创建</summary>
+    public static void TickPath(string path)
+    {
+        if (Directory.Exists(path) == false) //输出path
+        {
+            Directory.CreateDirectory(path);
+        }
+
+    }
+    #endregion
+
+
+    #region Guid
+    /// <summary>异步的Guid，为了可以取消该异步</summary> 
+    static long m_asyncGuid = 0;
     /// <summary>异步的Guid，为了可以取消该异步</summary>
     public static long CreateGuid()
     {
@@ -271,7 +321,7 @@ public class Common
 
 
 
- public static string TrimName(string path, TrimNameType type)
+    public static string TrimName(string path, TrimNameType type)
     {
         switch (type)
         {
@@ -289,6 +339,11 @@ public class Common
                 {
                     string name = path.Substring(path.LastIndexOf('/') + 1);// plane.unity3d
                     name = name.Substring(0, name.LastIndexOf('.'));// plane
+                    return name;
+                }
+            case TrimNameType.PointAfter:
+                {
+                    string name = path.Substring(0, path.LastIndexOf('.'));// plane.unity3d=> plane
                     return name;
                 }
             //break;
@@ -329,9 +384,20 @@ public class Common
 
         return false;
     }
+
+
+    /// <summary>
+    /// 去除所有空格
+    /// </summary>
+    /// <param name="val"></param>
+    /// <returns></returns>
+    public static string TrimAllSpace(string val)
+    {
+        return val.Trim().Replace(" ", "");
+    }
     #endregion
 
-   
+
 
 
     #region 辅助
@@ -381,25 +447,9 @@ public class Common
     }
 
 
-    /// <summary>有就好，没有就创建</summary>
-    public static void TickPath(string path)
-    {
-        if (Directory.Exists(path) == false) //输出path
-        {
-            Directory.CreateDirectory(path);
-        }
 
-    }
 
-    /// <summary>
-    /// 去除所有空格
-    /// </summary>
-    /// <param name="val"></param>
-    /// <returns></returns>
-    public static string TrimAllSpace(string val)
-    {
-        return val.Trim().Replace(" ", "");
-    }
+
 
 
 
@@ -421,7 +471,7 @@ public class Common
         sw.Close();
         fs.Close();
 
-       
+
     }
 
 
@@ -440,7 +490,62 @@ public class Common
 
 
     }
+    #endregion
+
+
+
+
+
+
+    #region  App   网络
+
+    public static bool IsAndroidOrIOS()
+    {
+
+        return Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android;
+    }
+
+
+    /// <summary>
+    /// 网络状态
+    /// </summary>
+    /// <returns></returns>
+    public static NetworkStatusType NetworkStatus()
+    {
+
+        switch (Application.internetReachability)
+        {
+            case NetworkReachability.ReachableViaCarrierDataNetwork:
+                {
+                    return NetworkStatusType.Traffic;
+                }
+
+            case NetworkReachability.ReachableViaLocalAreaNetwork:
+
+                {
+                    return NetworkStatusType.Wifi;
+                }
+            case NetworkReachability.NotReachable:
+            default:
+                {
+                    return NetworkStatusType.NotReachable;
+                }
+        }
+    }
+
+
     #endregion  
+
+    public static string BuildTarget = "";
+    public static void SetBuildTarget(string str)
+    {
+        BuildTarget = str;
+    }
+
+    public static string GetBuildTarget()
+    {
+       return BuildTarget;
+    }
 }
 
 
@@ -455,4 +560,23 @@ public enum TrimNameType
     SlashPre,
     /// <summary>A/B/C.prefab => C</summary>
     SlashAndPoint,
+    /// <summary>C.prefab => C</summary>
+    PointAfter
 }
+
+
+/// <summary>
+///网络状态
+/// </summary>
+public enum NetworkStatusType
+{
+    NotReachable,
+    Traffic,
+    Wifi
+
+}
+
+
+
+
+

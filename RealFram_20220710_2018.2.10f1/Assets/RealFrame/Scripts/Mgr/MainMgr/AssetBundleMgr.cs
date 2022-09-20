@@ -12,10 +12,12 @@
 
 *****************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEditor;
 using UnityEngine;
 
 public class AssetBundleMgr : Singleton<AssetBundleMgr>
@@ -32,6 +34,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
 
     ClassObjectPool<ABItem> m_abItemPool = ObjectMgr.Instance.GetOrNewClassObjectPool<ABItem>(Constants.ClassObjectPool_MAXCNT);
+    private string m_AB_InnerPath= DefinePath.OutputAB_InnerPath + Common.GetBuildTarget() + "/";
     #endregion
 
 
@@ -45,7 +48,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     string LoadABPath
     {
-        get { return DefinePath.RealFramePath + "StreamingAssets/"; }
+        get { return m_AB_InnerPath; }
         set { }
     }
 
@@ -104,6 +107,12 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     ABCfg Bin2Class()
     {
         AssetBundle ab = AssetBundle.LoadFromFile( DefinePath.OutputAB );//Load AB
+        if (ab == null)
+        {
+
+            Debug.LogErrorFormat("该路径不存在AB包{0}", DefinePath.OutputAB);
+            return null;
+        }
         TextAsset ta = ab.LoadAsset<TextAsset>( DefinePath.abCfg_Bytes );//load bytes
         if (ta == null)
         {
@@ -156,16 +165,16 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// <summary>
     /// Get不到就Load
     /// </summary>
-    /// <param name="ABName"></param>
+    /// <param name="abName"></param>
     /// <returns></returns>
-    ABItem LoadABItem(string ABName)
+    ABItem LoadABItem(string abName)
     {
-        uint crc = CRC32.GetCRC32(ABName);
+        uint crc = CRC32.GetCRC32(abName);
         
 
-        string path =LoadABPath + ABName;
-
-
+        string localPath = LoadABPath + abName;
+        string hotPath = HotPatchMgr.Instance.ComputeABPath(abName);
+        string path = String.IsNullOrEmpty(hotPath) ? localPath : hotPath;
         //if (File.Exists(path)) //File不能在安卓IOS上使用，只能PC，所以打包后不能存在
         //{
             AssetBundle ab = AssetBundle.LoadFromFile(path);
@@ -173,7 +182,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
         if (ab == null)
         {
-            Debug.LogErrorFormat("Load ab Error：path not exist:{0}", path);
+            Debug.LogErrorFormat("Load ab Error：path not exist:{0}", localPath);
             
         }
         ABItem abItem  = SpawnABItem(true);
@@ -342,7 +351,7 @@ public class ResItem//Ocean命名为ResItem。还是ResItem吧。 Asset是在硬
     /// 资源对象（prefab,图片，音频，Unity中一切物体继承于UnityEngine.Object） <para /> 
     ///Unity中一切物体（比如GameObject）继承于UnityEngine.Object，区别于System.object <para /> 
     ///</summary>
-    public Object m_Obj = null;
+    public UnityEngine.Object m_Obj = null;
 
     /// <summary>上次使用该资源（RefCnt++）时间</summary>
     public float m_LastUseTime = 0.0f;

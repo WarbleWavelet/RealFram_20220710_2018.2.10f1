@@ -14,23 +14,25 @@ using UnityEngine.UI;
 public class Window
 {
 
-    //引用GameObject
-    public GameObject m_GameObject { get; set; }
 
-    //引用Transform
-    public Transform m_Transform { get; set; }
 
-    //名字
-    public string m_Name { get; set; }
+    #region 字属
 
-    //所有的Button
+    public GameObject m_GameObject { get; set; }     //引用GameObject
+    public Transform m_Transform { get; set; }   //引用Transform
+    public string m_Name { get; set; }              //名字
 
-    protected List<Button> m_btnLst = new List<Button>();
+  
+
+    protected List<Button> m_btnLst = new List<Button>();           //所有的Button
     protected List<Slider> m_sliderLst = new List<Slider>();
     protected List<Image> m_imgLst = new List<Image>();
+    protected List<Toggle> m_toggleLst = new List<Toggle>();       //所有Toggle
 
-    //所有Toggle
-    protected List<Toggle> m_toggleLst = new List<Toggle>();
+    public bool Resources { get; set; } = false;                                    //从Resourves加载
+
+
+    #endregion
 
 
 
@@ -50,7 +52,7 @@ public class Window
 
     public virtual void OnUpdate() { }
     /// <summary>关闭</summary> 
-    public virtual void Close()
+    public virtual void OnClose()
     {
         RemoveAllButtonListener();
         RemoveAllToggleListener();

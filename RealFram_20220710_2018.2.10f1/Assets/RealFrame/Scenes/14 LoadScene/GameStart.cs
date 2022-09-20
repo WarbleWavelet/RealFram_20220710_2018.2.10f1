@@ -20,6 +20,8 @@ namespace Demo14
 	{
 
 		#region 字属
+
+
 		public Transform m_RecyclePoolTrans;
 		public Transform m_SceneTrans;
 
@@ -34,7 +36,9 @@ namespace Demo14
 		public Button btnPlay;
 		AudioClip clip;
 		AudioSource source;
-	public	bool LoadFromAB = true;
+		public	bool LoadFromAB = true;
+
+
 		#endregion
 
 		#region 生命
@@ -56,14 +60,41 @@ namespace Demo14
         void Start()
         {
 			//Test_AddABAndInstance();
-				//Test_LoadDataCfg();
+			//Test_LoadDataCfg();
         }
+
+		void Update()
+		{
+			UIMgr.Instance.OnUpdate();
+
+		}
+
+		private void OnApplicationQuit()
+		{
+			Debug.Log("OnApplicationQuit");
+
+			//#if UNITY_EDITOR//这样写才对，不能括外面
+			ResourceMgr.Instance.ClearAllResItem();
+			Resources.UnloadUnusedAssets();
+			Debug.Log("清存");
+			//#endif
+		}
+
+
+
+
+		#endregion
+
+
+
+
+		#region 辅助
 
 
 		#region 测试 能新增AB包并且可以实例	 
 		void Test_AddABAndInstance()
 		{
-			ObjectMgr.Instance.InstantiateObject(DefinePath_Demo14.Prefab_Attack, true); 
+			ObjectMgr.Instance.InstantiateObject(DefinePath_Demo14.Prefab_Attack, true);
 		}
 		#endregion
 
@@ -73,16 +104,16 @@ namespace Demo14
 		{
 			CfgMgr.Instance.LoadData<MonsterData>(DefinePath.Cfg_MonsterData_Inner);
 			CfgMgr.Instance.LoadData<BuffData>(DefinePath.Cfg_BuffData); //拆分类列表
-			//CfgMgr.Instance.LoadData<BuffData>(DefinePath.Cfg_BuffData2); //不拆分类列表
+																		 //CfgMgr.Instance.LoadData<BuffData>(DefinePath.Cfg_BuffData2); //不拆分类列表
 		}
-        #endregion	
+		#endregion
 
 
-        void BindUI()
-        {
+		void BindUI()
+		{
 
 			#region Mgr中资源的加载方式、切场景
-												
+
 			toggle.GetComponentInChildren<Text>().text = LoadFromAB.ToString();
 			toggle.isOn = LoadFromAB;
 			toggle.onValueChanged.AddListener((bool _state) =>
@@ -100,11 +131,11 @@ namespace Demo14
 				SceneMgr.Instance.LoadScene(DefinePath_Demo14.Prefab_LoadPanel, DefinePath_Demo14.Scene_Menu);
 				btnLoadScene.interactable = false;
 			});
-            #endregion
+			#endregion
 
 
-            #region 测试实例
-             GameObject go = null;
+			#region 测试实例
+			GameObject go = null;
 			Common.BindBtn(btnInstaniate, () =>
 			{
 				go = ObjectMgr.Instance.InstantiateObject(DefinePath_Demo14.Prefab_Attack, true, true);
@@ -117,42 +148,42 @@ namespace Demo14
 				go = null; //引用置空
 
 			});
-            #endregion
+			#endregion
 
 
 
-            #region 预加载
-             Common.BindBtn(btnPreload, () =>
+			#region 预加载
+			Common.BindBtn(btnPreload, () =>
 			{
-				ObjectMgr.Instance.PreloadGameObject(DefinePath_Demo14.Prefab_Attack,5);
+				ObjectMgr.Instance.PreloadGameObject(DefinePath_Demo14.Prefab_Attack, 5);
 
 
-			});				
+			});
 			Common.BindBtn(btnPreloadResObj, () =>
 			{
 				ResourceMgr.Instance.PreLoadObject(DefinePath_Demo14.MP3_SenLin);
 
 
 			});
-            #endregion
+			#endregion
 
 
-            #region mp3等，在切换场景后要用，MenuWnd
+			#region mp3等，在切换场景后要用，MenuWnd
 			Common.BindBtn(btnPlay, () =>
 			{
-				 clip = ResourceMgr.Instance.LoadResource<AudioClip>(DefinePath_Demo14.MP3_SenLin);
+				clip = ResourceMgr.Instance.LoadResource<AudioClip>(DefinePath_Demo14.MP3_SenLin);
 
 			});
 			Common.BindBtn(btnUnloadResource, () =>
 			{
 				if (ResourceMgr.Instance.UnloadResItemByObject(clip, false) == true) //false，来测试切换场景
-				{ 
-					clip = null;	//删引用				
+				{
+					clip = null;    //删引用				
 				}
 
 
 			});
-            #endregion
+			#endregion
 
 		}
 
@@ -160,7 +191,7 @@ namespace Demo14
 		{
 			curSceneAction();
 			SceneMgr.Instance.LoadScene(DefinePath_Demo14.Prefab_LoadPanel, DefinePath_Demo14.Scene_Menu);
-			MenuWnd menuWnd =  UIMgr.Instance.GetWnd<MenuWnd>(Common.TrimName(DefinePath_Demo14.Prefab_MenuPanel, TrimNameType.SlashAfter));
+			MenuWnd menuWnd = UIMgr.Instance.GetWnd<MenuWnd>(Common.TrimName(DefinePath_Demo14.Prefab_MenuPanel, TrimNameType.SlashAfter));
 			menuWnd.OnShow(tarSceneAction);
 		}
 		void A()
@@ -174,28 +205,12 @@ namespace Demo14
 				GameObject go = ObjectMgr.Instance.InstantiateObject(DefinePath_Demo14.Prefab_Attack, true);
 				ObjectMgr.Instance.UnloadGameObject(go);
 			});
-
-
 		}
 
 
-		void Update()
-        {
-			UIMgr.Instance.OnUpdate();
-
-        }
-        #endregion
-
-
-
-
-        #region 辅助
-        void InitMgr()
+		void InitMgr()
 		{
-			bool log = true;
-			AssetBundleMgr.Instance.InitMgr(log);
-			ResourceMgr.Instance.InitMgr(this);
-
+			bool log = true;			
 			ObjectMgr.Instance.InitMgr(m_RecyclePoolTrans, m_SceneTrans);
 			UIMgr.Instance.InitMgr(
 				transform.Find("UIRoot") as RectTransform,
@@ -203,6 +218,11 @@ namespace Demo14
 				transform.Find("UIRoot/UICamera").GetComponent<Camera>(),
 				transform.Find("UIRoot/EventSystem").GetComponent<EventSystem>()
 				);
+			RegisterUI();
+			AssetBundleMgr.Instance.InitMgr(log);
+			ResourceMgr.Instance.InitMgr(this);
+
+
 
 			SceneMgr.Instance.InitMgr(this);
 		}
@@ -216,16 +236,7 @@ namespace Demo14
 
 
 
-		private void OnApplicationQuit()
-		{
-			Debug.Log("OnApplicationQuit");
 
-//#if UNITY_EDITOR//这样写才对，不能括外面
-			ResourceMgr.Instance.ClearAllResItem();
-			Resources.UnloadUnusedAssets();
-			Debug.Log("清存");
-//#endif
-		}
 	}
 
 }

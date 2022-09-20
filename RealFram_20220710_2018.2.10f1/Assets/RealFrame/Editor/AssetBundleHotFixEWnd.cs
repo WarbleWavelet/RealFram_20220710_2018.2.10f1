@@ -60,6 +60,12 @@ public class AssetBundleHotFixEWnd : EditorWindow
             if (false==string.IsNullOrEmpty(m_abMD5_OutterPath) && true==m_abMD5_OutterPath.EndsWith(".bytes"))
             {
                 AssetBundleHotFixEditor.BuildAB(true, m_abMD5_OutterPath, m_hotCnt);
+
+                //复制到Apache
+                //string from = @"D:\Data\Projects\Unity\Ocean_RealFram_20220710_2018.2.10f1\RealFram_20220710_2018.2.10f1\Hot\StandaloneWindows64";
+                //string to   = @"D:\ProgramFilesTrim\Apache\Apache24\htdocs\AssetBundle\0.1\1";
+                //Common.File_Copy(from ,to);
+                //Common.File_Delete(@"D:\ProgramFilesTrim\Apache\Apache24\htdocs\AssetBundle\0.1\1\Patch.xml");
             }
         }
     }

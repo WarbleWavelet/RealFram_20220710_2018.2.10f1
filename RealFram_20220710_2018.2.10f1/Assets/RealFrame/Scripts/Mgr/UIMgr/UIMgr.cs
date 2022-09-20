@@ -16,10 +16,12 @@ public class UIMgr : Singleton<UIMgr> {
 
 
     #region 字属
+
+
     //UI节点
     public RectTransform m_UiRoot;
     //窗口节点
-    private RectTransform m_wndRoot;
+    public RectTransform m_wndRoot;
     //UI摄像机
     private Camera m_uiCamera;
     //EventSystem节点
@@ -28,7 +30,7 @@ public class UIMgr : Singleton<UIMgr> {
     private float m_canvasRate = 0;
 
     private string m_uiPrefabPath = DefinePath.Cfg_UIPrefabPath;
-    //注册的字典
+    /// <summary><Panel,Wnd>注册的字典</summary> 
     private Dictionary<string, System.Type> m_registerDic = new Dictionary<string, System.Type>();
 
 
@@ -45,6 +47,8 @@ public class UIMgr : Singleton<UIMgr> {
 
 
     #region 生命
+
+
     /// <summary>
     /// 初始化
     /// </summary>
@@ -164,14 +168,23 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="para2"></param>
     /// <param name="para3"></param>
     /// <returns></returns>
-    public Window OpenWnd(string panelFullPath,  bool isTop = true, params object[] paralist)
+    public Window OpenWnd(string endPrefabName, bool resources=false,bool isTop = true,params object[] paralist)
     {
-        string wndName = Common.TrimName(panelFullPath, TrimNameType.SlashAfter);
+        string wndName= endPrefabName;
+        if (resources) //.prefab
+        {
+            // wndName = Common.TrimName(wndName, TrimNameType.PointAfter);
+            wndName = endPrefabName;
+        }
+        else
+        { 
+             wndName = Common.TrimName(wndName, TrimNameType.SlashAfter);
+        }
         Window wnd = GetWnd<Window>(wndName);
-        if ( null == wnd )
+        if (null == wnd)
         {
             System.Type type = null;
-            if ( m_registerDic.TryGetValue(wndName, out type) ==true )
+            if (m_registerDic.TryGetValue(wndName, out type) == true)
             {
                 wnd = System.Activator.CreateInstance(type) as Window;
             }
@@ -181,14 +194,26 @@ public class UIMgr : Singleton<UIMgr> {
                 return null;
             }
 
-            GameObject go = ObjectMgr.Instance.InstantiateObject(panelFullPath , false, false);
-            if ( null == go)
+
+            GameObject go = null;
+            if (resources)
+            {
+                string nameWithoutSuffix = Common.TrimName(wndName, TrimNameType.PointAfter);
+                go = GameObject.Instantiate(Resources.Load<GameObject>(nameWithoutSuffix)); 
+            }
+            else
+            {
+               go = ObjectMgr.Instance.InstantiateObject(endPrefabName, false, false);             
+            }
+
+          
+            if (null == go)
             {
                 Debug.Log("创建窗口Prefab失败：" + wndName);
                 return null;
             }
 
-            if (m_wndDic.ContainsKey(wndName)==false)
+            if (m_wndDic.ContainsKey(wndName) == false)
             {
                 m_wndLst.Add(wnd);
                 m_wndDic.Add(wndName, wnd);
@@ -197,7 +222,10 @@ public class UIMgr : Singleton<UIMgr> {
             wnd.m_GameObject = go;
             wnd.m_Transform = go.transform;
             wnd.m_Name = wndName;
+            //
             wnd.OnAwake(paralist);
+            //
+            wnd.Resources = resources;
             go.transform.SetParent(m_wndRoot, false);
 
             if (isTop)
@@ -216,6 +244,9 @@ public class UIMgr : Singleton<UIMgr> {
     }
 
 
+
+
+
     /// <summary>
     /// 最上面
     /// </summary>
@@ -226,6 +257,9 @@ public class UIMgr : Singleton<UIMgr> {
     }
 
 
+
+
+
     /// <summary>
     /// 全部关闭，只打开唯一窗口
     /// </summary>
@@ -233,7 +267,8 @@ public class UIMgr : Singleton<UIMgr> {
     {
         name = Common.TrimName(name, TrimNameType.SlashAfter);
         CloseAllWnd();
-        OpenWnd(name, isTop, paralist);
+        bool resources = false;
+        OpenWnd(name, resources, isTop,   paralist);
     }
     /// <summary>
     /// 根据窗口名关闭窗口
@@ -250,35 +285,44 @@ public class UIMgr : Singleton<UIMgr> {
     /// <summary>
     /// 根据窗口对象关闭窗口
     /// </summary>
-    /// <param name="window"></param>
+    /// <param name="wnd"></param>
     /// <param name="destory"></param>
-    public void CloseWnd(Window window, bool destory = false)
+    public void CloseWnd(Window wnd, bool destory = false)
     {
-        if (window != null)
+        if (wnd != null)
         {
-            window.Disable();
-            window.Close();
-            if (m_wndDic.ContainsKey(window.m_Name))
+            wnd.Disable();
+            wnd.OnClose();
+            if (m_wndDic.ContainsKey(wnd.m_Name))
             {
-                m_wndDic.Remove(window.m_Name);
-                m_wndLst.Remove(window);
+                m_wndDic.Remove(wnd.m_Name);
+                m_wndLst.Remove(wnd);
             }
 
-            if (destory)
+
+            if (wnd.Resources == false)
             {
-                ObjectMgr.Instance.UnloadGameObject(window.m_GameObject, 0, true);
+                if (destory)
+                {
+                    ObjectMgr.Instance.UnloadGameObject(wnd.m_GameObject, 0, true);
+                }
+                else
+                {
+                    ObjectMgr.Instance.UnloadGameObject(wnd.m_GameObject, recycleParent: false);
+                }
+
             }
-            else
-            {
-                ObjectMgr.Instance.UnloadGameObject(window.m_GameObject, recycleParent: false);
-            }
-            window.m_GameObject = null;
-            window = null;
+
+
+
+            wnd.m_GameObject = null;
+            wnd = null;
         }
     }
 
 
-    
+
+
     /// <summary>
     /// 关闭所有窗口
     /// </summary>

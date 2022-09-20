@@ -53,7 +53,19 @@ public class SceneMgr : Singleton<SceneMgr>
         }
         m_CurPrg = 0;
         m_mono.StartCoroutine(  LoadSceneAsync(tarSceneName)  );
-        UIMgr.Instance.OpenWnd(loadPanelFullPath, true, tarSceneName); //loadPanel跑完了，去sceneName
+        UIMgr.Instance.OpenWnd(loadPanelFullPath,false,true, tarSceneName); //loadPanel跑完了，去sceneName
+    }
+
+    public void LoadScene(string tarSceneName)
+    {
+        if (null == SceneManager.GetSceneByName(tarSceneName)
+          || null == tarSceneName)
+        {
+            Debug.LogFormat("场景{0}不存在", tarSceneName == null ? "NULL" : tarSceneName);
+            return;
+        }
+        m_CurPrg = 0;
+        m_mono.StartCoroutine(LoadSceneAsync(tarSceneName));
     }
 
     void SetSceneSettings(string sceneName)

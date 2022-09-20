@@ -25,12 +25,12 @@ public class AppEditor
     public static string m_appBuildPath_IOS = DefinePath.AppBuildPath_IOS;
     public static string m_appBuildPath_Windows = DefinePath.AppBuildPath_Windows;
     //
-    static string m_abBuildPath_Android = DefinePath.ABBuildPath_Andriod + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
-    static string m_abBuildPath_IOS = DefinePath.ABBuildPath_IOS + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
-    static string m_abBuildPath_Windows = DefinePath.ABBuildPath_Windows + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    static string m_abBuildPath_Android = DefinePath.ABBuildPath_Andriod + Common_Editor.BuildTarget + "/";
+    static string m_abBuildPath_IOS = DefinePath.ABBuildPath_IOS + Common_Editor.BuildTarget + "/";
+    static string m_abBuildPath_Windows = DefinePath.ABBuildPath_Windows + Common_Editor.BuildTarget + "/";
     //
-    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath;
-    static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath + "Windows/" + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath + Common_Editor.BuildTarget + "/";
+    static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath + "Windows/" + Common_Editor.BuildTarget+ "/";
 
     public static string m_appName = PlayerSettings.productName;//注意设为RealFrame
     #endregion
@@ -50,7 +50,7 @@ public class AppEditor
         string completedName = GetName_Completed(PackType.Unity_PC);//用unity的参数
         string programPath = GetName_App(completedName);
         BuildApp(programPath);
-        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
+        Common.File_Create_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
 
 
@@ -69,7 +69,7 @@ public class AppEditor
         string compressedPackageName = GetName_Completed(PackType.Unity_Android);//用unity的参数
         string programPath = GetName_App(compressedPackageName);
         BuildApp(programPath);
-        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", compressedPackageName);
+        Common.File_Create_Write(DefinePath.AppBuildPath + "buildname.txt", compressedPackageName);
     }
 
 
@@ -84,7 +84,7 @@ public class AppEditor
         string programPath = GetName_App(completedName);
 
         BuildApp(programPath);
-        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
+        Common.File_Create_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
 
     [MenuItem(DefinePath.MenuItem_App + "(测试)写入版本信息（RealFrame\\Resources\\Version.txt）", false, 100)]

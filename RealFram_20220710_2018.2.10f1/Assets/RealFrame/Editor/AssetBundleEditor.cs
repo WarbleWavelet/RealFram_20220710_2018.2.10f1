@@ -31,7 +31,7 @@ public class AssetBundleEditor
     static ABCfgSO m_abCfgSO;
     static string m_abCfgSOPath = DefinePath.ABCfgSOPath;
     /// <summary>AB的生成位置</summary>
-    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath+ EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+    static string m_AB_InnerPath = DefinePath.OutputAB_InnerPath + Common_Editor.BuildTarget + "/";
     static string m_AB_OutterPath = DefinePath.OutputAB_OutterPath;
 
     static string m_ab_Xml = DefinePath.OutputXml;
@@ -55,6 +55,11 @@ public class AssetBundleEditor
 
     #region 00 ABCfgSO
 
+    static void Init()
+    {
+        Common.SetBuildTarget(Common_Editor.BuildTarget);
+    }
+
 
     [MenuItem(DefinePath.MenuItem_AB + "定位标记数据的SO（除了配置表）", false, 0)] //Alt+R打开资源路径 ,Unity上的路径
     static void OpenResourcesUIPanel()
@@ -66,6 +71,8 @@ public class AssetBundleEditor
     [MenuItem(DefinePath.MenuItem_AB + "01 添加标记数据和Init类（除了配置表）", false, 0)]//按钮在菜单栏的位置
     public static void InitABCfgSO() //文件夹
     {
+
+        Init();
         m_abCfgSO = AssetDatabase.LoadAssetAtPath<ABCfgSO>(m_abCfgSOPath);
         m_abCfgSO.m_PrefabPathLst.Clear();
         m_abCfgSO.m_FolderPathLst.Clear();

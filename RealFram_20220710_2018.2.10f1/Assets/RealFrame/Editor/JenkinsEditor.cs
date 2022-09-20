@@ -23,7 +23,7 @@ public class JenkinsEditor : Editor
     [MenuItem(DefinePath.MenuItem_Jenkins + "写入txt当前日期", false, 100)]
     static void MenuItem_WriteTxt()
     {
-        Common.Text_Write(DefinePath.RealFramePath + "输出可删除/Test_Jenkins_写入txt当前日期.txt", System.DateTime.Now.ToString());
+        Common.File_Create_Write(DefinePath.RealFramePath + "输出可删除/Test_Jenkins_写入txt当前日期.txt", System.DateTime.Now.ToString());
     }
 
 
@@ -46,7 +46,7 @@ public class JenkinsEditor : Editor
         string programPath = AppEditor.GetName_App(completedName);
         Common.Folder_Clear_Recursive(DefinePath.ABBuildPath_Windows);
         AppEditor.BuildApp(programPath);
-        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
+        Common.File_Create_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
 
 
@@ -64,7 +64,7 @@ public class JenkinsEditor : Editor
         string completedName = GetName_Completed(PackType.Jenkins_Android); //程序包
         string appPath = AppEditor.GetName_App(completedName);
         AppEditor.BuildApp(appPath);
-        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
+        Common.File_Create_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
 
 
@@ -78,7 +78,7 @@ public class JenkinsEditor : Editor
         string completedName = GetName_Completed(PackType.Jenkins_IOS); //用Jenkins的参数
         string appPath = AppEditor.GetName_App();
         AppEditor.BuildApp(appPath);
-        Common.Text_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
+        Common.File_Create_Write(DefinePath.AppBuildPath + "buildname.txt", completedName);
     }
 
     #endregion
