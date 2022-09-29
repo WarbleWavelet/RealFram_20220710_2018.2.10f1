@@ -610,7 +610,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RecyclePoolTrans: {fileID: 272287155}
   m_SceneTrans: {fileID: 604906267}
-  LoadFromAB: 0
+  LoadFromAB: 1
 --- !u!81 &1772943727
 AudioListener:
   m_ObjectHideFlags: 0

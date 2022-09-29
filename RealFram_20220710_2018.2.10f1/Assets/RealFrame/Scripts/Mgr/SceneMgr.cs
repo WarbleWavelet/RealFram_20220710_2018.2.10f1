@@ -41,19 +41,19 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <summary>
     /// loadPanelFullPath跑到100%，就显示tarSceneName
     /// </summary>
-    /// <param name="loadPanelFullPath"></param>
-    /// <param name="tarSceneName"></param>
-    public void LoadScene(string  loadPanelFullPath, string tarSceneName)
+    /// <param name="wnd"></param>
+    /// <param name="scene"></param>
+    public void LoadScene(string  wnd, string scene)
     {
-        if ( null == SceneManager.GetSceneByName(tarSceneName) 
-          || null == tarSceneName)
+        if ( null == SceneManager.GetSceneByName(scene) 
+          || null == scene)
         {
-            Debug.LogFormat("场景{0}不存在", tarSceneName==null ?"NULL":tarSceneName);
+            Debug.LogFormat("场景{0}不存在", scene==null ?"NULL":scene);
             return;
         }
         m_CurPrg = 0;
-        m_mono.StartCoroutine(  LoadSceneAsync(tarSceneName)  );
-        UIMgr.Instance.OpenWnd(loadPanelFullPath,false,true, tarSceneName); //loadPanel跑完了，去sceneName
+        m_mono.StartCoroutine(  LoadSceneAsync(scene)  );
+        UIMgr.Instance.OpenWnd(wnd,false,true, scene); //loadPanel跑完了，去sceneName
     }
 
     public void LoadScene(string tarSceneName)

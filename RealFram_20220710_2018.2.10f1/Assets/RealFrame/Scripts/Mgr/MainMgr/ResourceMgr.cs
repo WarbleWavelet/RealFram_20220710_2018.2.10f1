@@ -58,6 +58,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
     #endregion
 
 
+    AssetBundleMgr assetBundleMgr = AssetBundleMgr.Instance; 
+
     #endregion
 
 
@@ -97,7 +99,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         OnAsyncResObj cb,
         AsyncLoadResPriority priority)
     {
-        ResItem resItem = GetResItem(resObj.m_Crc);
+        ResItem resItem = GetResItem_Ref(resObj.m_Crc);
 
         if (resItem != null)
         {
@@ -181,7 +183,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         uint crc= (resObj.m_Crc==0) ? CRC32.GetCRC32(path) : resObj.m_Crc;
 
-        ResItem resItem = GetResItem(crc);
+        ResItem resItem = GetResItem_Ref(crc);
 
 
    
@@ -198,7 +200,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         if (m_loadFromAB == false)
         {
-            resItem = AssetBundleMgr.Instance.GetResItem(crc);//迷惑m_loadFromAB == false为什么还使用AssetBundleMgr
+            resItem = assetBundleMgr.GetResItem(crc);//迷惑m_loadFromAB == false为什么还使用AssetBundleMgr
             if (resItem != null && resItem.m_Obj != null)
             {
                 obj = resItem.m_Obj as Object;
@@ -212,7 +214,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
        
         if (obj == null) //Get不到就Load
         {
-            resItem = AssetBundleMgr.Instance.LoadResItem(crc);
+            resItem = assetBundleMgr.LoadResItem(crc);
             if (resItem != null && resItem.m_AB != null)
             {
                 if (resItem.m_Obj != null)
@@ -307,7 +309,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
     /// <param name="crc"></param>
     /// <param name="addCnt"></param>
     /// <returns></returns>
-    ResItem GetResItem(uint crc, int addCnt = 1)
+    ResItem GetResItem_Ref(uint crc, int addCnt = 1)
     {
         ResItem resItem = null;
         if (m_RefResItemDic.TryGetValue(crc, out resItem)==true && resItem != null)
@@ -348,16 +350,13 @@ public class ResourceMgr : Singleton<ResourceMgr>
                 + "." 
                 + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
 
-
             return;
-
         }
 
         if (obj == null)
         {
             UnityEngine.Debug.LogError(this.GetType().ToString() + "." + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
-
-     return ;
+            return ;
         }
 
         resItem.m_Obj = obj;
@@ -438,9 +437,11 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
 
         #region 最占内存的两个地方
+
+
         m_NoRefResItemLst.Remove(resItem);
         //上层Mgr
-        AssetBundleMgr.Instance.UnloadAB(resItem);
+        assetBundleMgr.UnloadAB(resItem);
         ObjectMgr.Instance.ClearAllObjectsInPool(resItem.m_Crc);
             //下层引用，对象置空
         if (resItem.m_Obj != null)
@@ -599,13 +600,14 @@ public class ResourceMgr : Singleton<ResourceMgr>
         object para3 = null,
         uint crc = 0)
     {
+
         if (crc == 0)
         {
             crc = CRC32.GetCRC32(path);
 
         }
 
-        ResItem resItem = GetResItem(crc);
+        ResItem resItem = GetResItem_Ref(crc);
 
         if (resItem != null)
         {
@@ -686,7 +688,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
                     yield return new WaitForSeconds(0.5f);//模拟异步
 
-                    resItem = AssetBundleMgr.Instance.GetResItem(para.m_Crc);
+                    resItem = assetBundleMgr.GetResItem(para.m_Crc);
 
                     NewResItem(ref resItem, para.m_Crc);
 
@@ -695,15 +697,15 @@ public class ResourceMgr : Singleton<ResourceMgr>
 #endif             
                 if (null == obj)   //m_loadFromAB==true
                 {
-                    resItem = AssetBundleMgr.Instance.LoadResItem(para.m_Crc);
+                    resItem = assetBundleMgr.LoadResItem( para.m_Crc);
 
                     if (null != resItem && null != resItem.m_AB)
                     {
                         AssetBundleRequest abReq = null;
                         if (para.m_Sprite == true)// 特殊：Sprite 会不能直接等于 asset
                         {
-                           // abReq = resItem.m_AB.LoadAssetAsync<Sprite>(resItem.m_ABName);
-                            abReq = resItem.m_AB.LoadAssetAsync<Sprite>(  resItem.m_AssetName);
+                            // abReq = resItem.m_AB.LoadAssetAsync<Sprite>(resItem.m_ABName);
+                            abReq = resItem.m_AB.LoadAssetAsync<Sprite>(resItem.m_AssetName);
                         }
                         else
                         {
@@ -719,9 +721,24 @@ public class ResourceMgr : Singleton<ResourceMgr>
                         lastYieldTime = System.DateTime.Now.Ticks;
 
                     }
+                    else
+                    {
+                        //NewResItem(ref resItem, para.m_Crc);
+                        Debug.LogWarningFormat("ResItem为空：{0},crc：{1}", para.m_Path, para.m_Crc);
+                    }
                 }
-                //缓存资源
-                CacheResItem(para.m_Path, ref resItem, para.m_Crc, obj, cbLst.Count);
+
+                if (resItem != null)
+                {
+                    CacheResItem(para.m_Path, ref resItem, para.m_Crc, obj, cbLst.Count);    //缓存资源
+                }
+                else
+                {
+
+                    Debug.LogWarningFormat("ResItem为空：{0}",para.m_Path );
+                }
+               
+           
 
                 // AsyncLoadResCallBack
                 for (int j = 0; j < cbLst.Count; j++)
@@ -791,7 +808,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
         //同步加载
         uint crc = CRC32.GetCRC32(path);
-        ResItem resItem = GetResItem(crc);
+        ResItem resItem = GetResItem_Ref(crc);
 
         //
         if (resItem != null)
@@ -805,7 +822,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         if (m_loadFromAB == false)
         {
 
-            resItem = AssetBundleMgr.Instance.GetResItem(crc);  //StreamAsset ,实际打包位置要外迁移到AssetBundle
+            resItem = assetBundleMgr.GetResItem(crc);  //StreamAsset ,实际打包位置要外迁移到AssetBundle
             if (resItem != null && resItem.m_AB != null)
             {
                 if (resItem.m_Obj != null)
@@ -829,7 +846,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 #endif
         if (obj == null)
         {
-            resItem = AssetBundleMgr.Instance.LoadResItem(crc);
+            resItem = assetBundleMgr.LoadResItem(crc);
             if (resItem != null && resItem.m_AB != null)
             {
                 if (resItem.m_Obj != null)
@@ -872,7 +889,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
         //同步加载
         uint crc = CRC32.GetCRC32(path);
-        ResItem resItem = GetResItem(crc,0);//预加载不需要引用计数
+        ResItem resItem = GetResItem_Ref(crc,0);//预加载不需要引用计数
         if (resItem != null)
         {
             return;
@@ -885,7 +902,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         if (m_loadFromAB == false)
         {
 
-            resItem = AssetBundleMgr.Instance.GetResItem(crc);
+            resItem = assetBundleMgr.GetResItem(crc);
             if (resItem!=null && resItem.m_Obj != null)
             {
                 obj = resItem.m_Obj;
@@ -898,7 +915,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 #endif
         if (obj == null)
         {
-            resItem = AssetBundleMgr.Instance.LoadResItem(crc);
+            resItem = assetBundleMgr.LoadResItem(crc);
             if (resItem != null && resItem.m_AB != null)
             {
                 if (resItem.m_Obj != null)

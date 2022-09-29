@@ -26,33 +26,51 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
 
     #region 字属
-    ABCfg m_cfg = new ABCfg();
+
+
+    ABCfg m_abCfg = new ABCfg();
     /// <summary>资源数据</summary>
     Dictionary<uint, ResItem> m_resItemDic = new Dictionary<uint, ResItem>();
     /// <summary>已加载的AB包</summary> 
     Dictionary<uint, ABItem> m_abItemDic = new Dictionary<uint, ABItem>();
-
-
     ClassObjectPool<ABItem> m_abItemPool = ObjectMgr.Instance.GetOrNewClassObjectPool<ABItem>(Constants.ClassObjectPool_MAXCNT);
-    private string m_AB_InnerPath= DefinePath.OutputAB_InnerPath + Common.GetBuildTarget() + "/";
+
+    private string m_assetbundleconfigPath_Local = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad\assetbundleconfig";
+    private string m_assetbundleconfigPath_Inner = DefinePath.assetbundleconfig_Inner;
+    private string m_assetbundleconfigPath_Outter = @"D:\Data\Projects\Unity\Ocean_RealFram_20220710_2018.2.10f1\RealFram_20220710_2018.2.10f1\AssetBundle\assetbundleconfig";
+    private string m_assetbundleconfigPath = "";
+    private string m_assetbundleconfigName = "assetbundleconfig";
+    private string m_abCfg_Bytes = DefinePath.abCfg_Bytes;       //AssetBundleConfig.bytes
+
     #endregion
 
 
-    void Reset()
-    {
-
-        m_resItemDic.Clear();
-        m_cfg = Bin2Class();
-    }
-
-
-    string LoadABPath
-    {
-        get { return m_AB_InnerPath; }
-        set { }
-    }
 
     #region ABCfg
+
+    void  Load_assetbundleconfig(Path_assetbundleconfig path,out string ab)
+    {
+        ab = null;
+        switch (path)
+        {
+            case Path_assetbundleconfig.Local:
+                   {
+                    ab = DefinePath.assetbundleconfig_Local;
+                } break;
+            case Path_assetbundleconfig.Inner :
+                {
+                    ab = DefinePath.assetbundleconfig_Inner;
+                }
+                break;
+            case Path_assetbundleconfig.Outter :
+                {
+                    ab = DefinePath.assetbundleconfig_Outter;
+                }
+                break;
+            default: ab = null; break;
+        }
+
+    }
     /// <summary>
     ///  加载配置文件LoadABCfg
     /// </summary>
@@ -68,11 +86,20 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 #endif
 
 
-        Reset();
-        //
-        for (int i = 0; i < m_cfg.ABLst.Count; i++)
+        m_resItemDic.Clear();
+        if (String.IsNullOrEmpty( HotPatchMgr.Instance.Exist_assetbundleconfig_Hotfix(m_assetbundleconfigName)) == false)  //取assetbundleconfig的路径
         {
-            ABBase abBase = m_cfg.ABLst[i];
+             Load_assetbundleconfig(Path_assetbundleconfig.Local,out m_assetbundleconfigPath);
+        }
+        else
+        {
+             Load_assetbundleconfig(Path_assetbundleconfig.Inner,out m_assetbundleconfigPath);
+        }
+         Bin2ABCfg(m_assetbundleconfigPath_Inner,out m_abCfg);
+        //
+        for (int i = 0; i < m_abCfg.ABLst.Count; i++)
+        {
+            ABBase abBase = m_abCfg.ABLst[i];
 
             if (m_resItemDic.ContainsKey(abBase.Crc))
             {
@@ -104,29 +131,27 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// /反序列化存储的Cfg
     /// </summary>
     /// <returns></returns>
-    ABCfg Bin2Class()
+    void Bin2ABCfg(string assetbundleconfig,out ABCfg m_abCfg)
     {
-        AssetBundle ab = AssetBundle.LoadFromFile( DefinePath.OutputAB );//Load AB
+        m_abCfg = null;
+        AssetBundle ab = AssetBundle.LoadFromFile(assetbundleconfig);//Load AB
         if (ab == null)
         {
 
-            Debug.LogErrorFormat("该路径不存在AB包{0}", DefinePath.OutputAB);
-            return null;
+            Debug.LogErrorFormat("该路径不存在AB包{0}", assetbundleconfig);
         }
-        TextAsset ta = ab.LoadAsset<TextAsset>( DefinePath.abCfg_Bytes );//load bytes
+        TextAsset ta = ab.LoadAsset<TextAsset>(m_abCfg_Bytes);//load bytes
         if (ta == null)
         {
-            Debug.LogErrorFormat(" \"{0}\" is not exist", DefinePath.OutputAB );
+            Debug.LogErrorFormat(" \"{0}\" is not exist", assetbundleconfig);
 
-            return null;
         }
 
         MemoryStream stream = new MemoryStream(ta.bytes);
         BinaryFormatter bf = new BinaryFormatter();
-        ABCfg cfg = (ABCfg)bf.Deserialize(stream);
+        m_abCfg = (ABCfg)bf.Deserialize(stream);
         stream.Close();
 
-        return cfg;
     }
     #endregion
 
@@ -172,17 +197,24 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         uint crc = CRC32.GetCRC32(abName);
         
 
-        string localPath = LoadABPath + abName;
-        string hotPath = HotPatchMgr.Instance.ComputeABPath(abName);
-        string path = String.IsNullOrEmpty(hotPath) ? localPath : hotPath;
-        //if (File.Exists(path)) //File不能在安卓IOS上使用，只能PC，所以打包后不能存在
-        //{
-            AssetBundle ab = AssetBundle.LoadFromFile(path);
-        //}
+        //string localPath = LoadABPath + abName;
+        string innerPath = DefinePath.ABPath_Inner + abName;
+        string hotfixPath = HotPatchMgr.Instance.Exist_assetbundleconfig_Hotfix(abName);
+        string path = "";
+        if (String.IsNullOrEmpty(hotfixPath)==false)
+        {
+            path = hotfixPath;//热更路径
+        }
+        else
+        {
+            path = innerPath; //暂时用内部路径做本地路径
+        }
+
+        AssetBundle ab = AssetBundle.LoadFromFile(path);
 
         if (ab == null)
         {
-            Debug.LogErrorFormat("Load ab Error：path not exist:{0}", localPath);
+            Debug.LogErrorFormat("Load ab Error：path not exist:{0}", path);
             
         }
         ABItem abItem  = SpawnABItem(true);
@@ -246,17 +278,31 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     public ResItem GetResItem(uint crc)
     {
         ResItem resItem = null;
+        if (m_resItemDic == null)
+        {
+            Debug.LogErrorFormat("ABMgr字典为初始化");
+        }
         m_resItemDic.TryGetValue(crc, out resItem);
+        if (resItem == null)
+        {
+            Debug.LogErrorFormat("ABMgr字典中没找到resItem");
+        }
+        else
+        {
+            Debug.LogFormat("路径{2}\n查找{0}\n同名{1}", crc, resItem.m_Crc, resItem.m_AssetName);
+        }
         return resItem;
 
     }
+
+
 
     /// <summary>
     /// 不能GetResItem就LoadResItem
     /// </summary>
     /// <param name="crc"></param>
     /// <returns></returns>
-   public  ResItem LoadResItem(uint crc)
+    public  ResItem LoadResItem(uint crc)
     {
         ResItem resItem = GetResItem(crc);
         if ( resItem == null)
@@ -273,6 +319,9 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
         return resItem;
     }
+
+
+
 
 
 
@@ -424,3 +473,14 @@ public class ABItem
     }
 }
 #endregion
+
+
+
+
+public enum Path_assetbundleconfig
+{
+    Inner, //Assets/RealFrame/StreamingAsset/平台
+    Outter,//AssetBundle
+    Local // Application.persistentDataPath
+
+}

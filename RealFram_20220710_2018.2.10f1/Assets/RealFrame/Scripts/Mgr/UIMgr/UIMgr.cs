@@ -168,7 +168,12 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="para2"></param>
     /// <param name="para3"></param>
     /// <returns></returns>
-    public Window OpenWnd(string endPrefabName, bool resources=false,bool isTop = true,params object[] paralist)
+    public Window OpenWnd(
+        string endPrefabName, 
+        bool resources=false,
+        bool isTop = true,
+        params object[] paralist
+        )
     {
         string wndName= endPrefabName;
         if (resources) //.prefab
@@ -263,12 +268,11 @@ public class UIMgr : Singleton<UIMgr> {
     /// <summary>
     /// 全部关闭，只打开唯一窗口
     /// </summary>
-    public void OpenOnlyOneWnd(string name, bool isTop = true, params object[] paralist)
+    public void OpenOnlyOneWnd(string name,bool resources = false, bool isTop = true, params object[] paralist)
     {
         name = Common.TrimName(name, TrimNameType.SlashAfter);
         CloseAllWnd();
-        bool resources = false;
-        OpenWnd(name, resources, isTop,   paralist);
+        OpenWnd(name, isTop, resources,   paralist);
     }
     /// <summary>
     /// 根据窗口名关闭窗口

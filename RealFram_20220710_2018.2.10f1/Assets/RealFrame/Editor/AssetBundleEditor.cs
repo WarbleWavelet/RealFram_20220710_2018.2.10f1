@@ -249,6 +249,8 @@ public class AssetBundleEditor
 
 
 
+
+
     [MenuItem(DefinePath.MenuItem_AB + "_1234 一键清除内部打包", false, 80)]//按钮在菜单栏的位置
     static void MenuItem_ClearAB_InnerPath()
     {

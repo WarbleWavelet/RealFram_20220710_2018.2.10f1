@@ -153,7 +153,7 @@ public class AssetBundleHotFixEditor
         //生成服务器Patch
         DirectoryInfo directory = new DirectoryInfo(m_Hot_OutterPath);
         FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
-        Pathces pathces = new Pathces();
+        Patches pathces = new Patches();
         pathces.Version = 1;
         pathces.Files = new List<Patch>();
         for (int i = 0; i < files.Length; i++)
@@ -164,7 +164,7 @@ public class AssetBundleHotFixEditor
             patch.Size = files[i].Length / 1024.0f;
             patch.Platform = EditorUserBuildSettings.activeBuildTarget.ToString();
             //Apache D:\ProgramFilesTrim\Apache\Apache24\htdocs\AssetBundle\0.1\1\...
-            patch.Url = "http://127.0.0.1/AssetBundle/" + PlayerSettings.bundleVersion + "/" + hotCnt + "/" + files[i].Name;
+            patch.Url = "http://127.0.0.1:8081/AssetBundle/" + PlayerSettings.bundleVersion + "/" + hotCnt + "/" + files[i].Name;
             pathces.Files.Add(patch);
         }
         FormatTool.Class2Xml(m_Hot_OutterPath + "/Patch.xml", pathces);

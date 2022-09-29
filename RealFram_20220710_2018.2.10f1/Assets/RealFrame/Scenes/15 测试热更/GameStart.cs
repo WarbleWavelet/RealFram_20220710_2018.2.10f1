@@ -27,7 +27,9 @@ namespace Demo15
 		public const string m_CommonConfirm = DefinePath_Demo15.CommonConfirm;
 		public const string m_Hotfix = DefinePath_Demo15.Hotfix;
 
-																									  
+
+
+
 		#endregion
 
 
@@ -40,8 +42,14 @@ namespace Demo15
 		{
 			base.Awake();
 			GameObject.DontDestroyOnLoad(gameObject);
-			//
 
+
+#if UNITY_EDITOR
+			   Common.SetBuildTarget(UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString());
+#endif
+
+
+			//
 			ResourceMgr.Instance.SetLoadFromAB(LoadFromAB);
 			InitMgr();
 			RegisterUI();
@@ -90,10 +98,11 @@ namespace Demo15
 
 		void InitMgr()
 		{
-			bool log = true;
-			AssetBundleMgr.Instance.InitMgr(log);
-			ResourceMgr.Instance.InitMgr(this);
 
+
+			bool log = true;
+			//AssetBundleMgr.Instance.InitMgr(log);//HotPatchMgr来控制,调用StartGame
+			ResourceMgr.Instance.InitMgr(this);
 			ObjectMgr.Instance.InitMgr(m_RecyclePoolTrans, m_SceneTrans);
 			HotPatchMgr.Instance.InitMgr(this);			
 			UIMgr.Instance.InitMgr(
@@ -103,12 +112,13 @@ namespace Demo15
 				transform.Find("UIRoot/EventSystem").GetComponent<EventSystem>()
 				);
 
-			SceneMgr.Instance.InitMgr(this);
+			//SceneMgr.Instance.InitMgr(this);//HotPatchMgr来控制,调用StartGame
 		}
 
 		void RegisterUI()
 		{
 			UIMgr.Instance.Register<HotfixWnd>(m_Hotfix);
+		
 		}
 		#endregion
 

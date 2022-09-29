@@ -70,7 +70,11 @@ public class DefinePath
 
     public static string OutputXml = RealFramePath + "AssetBundleConfig.xml";//XML可视化，随便删
     public static string OutputBytes = RealFramePath + "AssetBundleConfig.bytes";//bytes，与下面简单的路径不同
-    public static string OutputAB = RealFramePath + "StreamingAssets/assetbundleconfig"; //bytes路径的AB包路径
+    //public static string OutputAB = RealFramePath + "StreamingAssets/assetbundleconfig"; //bytes路径的AB包路径
+    public static string assetbundleconfig_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/assetbundleconfig"; //bytes路径的AB包路径
+    public static string ABPath_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/"; 
+    public static string assetbundleconfig_Outter = ProjectPath+"AssetBundle/assetbundleconfig"; //bytes路径的AB包路径
+    public static string assetbundleconfig_Local = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad\assetbundleconfig"; //bytes路径的AB包路径
 
     public static string abCfg_Path = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/ABData/"; //bytes
     public const string abCfg_Name = "assetbundleconfig"; //bytes
@@ -160,8 +164,10 @@ public class DefinePath_Demo15
 
     public const string Prefab_CommonConfirm = PanelPath + "CommonConfirm.prefab";
     public const string CommonConfirm =  "CommonConfirm";
-    public const string Prefab_HotfixPanel = PanelPath + "HotfixPanel.prefab";      
+    public const string Prefab_HotfixPanel = PanelPath + "HotfixPanel.prefab";
+    public const string Prefab_LoadPanel = PanelPath + "LoadPanel.prefab";
     public const string Hotfix = "HotfixPanel.prefab";
+    public const string Images_PathPreFixed = "Assets/" + DefinePath.RealFrameName + "/GameData/Images/";
 }
 #endregion
 
