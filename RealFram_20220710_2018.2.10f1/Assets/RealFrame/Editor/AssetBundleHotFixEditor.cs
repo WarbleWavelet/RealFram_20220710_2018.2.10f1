@@ -24,7 +24,7 @@ public class AssetBundleHotFixEditor
     static string m_ABMD5_OutterPath = DefinePath.ABMD5_OutterPath + Common_Editor.BuildTarget + "/";
 
 
-    [MenuItem(DefinePath.MenuItem_AB + "AB热更编辑器", false, 100)]
+    [MenuItem(DefinePath.MenuItem_AB + "AB热更编辑器", false, DefinePath.MenuItem_Index_AB_ABHotfix)]
     static void MenuItem_AB_Init()
     {
         AssetBundleHotFixEWnd.GetWnd();

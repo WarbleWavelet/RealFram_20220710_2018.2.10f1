@@ -27,13 +27,19 @@ public class DefinePath
 
     #region 拓展
     public const string MenuItem_AB = "AB/";
+
     public const string MenuItem_App = "App/";
     public const string MenuItem_Offline = "离线数据/";
     public const string MenuItem_FormatTool = "数据转换/";
     public const string MenuItem_RealFrame = "RealFrame配置/";
     public const string MenuItem_Jenkins = "Jenkins/";
     public const int MenuItem_FormatTool_StartIdx = 0;
-    public const string Assets_MyAssets = "My Assets/";
+    public const string Assets_MyAssets = "My Assets/";      
+    
+    
+    
+    public const int MenuItem_Index_AB_Encrypt = 120;
+    public const int MenuItem_Index_AB_ABHotfix = 100;
     #endregion
 
 
