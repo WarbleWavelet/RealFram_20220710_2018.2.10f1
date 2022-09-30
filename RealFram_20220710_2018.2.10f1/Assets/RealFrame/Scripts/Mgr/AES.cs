@@ -21,7 +21,13 @@ public class AES
 {
     private static string m_AESHead = "AESEncrypt";   //加密头
 
-    /// <summary>
+
+
+    #region 加密
+
+
+
+   /// <summary>
     /// 文件加密，传入文件路径
     /// </summary>
     /// <param name="path"></param>
@@ -42,7 +48,7 @@ public class AES
             {
                 if (fs != null)
                 {
-                   string headTag= Common.FileStream_Bytes2String(fs,10);   //读取字节头，判断是否已经加密过了
+                   string headTag= Common.FileStream_Read(fs,10);   //读取字节头，判断是否已经加密过了
                    
                     if (headTag == m_AESHead)
                     {
@@ -66,8 +72,11 @@ public class AES
         }
     }
 
+    #endregion
 
 
+
+    #region 解密
 
 
     /// <summary>
@@ -89,7 +98,7 @@ public class AES
                 if (fs != null)
                 {
                     byte[] headBuff = new byte[10];
-                    string headTag = Common.FileStream_Bytes2String(fs, headBuff.Length);
+                    string headTag = Common.FileStream_Read(fs, headBuff.Length);
                     if (headTag == m_AESHead)
                     {
                         byte[] buffer =  Common.FileStream_Read(fs, (long)headBuff.Length,fs.Length);
@@ -107,12 +116,12 @@ public class AES
     }
 
     /// <summary>
-    /// 文件界面，传入文件路径，返回字节
+    /// 文件界面，传入文件路径，返回字节（AB包主用）
     /// </summary>
     /// <returns></returns>
     public static byte[] AESFileByteDecrypt(string path, string EncrptyKey)
     {
-        if (!File.Exists(path))
+        if (!Common.File_Exits(path))
         {
             return null;
         }
@@ -124,12 +133,11 @@ public class AES
                 if (fs != null)
                 {
                     byte[] headBuff = new byte[10];
-                    fs.Read(headBuff, 0, headBuff.Length);
-                    string headTag = Encoding.UTF8.GetString(headBuff);
+                    string headTag = Common.FileStream_Read(fs, headBuff);
                     if (headTag == m_AESHead)
                     {
                         byte[] buffer = new byte[fs.Length - headBuff.Length];
-                        fs.Read(buffer, 0, Convert.ToInt32(fs.Length - headBuff.Length));
+                        Common.FileStream_Write(fs,buffer,0, (fs.Length - headBuff.Length) );
                         DecBuffer = AESDecrypt(buffer, EncrptyKey);
                     }
                 }
@@ -138,12 +146,22 @@ public class AES
         catch (Exception e)
         {
             Debug.LogError(e);
+            Debug.LogError(e);
         }
 
         return DecBuffer;
     }
 
-    /// <summary>
+    #endregion
+
+
+
+
+    #region 一开始就有的
+
+
+
+  /// <summary>
     /// AES 加密(高级加密标准，是下一代的加密算法标准，速度快，安全级别高，目前 AES 标准的一个实现是 Rijndael 算法)
     /// </summary>
     /// <param name="EncryptString">待加密密文</param>
@@ -229,6 +247,9 @@ public class AES
         finally { m_AESProvider.Clear(); }
         return m_strDecrypt;
     }
+    #endregion  
+
+  
 
 
 }

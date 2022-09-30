@@ -58,12 +58,21 @@ public class Common
     /// <param name="fs"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public static string FileStream_Bytes2String(FileStream fs, int length)
+    public static string FileStream_Read(FileStream fs, int length)
     {
         byte[] buffer = new byte[length]; 
         fs.Read(buffer, 0, buffer.Length);
         string str=  Encoding.UTF8.GetString(buffer);
       
+        return str;
+    }
+
+
+    public static string FileStream_Read(FileStream fs, byte[] buffer)
+    {
+        fs.Read(buffer, 0, buffer.Length);
+        string str = Encoding.UTF8.GetString(buffer);
+
         return str;
     }
 
@@ -122,6 +131,19 @@ public class Common
     }
 
 
+
+
+    public static void FileStream_Write(FileStream fs, byte[] buffer, int start,int end)
+    {
+        fs.Write(buffer, start,end);
+
+    }
+
+    public static void FileStream_Write(FileStream fs, byte[] buffer, int start, long end)
+    {
+        fs.Write(buffer,  start,Convert.ToInt32(end) );
+
+    }
 
     #endregion
 
@@ -315,13 +337,22 @@ public class Common
         }
     }
 
+    public static FileInfo[] Folder_GetAllFileInfo(string path)
+    {
+        DirectoryInfo directory = new DirectoryInfo(path);
+        FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
 
-    /// <summary>
-    /// 存在文件夹（带/也可以）
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public static bool Folder_Exits(string path)
+        return files;
+
+    }
+
+
+        /// <summary>
+        /// 存在文件夹（带/也可以）
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool Folder_Exits(string path)
     {
         return Directory.Exists(path);
     }
