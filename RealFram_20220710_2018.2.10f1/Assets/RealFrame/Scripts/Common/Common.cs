@@ -337,6 +337,26 @@ public class Common
         }
     }
 
+
+
+    /// <summary>
+    /// 到path下删除后缀名为suffix
+    /// </summary>
+    /// <param name="abPath"></param>
+    /// <param name="sufffix"></param>
+   public static void Folder_Delete(string path, string sufffix)//m_AB_OutterPath
+    {
+        FileInfo[] fis = Common.Folder_GetAllFileInfo(path);
+        foreach (FileInfo item in fis)
+        {
+            if (item.FullName.EndsWith(sufffix))
+            {
+                Common.File_Delete(item.FullName);
+            }
+        }
+
+    }
+
     public static FileInfo[] Folder_GetAllFileInfo(string path)
     {
         DirectoryInfo directory = new DirectoryInfo(path);

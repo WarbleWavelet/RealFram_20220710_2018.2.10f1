@@ -262,6 +262,14 @@ public class AssetBundleEditor
     static void MenuItem_ClearAB_OutterPath()
     {
         ClearAB_RootOutter();
+    }     
+    
+    [MenuItem(DefinePath.MenuItem_AB + "_12345 一键清除外部Manifest", false, 80)]//按钮在菜单栏的位置
+    static void MenuItem_ClearManifest_OutterPath()
+    {
+        Common.Folder_Delete(m_AB_OutterPath, ".manifest");
+
+        Debug.LogFormat("{0}——{1}清除成功", m_AB_OutterPath,".manifest"  );
     }
     #endregion
 
@@ -287,7 +295,7 @@ public class AssetBundleEditor
         ClearABCfgSO();
         DeleteData(Application.dataPath, m_ab_Xml);
         DeleteData(Application.dataPath, m_abCfg_Bytes);
-                Common.AB_Clear(m_AB_InnerPath);
+        Common.AB_Clear(m_AB_InnerPath);
  
       
         Unmark();
@@ -333,8 +341,9 @@ public class AssetBundleEditor
 
         BuildAB_RootInner();
         Common.File_Copy(m_AB_InnerPath, m_AB_OutterPath); //外部AB包
-
         Common.Folder_Clear_Recursive(m_AB_InnerPath);
+
+       
 
 
     }
@@ -883,6 +892,9 @@ public class AssetBundleEditor
 
         return assetPathLst.ToArray();
     }
+
+
+
     #endregion
 
 
