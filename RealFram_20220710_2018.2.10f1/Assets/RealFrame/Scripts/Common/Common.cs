@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
@@ -50,8 +51,87 @@ public class Common
     #endregion
 
 
+    #region FileStream
+  /// <summary>
+    /// 读取前length，byte[]转string
+    /// </summary>
+    /// <param name="fs"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static string FileStream_Bytes2String(FileStream fs, int length)
+    {
+        byte[] buffer = new byte[length]; 
+        fs.Read(buffer, 0, buffer.Length);
+        string str=  Encoding.UTF8.GetString(buffer);
+      
+        return str;
+    }
 
-    #region 文件操作
+
+    /// <summary>
+    /// 从开始索引start读取到结束索引end
+    /// </summary>
+    /// <param name="fs"></param>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
+    public static byte[] FileStream_Read(FileStream fs, long start, long end)
+    {
+        byte[] buffer = new byte[end - start];//内容
+        fs.Read(buffer, 0, Convert.ToInt32(end - start));
+        fs.Seek(0, SeekOrigin.Begin);
+        fs.SetLength(0);
+
+        return buffer;
+
+
+
+    }
+
+
+
+
+
+    public static byte[] FileStream_Read(FileStream fs)
+    {
+        fs.Seek(0, SeekOrigin.Begin);       //读完 seek回去，保持原始状态
+        byte[] buffer= new byte[fs.Length];
+        fs.Read(buffer, 0, Convert.ToInt32(fs.Length));     //获取所有
+        fs.Seek(0, SeekOrigin.Begin);                       //移动到开头
+        fs.SetLength(0);                                    //清空
+
+        return buffer;
+
+
+    }
+     /// <summary>
+    /// fs写入 str  .fs会返回出去（）但因为是using，所以不能用返回值，ref out
+    /// </summary>
+  public  static void FileStream_Write( FileStream fs, string str)
+    {
+        byte[] buffer = Encoding.UTF8.GetBytes(str);
+        fs.Write(buffer, 0, buffer.Length);
+
+    }
+
+
+    public static void FileStream_Write(FileStream fs, byte[] buffer)
+    {
+        fs.Write(buffer, 0, buffer.Length);
+
+    }
+
+
+
+    #endregion
+
+
+
+
+    #region File FileInfo StreamWriter     
+
+
+
 
     /// <summary>
     /// 新建并且向filePath写入fileContent（StreamWriter）

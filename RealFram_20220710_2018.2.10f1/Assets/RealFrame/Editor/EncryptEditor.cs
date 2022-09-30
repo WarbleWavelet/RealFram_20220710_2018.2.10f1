@@ -21,10 +21,16 @@ public class EncryptEditor : Editor
 
     static string m_EncryptPath = DefinePath.RealFramePath + "GameData/Data/Xml/";
 
-    [MenuItem(DefinePath.MenuItem_AB + "测试加密", false, DefinePath.MenuItem_Index_AB_Encrypt)]//按钮在菜单栏的位置
+    [MenuItem(DefinePath.MenuItem_AB + "测试AES加密", false, DefinePath.MenuItem_Index_AB_Encrypt)]//按钮在菜单栏的位置
     public static void MenuItem_Encrypt()
     {
         AES.AESFileEncrypt(m_EncryptPath+ "Test_AESData.xml","WWS");
+    }
+
+    [MenuItem(DefinePath.MenuItem_AB + "测试AES解密", false, DefinePath.MenuItem_Index_AB_Encrypt)]//按钮在菜单栏的位置
+    public static void MenuItem_Decrypt()
+    {
+        AES.AESFileDecrypt(m_EncryptPath + "Test_AESData.xml", "WWS");
     }
 
 }

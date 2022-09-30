@@ -42,10 +42,8 @@ public class AES
             {
                 if (fs != null)
                 {
-                    byte[] headBuff = new byte[10];  //读取字节头，判断是否已经加密过了
-                    fs.Read(headBuff, 0, headBuff.Length);
-                    string headTag = Encoding.UTF8.GetString(headBuff);
-                    //FileStream_Bytes2String(fs,10);
+                   string headTag= Common.FileStream_Bytes2String(fs,10);   //读取字节头，判断是否已经加密过了
+                   
                     if (headTag == m_AESHead)
                     {
 #if UNITY_EDITOR
@@ -53,31 +51,24 @@ public class AES
 #endif
                         return;
                     }
-                   
-                    fs.Seek(0, SeekOrigin.Begin);                       //加密并且写入字节头
-                    byte[] buffer = new byte[fs.Length];                
-                    fs.Read(buffer, 0, Convert.ToInt32(fs.Length));     //获取所有
-                    fs.Seek(0, SeekOrigin.Begin);                       //移动到开头
-                    fs.SetLength(0);                                    //清空
-                    byte[] headBuffer = Encoding.UTF8.GetBytes(m_AESHead);
-                    fs.Write(headBuffer, 0, headBuffer.Length);             //写入密钥
+
+                    byte[] buffer= Common.FileStream_Read(fs );
+                     Common.FileStream_Write( fs, m_AESHead);
                     byte[] EncBuffer = AESEncrypt(buffer, EncrptyKey);      //内容+密钥
-                    fs.Write(EncBuffer, 0, EncBuffer.Length);               //写入密钥+内容            
+                    Common.FileStream_Write(fs, EncBuffer);               //写入密钥+内容
+                     Debug.LogFormat(  "加密成功！{0}",path);
                 }
             }
         }
         catch (Exception e)
         {
-            Debug.LogError(e);
+            Debug.LogErrorFormat("加密失败！{0}\n{1}", path,e);
         }
     }
 
-    static String FileStream_Bytes2String(FileStream fs,int length)
-    {
-        byte[] buff = new byte[length];  //读取字节头，判断是否已经加密过了
-        fs.Read(buff, 0, buff.Length);
-        return Encoding.UTF8.GetString(buff);
-    }
+
+
+
 
     /// <summary>
     /// 文件解密，传入文件路径（会改动加密文件，不适合运行时）
@@ -86,10 +77,11 @@ public class AES
     /// <param name="EncrptyKey"></param>
     public static void AESFileDecrypt(string path, string EncrptyKey)
     {
-        if (!File.Exists(path))
+        if (!Common.File_Exits(path))
         {
             return;
         }
+
         try
         {
             using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite))
@@ -97,23 +89,20 @@ public class AES
                 if (fs != null)
                 {
                     byte[] headBuff = new byte[10];
-                    fs.Read(headBuff, 0, headBuff.Length);
-                    string headTag = Encoding.UTF8.GetString(headBuff);
+                    string headTag = Common.FileStream_Bytes2String(fs, headBuff.Length);
                     if (headTag == m_AESHead)
                     {
-                        byte[] buffer = new byte[fs.Length - headBuff.Length];
-                        fs.Read(buffer, 0, Convert.ToInt32(fs.Length - headBuff.Length));
-                        fs.Seek(0, SeekOrigin.Begin);
-                        fs.SetLength(0);
+                        byte[] buffer =  Common.FileStream_Read(fs, (long)headBuff.Length,fs.Length);
                         byte[] DecBuffer = AESDecrypt(buffer, EncrptyKey);
-                        fs.Write(DecBuffer, 0, DecBuffer.Length);
+                        Common.FileStream_Write(fs,DecBuffer);
+                        Debug.LogFormat("解密成功！{0}", path);
                     }
                 }
             }
         }
         catch (Exception e)
         {
-            Debug.LogError(e);
+            Debug.LogErrorFormat("解密失败！{0}\n{1}", path, e);
         }
     }
 
