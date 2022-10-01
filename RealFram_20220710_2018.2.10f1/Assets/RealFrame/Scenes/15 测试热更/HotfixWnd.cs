@@ -20,7 +20,8 @@ namespace Demo15
 
 
         private HotfixPanel m_hotfixPanel;
-        private float m_SumTime = 0;//下载总时间
+        private float m_SumTime = 0;    //下载或解压总时间，看你测试什么
+        public string m_LocalPath_Origin = DefinePath.LocalPath_Origin;
 
 
         #region 生命
@@ -34,27 +35,12 @@ namespace Demo15
             HotPatchMgr.Instance.ServerInfoError += ServerInfoError;
             HotPatchMgr.Instance.ItemError += ItemError;
 
+            Test_Awake();
+
+        }
 
 
-#if true// UNITY_EDITOR
-            HotFix();
-            //Hotfix_Update();
-#else
-        if (hotPatchMgr.ComputeUnPackFile())
-        {
-            m_hotfixPanel.m_ProgressText.text = "解压中...";
-            hotPatchMgr.StartUnackFile(()=> 
-            {
-                m_SumTime = 0;
-                HotFix();
-            });
-        }
-        else
-        {
-            HotFix();
-        }
-#endif
-        }
+
 
 
         public override void OnShow(params object[] paralist)
@@ -65,23 +51,11 @@ namespace Demo15
 
         public override void OnUpdate()
         {
-            if (HotPatchMgr.Instance.StartUnPack)//解压
-            {
-                m_SumTime += Time.deltaTime;
-                m_hotfixPanel.m_ProgressPg.fillAmount = HotPatchMgr.Instance.GetUnpackProgress();
-                float speed = (HotPatchMgr.Instance.AlreadyUnPackSize / 1024.0f) / m_SumTime;
-                m_hotfixPanel.m_ProgressText.text = string.Format("{0:F} M/S", speed);
-            }
 
-            if (HotPatchMgr.Instance.StartDownload) //下载
-            {
-                m_SumTime += Time.deltaTime;
-                m_hotfixPanel.m_ProgressPg.fillAmount = HotPatchMgr.Instance.GetDownloadProgress();
-                float speed = (HotPatchMgr.Instance.GetLoadSize() / 1024.0f) / m_SumTime;
-                m_hotfixPanel.m_ProgressText.text = string.Format("{0:F} M/S", speed);
-            }
-
+             Test_Update();
         }
+
+
 
         public override void OnClose()
         {
@@ -113,10 +87,70 @@ namespace Demo15
         }
 
 
+        #endregion
+
+
+
+        #region Test
+
+        /// <summary>
+        /// 测试的，要放在Awake
+        /// </summary>
+        void Test_Awake()
+        {
+            //Test_Hotfix();
+            Test_Unpack();
+        }
+
+        /// <summary>
+        /// 测试的，要放在Awake
+        /// </summary>
+        void Test_Update()
+        {
+            if (HotPatchMgr.Instance.Unpack_Start)//解压
+            {
+                m_SumTime += Time.deltaTime;
+                m_hotfixPanel.m_ProgressPg.fillAmount = HotPatchMgr.Instance.Unpack_Prg();
+                float speed = (HotPatchMgr.Instance.Unpack_DoneSize / 1024.0f) / m_SumTime;
+                m_hotfixPanel.m_ProgressText.text = string.Format("{0:F} M/S", speed);
+            }
+
+            if (HotPatchMgr.Instance.Download_Start) //下载
+            {
+                m_SumTime += Time.deltaTime;
+                m_hotfixPanel.m_ProgressPg.fillAmount = HotPatchMgr.Instance.Download_Prg();
+                float speed = (HotPatchMgr.Instance.Download_DoneSize() / 1024.0f) / m_SumTime;
+                m_hotfixPanel.m_ProgressText.text = string.Format("{0:F} M/S", speed);
+            }
+        }
+
+
+        /// <summary>
+        /// 直接热更
+        /// </summary>
+        void Test_Hotfix()
+        {
+            HotFix();
+        }
+
+
+        void Test_Unpack()
+        {
+            if (HotPatchMgr.Instance.UnpackFile_Compute( m_LocalPath_Origin ))
+            {
+                m_hotfixPanel.m_ProgressText.text = "解压中...";
+                HotPatchMgr.Instance.UnpackFile_Start(() =>
+                {
+                    m_SumTime = 0;
+                    HotFix();
+                });
+            }
+            else
+            {
+                HotFix();
+            }
+        }
         #endregion  
-
-
-
 
 
         #region CheckVersion 
@@ -185,7 +219,7 @@ namespace Demo15
         {
             m_hotfixPanel.m_ProgressText.text = "下载中...";
             m_hotfixPanel.m_InfoPanel.SetActive(true);
-            m_hotfixPanel.m_HotContentTex.text = HotPatchMgr.Instance.CurrentPatches.Des;
+            m_hotfixPanel.m_HotContentText.text = HotPatchMgr.Instance.CurrentPatches.Des;
            GameStart.Instance.StartCoroutine(HotPatchMgr.Instance.StartDownLoadAB(Hotfix_Update));
         }  
 
@@ -297,4 +331,3 @@ namespace Demo15
     }
 
 }
-

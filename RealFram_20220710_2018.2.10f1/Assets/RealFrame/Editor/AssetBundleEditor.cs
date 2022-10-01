@@ -245,7 +245,14 @@ public class AssetBundleEditor
 
         Debug.LogFormat("导出到外部成功：{0}", m_AB_OutterPath);
     }
+    [MenuItem(DefinePath.MenuItem_AB + "12345 一键打包和加密到外部", false, 80)]//按钮在菜单栏的位置
+    public static void MenuItem_BuildAndEncryptAB_OutterPath()
+    {
+        AssetBundleHotFixEditor.WriteABMD5();
+        BuildAndEncryptAB_RootOutter();
 
+        Debug.LogFormat("导出到外部成功：{0}", m_AB_OutterPath);
+    }
 
 
 
@@ -342,10 +349,20 @@ public class AssetBundleEditor
         BuildAB_RootInner();
         Common.File_Copy(m_AB_InnerPath, m_AB_OutterPath); //外部AB包
         Common.Folder_Clear_Recursive(m_AB_InnerPath);
+    }
 
-       
+    /// <summary>
+    /// 一键打AB包到外部
+    /// </summary>
+    public static void BuildAndEncryptAB_RootOutter()
+    {
+        Common.Folder_Clear_Recursive(m_AB_OutterPath);
+        Common.Folder_Clear_Recursive(m_AB_InnerPath);
 
-
+        BuildAB_RootInner();
+        Common.File_Copy(m_AB_InnerPath, m_AB_OutterPath); //外部AB包
+        EncryptEditor.EncryptAB(m_AB_OutterPath, EncryptEditor.m_PrivateKey);
+        Common.Folder_Clear_Recursive(m_AB_InnerPath);
     }
     #endregion
 
@@ -506,7 +523,7 @@ public class AssetBundleEditor
     /// <param name="outputABPath">打包到内部的文件夹，一般是AssetStreaming，但我看到Ocean的叫</param>
     public static void BuildAB(string outputABPath)
     {
-        Common.TickPath(outputABPath);
+        Common.Folder_New(outputABPath);
         DeleteUselessAB(m_AB_InnerPath);
 
         //

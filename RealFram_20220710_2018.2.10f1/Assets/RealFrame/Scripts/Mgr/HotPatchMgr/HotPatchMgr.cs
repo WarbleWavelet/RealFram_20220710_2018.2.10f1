@@ -46,19 +46,18 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
 
     #region 字属
 
-    private string m_VersionTextName = "Version"; //解析出下面2个
-    private string m_CurVersion="";  //当前版本号
-    private string m_CurPackName="";  //当前包名
+    private string m_VersionTextName = "Version";   //解析出下面2个
+    private string m_CurVersion="";                 //当前版本号
+    private string m_CurPackName="";                //当前包名
     string m_ABMD5_Name_Inner = "ABMD5";
 
     //
-    private MonoBehaviour m_Mono;                                                       //下载的线程
-    //private string m_ServerInfoXml_Server = "http://127.0.0.1/ServerInfo.xml";                 //热更配置表 =="http://127.0.0.1:80/ServerInfo.xml
+    private MonoBehaviour m_Mono;                                                               //下载的线程
+    //private string m_ServerInfoXml_Server = "http://127.0.0.1/ServerInfo.xml";                //热更配置表 =="http://127.0.0.1:80/ServerInfo.xml
     private string m_ServerInfoXml_Server = "http://localhost:8081/ServerInfo.xml";
-    private string m_SerevrInfoXml_Local = Application.persistentDataPath + "/ServerInfo.xml"; //本地路径
-    private string m_LocalInfoXml_Local = Application.persistentDataPath + "/LocalInfo.xml";  //类似D盘，大版本安装不删除
-    private string m_UnPackPath_Local   =   Application.persistentDataPath + "/Origin";
-    private string m_DownLoadPath_Local = Application.persistentDataPath + "/DownLoad";       //m_DownLoadPath = "C:/Users/lenovo/AppData/LocalLow/DefaultCompany/RealFrame_Test/DownLoad"
+    private string m_LocalPath_SerevrInfoXml = Application.persistentDataPath + "/ServerInfo.xml";  //本地路径
+    private string m_LocalPath_LocalInfoXml = Application.persistentDataPath + "/LocalInfo.xml";    //类似D盘，大版本安装不删除
+    private string m_LocalPath_DownLoad = Application.persistentDataPath + "/DownLoad";         //m_DownLoadPath = "C:/Users/lenovo/AppData/LocalLow/DefaultCompany/RealFrame_Test/DownLoad"
 
     private ServerInfo m_ServerInfo_Server=new ServerInfo();
     private ServerInfo m_ServerInfo_Local= new ServerInfo();
@@ -72,7 +71,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     public Action<string> ItemError;                                                    //文件下载出错回调
     public Action LoadOver;                                                             //下载完成回调 
     public List<Patch> m_AlreadyDownList = new List<Patch>();                           //储存已经下载的资源  
-    public bool StartDownload = false;                                                  //是否开始下载
+    public bool Download_Start = false;                                                  //是否开始下载
     private int m_TryDownCount = 0;                                                     //尝试重新下载次数
     private const int DOWNLOADCOUNT = 4;                                                //重复下载几次还失败就报错
     private DownLoadAssetBundle m_CurDownload = null;                                   //当前正在下载的资源
@@ -81,18 +80,15 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     private VersionInfo m_GameVersion;
                                                                                                            
     private Dictionary<string, string> m_DownLoadMD5Dic = new Dictionary<string, string>(); //服务器上的资源名对应的MD5，用于下载后MD5校验
-    private List<string> m_UnPackedList = new List<string>();
-    private Dictionary<string, ABMD5Base> m_primaryPackedMd5Dic = new Dictionary<string, ABMD5Base>();//原包记录的MD5码,最初的
      //
-    public int LoadFileCount { get; set; } = 0;     // 需要下载的资源总个数
-    public float LoadSumSize { get; set; } = 0;     // 需要下载资源的总大小 KB
+    public int LoadFileCount { get; set; } = 0;                                                         // 需要下载的资源总个数
+    public float LoadSumSize { get; set; } = 0;                                                         // 需要下载资源的总大小 KB
      //
-    public bool StartUnPack = false;                 //是否开始解压
 
-    private string m_AB_InnerPath=DefinePath.OutputAB_InnerPath + Common.GetBuildTarget() + "/";
 
-    public float UnPackSumSize { get; set; } = 0;    //解压文件总大小
-    public float AlreadyUnPackSize { get; set; } = 0;//已解压大小
+    private string m_AB_InnerPath=DefinePath.OutputAB_InnerPath + Common.GetBuildTarget() ;
+
+
 
     public Patches CurrentPatches
     {
@@ -103,6 +99,18 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
         get { return m_CurVersion; }
     }
 
+
+    #region 解压
+
+
+    private string m_LocalPath_Origin = Application.persistentDataPath + "/Origin";                     //解压路径
+    private Dictionary<string, ABMD5Base> m_primaryPackedMd5Dic = new Dictionary<string, ABMD5Base>();  //原包记录的MD5码,最初的
+    private List<string> m_UnpackLst = new List<string>();                                              //需要解压的文件
+
+    public bool Unpack_Start = false;                                                                    //是否开始解压
+    public float UnpackSumSize { get; set; } = 0;                                                       //解压文件总大小
+    public float Unpack_DoneSize { get; set; } = 0;                                                      //已解压大小
+    #endregion  
 
 
     #endregion
@@ -117,7 +125,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     {
         m_Mono = mono;
         TextAsset md5 = Resources.Load<TextAsset>(m_ABMD5_Name_Inner);
-        ReadMD5(md5, out m_primaryPackedMd5Dic);
+        MD5_Read(md5, out m_primaryPackedMd5Dic);
     }
 
 
@@ -137,7 +145,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
             ReadXml(
                 m_ServerInfoXml_Server,
                 30,
-                m_SerevrInfoXml_Local,
+                m_LocalPath_SerevrInfoXml,
                 m_ServerInfo_Local,
                 () =>
                 {
@@ -161,18 +169,18 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
 
                      m_PatchDic=GetHotAB(m_GameVersion);
 
-                    if (CheckLocalAndServerPatch( m_LocalInfoXml_Local,  m_ServerInfo_Local,  m_CurVersion,  m_GameVersion))
+                    if (CheckLocalAndServerPatch( m_LocalPath_LocalInfoXml,  m_ServerInfo_Local,  m_CurVersion,  m_GameVersion))
                     {
-                        ComputeDownloadInfo(m_GameVersion, out m_CurrentPatches, m_DownLoadPath_Local, m_DownLoadList, m_DownLoadDic, m_DownLoadMD5Dic);//不out会null
-                        if (Common.File_Exits(m_SerevrInfoXml_Local))
+                        ComputeDownloadInfo(m_GameVersion, out m_CurrentPatches, m_LocalPath_DownLoad, m_DownLoadList, m_DownLoadDic, m_DownLoadMD5Dic);//不out会null
+                        if (Common.File_Exits(m_LocalPath_SerevrInfoXml))
                         {                                                                       
-                            Common.File_Delete(m_LocalInfoXml_Local);//删本地
-                            Common.File_Move(m_SerevrInfoXml_Local, m_LocalInfoXml_Local); //拿服务器的
+                            Common.File_Delete(m_LocalPath_LocalInfoXml);//删本地
+                            Common.File_Move(m_LocalPath_SerevrInfoXml, m_LocalPath_LocalInfoXml); //拿服务器的
                         }
                     }
                     else //完全一致
                     {
-                        ComputeDownloadInfo(m_GameVersion, out  m_CurrentPatches, m_DownLoadPath_Local, m_DownLoadList, m_DownLoadDic, m_DownLoadMD5Dic);
+                        ComputeDownloadInfo(m_GameVersion, out  m_CurrentPatches, m_LocalPath_DownLoad, m_DownLoadList, m_DownLoadDic, m_DownLoadMD5Dic);
                     }
                     LoadFileCount = m_DownLoadList.Count;
                     LoadSumSize = m_DownLoadList.Sum(x => x.Size);
@@ -222,24 +230,29 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
 
 
 
+
+    #region 解压
+
+
     /// <summary>
     /// 读取本地资源MD5码(在编辑器内：D:\Data\Projects\Unity\Ocean_RealFram_20220710_2018.2.10f1\RealFram_20220710_2018.2.10f1\Assets\RealFrame\Resources)
     /// </summary>
-    void ReadMD5(TextAsset md5,out Dictionary<string , ABMD5Base> m_PackedMd5Dic)
+    void MD5_Read(TextAsset md5,out Dictionary<string , ABMD5Base> m_PackedMd5Dic)
     {
-
         m_PackedMd5Dic = new Dictionary<string, ABMD5Base>();
-
         if (md5 == null)
         {
             Debug.LogError("未读取到本地MD5");
             return;
         }
 
-        using (MemoryStream stream = new MemoryStream(md5.bytes))
+
+
+
+        using (MemoryStream ms = new MemoryStream(md5.bytes))
         {
             BinaryFormatter bf = new BinaryFormatter();
-            ABMD5 abmd5 = bf.Deserialize(stream) as ABMD5;
+            ABMD5 abmd5 = bf.Deserialize(ms) as ABMD5;
             foreach (ABMD5Base abmd5Base in abmd5.ABMD5Lst)
             {
                 m_PackedMd5Dic.Add(abmd5Base.Name, abmd5Base);
@@ -248,43 +261,43 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     }
 
     /// <summary>
-    /// 计算需要解压的文件
+    /// 计算需要解压的文件（也就是AES加密的）
     /// </summary>
     /// <returns></returns>
-    public bool ComputeUnPackFile()
+    public bool UnpackFile_Compute(string path)
     {
-#if UNITY_ANDROID
-        if (!Directory.Exists(m_UnPackPath))
+#if true// UNITY_ANDROID
+
+
+        Common.Folder_New(path);
+        m_UnpackLst.Clear();
+
+        foreach (string fileName in m_primaryPackedMd5Dic.Keys)
         {
-            Directory.CreateDirectory(m_UnPackPath);
-        }
-        m_UnPackedList.Clear();
-        foreach (string fileName in m_PackedMd5.Keys)
-        {
-            string filePath = m_UnPackPath + "/" + fileName;
-            if (File.Exists(filePath))
+            string filePath = path + "/" + fileName;
+            if (Common.File_Exits(filePath))
             {
-                string md5 = MD5Manager.Instance.BuildFileMd5(filePath);
-                if (m_PackedMd5[fileName].Md5 != md5)
+                string md5 = MD5Mgr.Instance.BuildFileMD5(filePath);
+                if (m_primaryPackedMd5Dic[fileName].MD5 != md5)//防止有人改动文件
                 {
-                    m_UnPackedList.Add(fileName);
+                    m_UnpackLst.Add(fileName);
                 }
             }
             else
             {
-                m_UnPackedList.Add(fileName);
+                m_UnpackLst.Add(fileName);
             }
         }
 
-        foreach (string fileName in m_UnPackedList)
+        foreach (string fileName in m_UnpackLst)
         {
-            if (m_PackedMd5.ContainsKey(fileName))
+            if (m_primaryPackedMd5Dic.ContainsKey(fileName))
             {
-                UnPackSumSize += m_PackedMd5[fileName].Size;
+                UnpackSumSize += m_primaryPackedMd5Dic[fileName].Size;
             }
         }
 
-        return m_UnPackedList.Count > 0;
+        return m_UnpackLst.Count > 0;
 #else
         return false;
 #endif
@@ -294,19 +307,19 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     /// 获取解压进度
     /// </summary>
     /// <returns></returns>
-    public float GetUnpackProgress()
+    public float Unpack_Prg()
     {
-        return AlreadyUnPackSize / UnPackSumSize;
+        return Unpack_DoneSize / UnpackSumSize;
     }
 
     /// <summary>
     /// 开始解压文件
     /// </summary>
     /// <param name="callBack"></param>
-    public void StartUnackFile(Action callBack)
+    public void UnpackFile_Start(Action callBack)
     {
-        StartUnPack = true;
-        m_Mono.StartCoroutine(UnPackToPersistentDataPath(callBack));
+        Unpack_Start = true;
+        m_Mono.StartCoroutine(Unpack2PersistentDataPath(m_AB_InnerPath, m_LocalPath_Origin,30,callBack));
     }
 
     /// <summary>
@@ -314,13 +327,15 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     /// </summary>
     /// <param name="callBack"></param>
     /// <returns></returns>
-    IEnumerator UnPackToPersistentDataPath(Action callBack)
+    IEnumerator Unpack2PersistentDataPath(string downloadPath,string unpackPath,int timeout,Action callBack)
     {
-        foreach (string fileName in m_UnPackedList)
+        foreach (string fileName in m_UnpackLst)
         {
-            UnityWebRequest unityWebRequest = UnityWebRequest.Get(m_AB_InnerPath + fileName);
-            unityWebRequest.timeout = 30;
+            UnityWebRequest unityWebRequest = UnityWebRequest.Get(downloadPath +"/"+ fileName);//(用内部路径模拟服务器)
+            unityWebRequest.timeout = timeout;
             yield return unityWebRequest.SendWebRequest();
+
+
             if (unityWebRequest.isNetworkError)
             {
                 Debug.Log("UnPack Error" + unityWebRequest.error);
@@ -328,12 +343,12 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
             else
             {
                 byte[] bytes = unityWebRequest.downloadHandler.data;
-                Common.File_Create_Write(m_UnPackPath_Local + "/" + fileName, bytes);
+                Common.File_Create_Write(unpackPath + "/" + fileName, bytes);
             }
 
             if (m_primaryPackedMd5Dic.ContainsKey(fileName))
             {
-                AlreadyUnPackSize += m_primaryPackedMd5Dic[fileName].Size;
+                Unpack_DoneSize += m_primaryPackedMd5Dic[fileName].Size;
             }
 
             unityWebRequest.Dispose();
@@ -344,10 +359,17 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
             callBack();
         }
 
-        StartUnPack = false;
+        Unpack_Start = false;
     }
+    #endregion
 
-    /// <summary>
+
+
+
+
+    #region 辅助
+
+  /// <summary>
     /// 计算AB包路径,本地路径是否存在C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad
     /// </summary>
     /// <param name="name"></param>
@@ -358,7 +380,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
         m_PatchDic.TryGetValue(name, out patch);
         if (patch != null)
         {
-            return m_DownLoadPath_Local + "/" + name;
+            return m_LocalPath_DownLoad + "/" + name;
         }
         return "";
     }
@@ -417,6 +439,9 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     {
         return versionInfo.Pathces[versionInfo.Pathces.Length - 1].Version;
     }
+
+    #endregion
+  
 
 
 
@@ -518,16 +543,16 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     /// 获取下载进度
     /// </summary>
     /// <returns></returns>
-    public float GetDownloadProgress()
+    public float Download_Prg()
     {
-        return GetLoadSize() / LoadSumSize;
+        return Download_DoneSize() / LoadSumSize;
     }
 
     /// <summary>
     /// 获取已经下载总大小
     /// </summary>
     /// <returns></returns>
-    public float GetLoadSize()
+    public float Download_DoneSize()
     {
         float alreadySize = m_AlreadyDownList.Sum(x => x.Size);
         float curAlreadySize = 0;
@@ -551,18 +576,18 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     public IEnumerator StartDownLoadAB(Action callBack, List<Patch> patchLst = null)
     {
         m_AlreadyDownList.Clear();
-        StartDownload = true;
+        Download_Start = true;
         if (patchLst == null)
         {
             patchLst = m_DownLoadList;
         }
-        Common.TickPath(m_DownLoadPath_Local);
+        Common.Folder_New(m_LocalPath_DownLoad);
 
 
         List<DownLoadAssetBundle> downLoadAssetBundleLst = new List<DownLoadAssetBundle>();
         foreach (Patch patch in patchLst)
         {
-            downLoadAssetBundleLst.Add(new DownLoadAssetBundle(patch.Url, m_DownLoadPath_Local));
+            downLoadAssetBundleLst.Add(new DownLoadAssetBundle(patch.Url, m_LocalPath_DownLoad));
         }
 
         foreach (DownLoadAssetBundle downLoad in downLoadAssetBundleLst)
@@ -578,7 +603,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
         }
 
         //MD5码校验,
-        VerifyMD5(downLoadAssetBundleLst, callBack);
+        MD5_Verify(downLoadAssetBundleLst, callBack);
     }
 
     /// <summary>
@@ -586,7 +611,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     /// </summary>
     /// <param name="downLoadAssetLst"></param>
     /// <param name="downloadCallback"></param> 
-    void VerifyMD5(List<DownLoadAssetBundle> downLoadAssetLst, Action downloadCallback)
+    void MD5_Verify(List<DownLoadAssetBundle> downLoadAssetLst, Action downloadCallback)
     {
         List<Patch> downLoadLst = new List<Patch>();
         foreach (DownLoadAssetBundle downLoad in downLoadAssetLst)
@@ -612,7 +637,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
             m_DownLoadMD5Dic.Clear();
             if (downloadCallback != null)
             {
-                StartDownload = false;//下载结束
+                Download_Start = false;//下载结束
                 downloadCallback();
             }
             if (LoadOver != null)
@@ -625,7 +650,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
             if (m_TryDownCount >= DOWNLOADCOUNT)
             {
                 string allName = "";
-                StartDownload = false;
+                Download_Start = false;
                 foreach (Patch patch in downLoadLst)
                 {
                     allName += patch.Name + ";";
@@ -692,20 +717,20 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     /// <summary>
     /// 将Client下载到Local，然后解析为serverInfo
     /// </summary>
-    /// <param name="xmlUrl"></param>
-    /// <param name="serverInfoXml_Local"></param>
+    /// <param name="serverPath_ServerInfoXml"></param>
+    /// <param name="localPath_ServerInfoXml"></param>
     /// <param name="serverInfo"></param>
     /// <param name="callBack"></param>
     /// <returns></returns>
-    IEnumerator ReadXml(string xmlUrl,int timeout, string serverInfoXml_Local, ServerInfo serverInfo, Action callBack)
+    IEnumerator ReadXml(string serverPath_ServerInfoXml,int timeout, string localPath_ServerInfoXml, ServerInfo serverInfo, Action callBack)
     {
-        UnityWebRequest webRequest = UnityWebRequest.Get(xmlUrl);//m_ServerInfoXml_Client , "http://127.0.0.1/ServerInfo.xml" （默认是80可以省略不写，但是改成其它端口比如8081后，必须加上去）
-        webRequest.timeout = timeout;  //超时时间30s
+        UnityWebRequest webRequest = UnityWebRequest.Get(serverPath_ServerInfoXml);//m_ServerInfoXml_Client , "http://127.0.0.1/ServerInfo.xml" （默认是80可以省略不写，但是改成其它端口比如8081后，必须加上去）
+        webRequest.timeout = 300;  //超时时间30s
         yield return webRequest.SendWebRequest();
 
-        if (webRequest.isNetworkError)//超时错误
+        if (webRequest.isNetworkError)//超时错误  ,一般是没开启服务器（Ocean用的是Apache）
         {
-            Debug.Log("Download Error" + webRequest.error);
+            Debug.Log("Download Error（没开启服务器？）：" + webRequest.error);
         }
         else if (webRequest.isHttpError)
         {
@@ -713,11 +738,11 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
         }
         else//下载到本地，写文件
         {
-            Common.File_Create_Write(serverInfoXml_Local, webRequest.downloadHandler.data); //m_ServerInfoXml_Local = "C:/Users/lenovo/AppData/LocalLow/DefaultCompany/RealFrame/ServerInfo.xml"
+            Common.File_Create_Write(localPath_ServerInfoXml, webRequest.downloadHandler.data); //m_ServerInfoXml_Local = "C:/Users/lenovo/AppData/LocalLow/DefaultCompany/RealFrame/ServerInfo.xml"
 
-            if (Common.File_Exits(serverInfoXml_Local))
+            if (Common.File_Exits(localPath_ServerInfoXml))
             {
-                serverInfo = FormatTool.Xml2Class(serverInfoXml_Local, typeof(ServerInfo)) as ServerInfo;
+                serverInfo = FormatTool.Xml2Class(localPath_ServerInfoXml, typeof(ServerInfo)) as ServerInfo;
                 m_ServerInfo_Local = serverInfo;
             }
             else

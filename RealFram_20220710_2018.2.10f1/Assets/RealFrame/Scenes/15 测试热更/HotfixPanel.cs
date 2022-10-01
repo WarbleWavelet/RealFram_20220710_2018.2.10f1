@@ -21,7 +21,7 @@ namespace Demo15
 		public Image m_ProgressPg; 		   //弹框
 		public Text m_ProgressText;
 		public GameObject 	m_InfoPanel; //热更信息
-		public Text m_HotContentTex;     //热更信息文本
+		public Text m_HotContentText;     //热更信息文本
 		public Image m_Image;
 
 		// Use this for initialization

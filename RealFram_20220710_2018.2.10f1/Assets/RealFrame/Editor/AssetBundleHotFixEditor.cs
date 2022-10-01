@@ -80,7 +80,7 @@ public class AssetBundleHotFixEditor
         string innerPath = string.Format("{0}ABMD5.bytes", m_ABMD5_InnerPath); //内部生成
         Common.Class2Bin(abmd5, innerPath);
 
-        Common.TickPath(m_ABMD5_OutterPath);//外部拷贝
+        Common.Folder_New(m_ABMD5_OutterPath);//外部拷贝
         string outterPath = string.Format("{0}ABMD5_{1}.bytes", m_ABMD5_OutterPath, PlayerSettings.bundleVersion);
         Common.File_Delete(outterPath); //清空
         File.Copy(innerPath, outterPath);
@@ -139,7 +139,7 @@ public class AssetBundleHotFixEditor
     static void CopyABAndGeneratXml(List<string> changeLst, string hotCnt)
     {
 
-        Common.TickPath(m_Hot_OutterPath);
+        Common.Folder_New(m_Hot_OutterPath);
         Common.Folder_ClearWithout_NotRecursive(m_Hot_OutterPath);
 
         foreach (string str in changeLst)

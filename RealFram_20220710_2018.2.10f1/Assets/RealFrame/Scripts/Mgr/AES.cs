@@ -123,6 +123,8 @@ public class AES
     {
         if (!Common.File_Exits(path))
         {
+
+            Debug.LogErrorFormat("assetbundleconfig完整路径不存在{0}",path );
             return null;
         }
         byte[] DecBuffer = null;
@@ -145,8 +147,8 @@ public class AES
         }
         catch (Exception e)
         {
-            Debug.LogError(e);
-            Debug.LogError(e);
+
+            Debug.LogErrorFormat("Stream中不允许使用FileStream：{0}",e );
         }
 
         return DecBuffer;

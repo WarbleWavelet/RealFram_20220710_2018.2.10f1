@@ -41,7 +41,14 @@ public class Constants
     public static string Android_keystoreName = Application.dataPath.Replace("Assets", "realframe.keystore");
     public static string Android_applicationIdentifierFix = "com.TTT.";
 
+   
+
     #endregion
+
+
+    #region AES加密
+      public const string PrivateKey = "WWS";
+    #endregion  
 
 }
 

@@ -276,7 +276,7 @@ MonoBehaviour:
   m_ProgressPg: {fileID: 114423767725981476}
   m_ProgressText: {fileID: 114831697925307368}
   m_InfoPanel: {fileID: 1794370211893088}
-  m_HotContentTex: {fileID: 114831697925307368}
+  m_HotContentText: {fileID: 114381324602412986}
   m_Image: {fileID: 114889304912289484}
 --- !u!114 &114175081450655454
 MonoBehaviour:
@@ -648,7 +648,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 224611334779228798}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -967,7 +967,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000014195639, y: 0.000008942818}
+  m_AnchoredPosition: {x: -0.000016005308, y: 0.000026643174}
   m_SizeDelta: {x: 0, y: 250.4}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224676277317722456

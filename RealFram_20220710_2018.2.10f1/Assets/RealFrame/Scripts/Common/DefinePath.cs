@@ -80,7 +80,7 @@ public class DefinePath
     public static string assetbundleconfig_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/assetbundleconfig"; //bytes路径的AB包路径
     public static string ABPath_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/"; 
     public static string assetbundleconfig_Outter = ProjectPath+"AssetBundle/assetbundleconfig"; //bytes路径的AB包路径
-    public static string assetbundleconfig_Local = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad\assetbundleconfig"; //bytes路径的AB包路径
+    public static string assetbundleconfig_Hotfix = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad\assetbundleconfig"; //bytes路径的AB包路径
 
     public static string abCfg_Path = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/ABData/"; //bytes
     public const string abCfg_Name = "assetbundleconfig"; //bytes
@@ -120,8 +120,10 @@ public class DefinePath
 
 
 
-    #region 热更
+    #region 热更 解密（解压）
     public static string Hot_OutterPath = Application.dataPath + "/../Hot/" ;
+    public static string LocalPath_DownLoad = Application.persistentDataPath + "/DownLoad/" ;
+    public static string LocalPath_Origin = Application.persistentDataPath + "/Origin/" ;
     #endregion
 }
 

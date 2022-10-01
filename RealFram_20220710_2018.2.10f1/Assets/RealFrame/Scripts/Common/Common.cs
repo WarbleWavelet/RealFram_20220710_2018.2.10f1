@@ -239,7 +239,7 @@ public class Common
         try //递归拷贝
         {
             //取路径
-            Common.TickPath(to);
+            Common.Folder_New(to);
             string toPath = Path.Combine(to, Path.GetFileName(from));// A/   B/b  =>  A/b
             toPath = Common.TrimName(toPath, TrimNameType.SlashPre);//去掉StreamingAssets
             if (File.Exists(from) == true)
@@ -248,7 +248,7 @@ public class Common
             }
 
             //取文件
-            Common.TickPath(toPath);
+            Common.Folder_New(toPath);
 
             string[] fileArr = Directory.GetFileSystemEntries(from);
             //赋值
@@ -378,6 +378,29 @@ public class Common
     }
 
 
+
+
+
+
+
+    /// <summary>有就好，没有就创建</summary>
+    public static void Folder_New(string path)
+    {
+        if (Directory.Exists(path) == false) //输出path
+        {
+            Directory.CreateDirectory(path);
+        }
+
+    }
+    #endregion
+
+
+
+    #region File
+
+
+
+
     /// <summary>
     /// 存在文件
     /// </summary>
@@ -387,7 +410,6 @@ public class Common
     {
         return File.Exists(path);
     }
-
 
     /// <summary>
     /// 删除该文件
@@ -413,17 +435,6 @@ public class Common
     public static string File_Name_WithoutSuffix(string path)
     {
         return Path.GetFileNameWithoutExtension(path);
-    }
-
-
-    /// <summary>有就好，没有就创建</summary>
-    public static void TickPath(string path)
-    {
-        if (Directory.Exists(path) == false) //输出path
-        {
-            Directory.CreateDirectory(path);
-        }
-
     }
     #endregion
 

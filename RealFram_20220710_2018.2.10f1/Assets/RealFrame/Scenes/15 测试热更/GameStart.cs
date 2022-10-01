@@ -29,7 +29,6 @@ namespace Demo15
 
 
 
-
 		#endregion
 
 
@@ -59,7 +58,11 @@ namespace Demo15
 		void Start()
 		{
 			UIMgr.Instance.OpenWnd(m_Hotfix,resources:true);
+
+			
 		}
+
+
 
 		void Update()
 		{

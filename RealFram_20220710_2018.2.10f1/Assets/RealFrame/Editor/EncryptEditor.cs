@@ -15,13 +15,13 @@ using UnityEngine;
 
 
 
-
+                                       
 
 public class EncryptEditor : Editor
 {
 
     static string m_EncryptPath = DefinePath.RealFramePath + "GameData/Data/Xml/";  //用来测试的一个文件
-    const string m_PrivateKey = "WWS";   //密钥
+  public  const string m_PrivateKey = Constants.PrivateKey;   //密钥
     static string m_BunleTargetPath=DefinePath.OutputAB_OutterPath;
 
 
