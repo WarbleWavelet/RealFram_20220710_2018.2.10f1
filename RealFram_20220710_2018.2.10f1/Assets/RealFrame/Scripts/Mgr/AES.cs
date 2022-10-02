@@ -135,11 +135,11 @@ public class AES
                 if (fs != null)
                 {
                     byte[] headBuff = new byte[10];
-                    string headTag = Common.FileStream_Read(fs, headBuff);
+                    string headTag = Common.FileStream_Read(fs,ref headBuff);
                     if (headTag == m_AESHead)
                     {
                         byte[] buffer = new byte[fs.Length - headBuff.Length];
-                        Common.FileStream_Write(fs,buffer,0, (fs.Length - headBuff.Length) );
+                        Common.FileStream_Read(fs,buffer,0, (fs.Length - headBuff.Length) );
                         DecBuffer = AESDecrypt(buffer, EncrptyKey);
                     }
                 }

@@ -266,7 +266,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     /// <returns></returns>
     public bool UnpackFile_Compute(string path)
     {
-#if true// UNITY_ANDROID
+#if true// UNITY_ANDROID//先测试一遍
 
 
         Common.Folder_New(path);
@@ -319,7 +319,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     public void UnpackFile_Start(Action callBack)
     {
         Unpack_Start = true;
-        m_Mono.StartCoroutine(Unpack2PersistentDataPath(m_AB_InnerPath, m_LocalPath_Origin,30,callBack));
+        m_Mono.StartCoroutine(Unpack_2PersistentDataPath(m_AB_InnerPath, m_LocalPath_Origin,30,callBack));
     }
 
     /// <summary>
@@ -327,7 +327,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     /// </summary>
     /// <param name="callBack"></param>
     /// <returns></returns>
-    IEnumerator Unpack2PersistentDataPath(string downloadPath,string unpackPath,int timeout,Action callBack)
+    IEnumerator Unpack_2PersistentDataPath(string downloadPath,string unpackPath,int timeout,Action callBack)
     {
         foreach (string fileName in m_UnpackLst)
         {
@@ -380,7 +380,8 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
         m_PatchDic.TryGetValue(name, out patch);
         if (patch != null)
         {
-            return m_LocalPath_DownLoad + "/" + name;
+            //return m_LocalPath_DownLoad + "/" + name;
+            return m_LocalPath_Origin + "/" + name;
         }
         return "";
     }
@@ -725,7 +726,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
     IEnumerator ReadXml(string serverPath_ServerInfoXml,int timeout, string localPath_ServerInfoXml, ServerInfo serverInfo, Action callBack)
     {
         UnityWebRequest webRequest = UnityWebRequest.Get(serverPath_ServerInfoXml);//m_ServerInfoXml_Client , "http://127.0.0.1/ServerInfo.xml" （默认是80可以省略不写，但是改成其它端口比如8081后，必须加上去）
-        webRequest.timeout = 300;  //超时时间30s
+        webRequest.timeout = timeout;  //超时时间30s
         yield return webRequest.SendWebRequest();
 
         if (webRequest.isNetworkError)//超时错误  ,一般是没开启服务器（Ocean用的是Apache）

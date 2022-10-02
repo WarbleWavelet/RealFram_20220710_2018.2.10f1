@@ -75,7 +75,7 @@ public class EncryptEditor : Editor
 
     public static void DecryptAB(string path, string privateKey)
     {
-        FileInfo[] files = Common.Folder_GetAllFileInfo(path);
+        FileInfo[] files = Common.Folder_GetAllFileInfo(path);                       
         for (int i = 0; i < files.Length; i++)
         {
             if (!files[i].Name.EndsWith("meta") && !files[i].Name.EndsWith(".manifest"))

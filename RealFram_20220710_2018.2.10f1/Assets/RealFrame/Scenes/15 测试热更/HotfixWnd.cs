@@ -23,6 +23,7 @@ namespace Demo15
         private float m_SumTime = 0;    //下载或解压总时间，看你测试什么
         public string m_LocalPath_Origin = DefinePath.LocalPath_Origin;
 
+        public string m_Prefab_Attack = DefinePath_Demo15.Prefab_Attack;
 
         #region 生命
 
@@ -136,6 +137,10 @@ namespace Demo15
 
         void Test_Unpack()
         {
+
+#if false//UNITY_EDITOR
+            Hotfix_Update();
+#else
             if (HotPatchMgr.Instance.UnpackFile_Compute( m_LocalPath_Origin ))
             {
                 m_hotfixPanel.m_ProgressText.text = "解压中...";
@@ -149,6 +154,9 @@ namespace Demo15
             {
                 HotFix();
             }
+#endif
+
+
         }
         #endregion  
 
@@ -241,8 +249,10 @@ namespace Demo15
         IEnumerator Hotfix_Finish()
         {
             yield return GameStart.Instance.StartCoroutine(GameStart.Instance.StartGame(m_hotfixPanel.m_ProgressPg, m_hotfixPanel.m_ProgressText) );
-            UIMgr.Instance.CloseWnd(this);     
+            UIMgr.Instance.CloseWnd(this); 
+            //
             Test_AsyncLoadSprite();
+            Test_Instaniate();
         }
         #endregion
 
@@ -324,6 +334,16 @@ namespace Demo15
 
 
             }
+        }
+        #endregion
+
+        #region 使用预加载的可实例资源
+        void Test_Instaniate()
+        {
+            GameObject go = ObjectMgr.Instance.InstantiateObject( m_Prefab_Attack, true); //
+            GameObject go1 = GameObject.Instantiate(go);
+            //ObjectMgr.Instance.UnloadGameObject(go);
+            //ObjectMgr.Instance.UnloadGameObject(go, 0, true);
         }
         #endregion
 

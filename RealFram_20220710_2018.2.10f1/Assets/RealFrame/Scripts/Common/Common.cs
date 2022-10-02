@@ -68,7 +68,7 @@ public class Common
     }
 
 
-    public static string FileStream_Read(FileStream fs, byte[] buffer)
+    public static string FileStream_Read(FileStream fs,ref byte[] buffer)
     {
         fs.Read(buffer, 0, buffer.Length);
         string str = Encoding.UTF8.GetString(buffer);
@@ -139,9 +139,9 @@ public class Common
 
     }
 
-    public static void FileStream_Write(FileStream fs, byte[] buffer, int start, long end)
+    public static void FileStream_Read(FileStream fs, byte[] buffer, int start, long end)
     {
-        fs.Write(buffer,  start,Convert.ToInt32(end) );
+        fs.Read(buffer,  start,Convert.ToInt32(end) );
 
     }
 

@@ -161,9 +161,7 @@ public class DefinePath_Demo15
     public const string Scene_Empty = "Empty15";
 
    
-    public const string ATTACK = "Assets/GameData/Prefabs/Attack.prefab";   //临时prefab路径
 
- 
     public const string MENUSOUND = "Assets/GameData/Sounds/menusound.mp3";    //临时音乐资源
     public const string Prefab_Attack = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/Attack.prefab";
     private const string PanelPath = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/UGUI/Panel/Demo15/";

@@ -35,14 +35,16 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     Dictionary<uint, ABItem> m_abItemDic = new Dictionary<uint, ABItem>();
     ClassObjectPool<ABItem> m_abItemPool = ObjectMgr.Instance.GetOrNewClassObjectPool<ABItem>(Constants.ClassObjectPool_MAXCNT);
 
-    private static string m_assetbundleconfigPath_Local = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad\assetbundleconfig";
+    private static string m_assetbundleconfigPath_Local_Download = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad\assetbundleconfig";
+    private static string m_assetbundleconfigPath_Local_Origin = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\Origin\assetbundleconfig";
     private static string m_assetbundleconfigPath_Inner = DefinePath.assetbundleconfig_Inner;
     private static string m_assetbundleconfigPath_Outter = @"D:\Data\Projects\Unity\Ocean_RealFram_20220710_2018.2.10f1\RealFram_20220710_2018.2.10f1\AssetBundle\assetbundleconfig";
     private static string m_assetbundleconfigPath = "";
     private static string m_assetbundleconfigName = "assetbundleconfig";
     private static string m_abCfg_Bytes = DefinePath.abCfg_Bytes;       //AssetBundleConfig.bytes
+    private static string m_PrivateKey=Constants.PrivateKey;    
 
-    static ABEncryptType m_abLoadType;
+
 
     #endregion
 
@@ -65,24 +67,14 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
             return;
         }
 #endif
-
-
         m_resItemDic.Clear();
 
-        if (false) // 不加密
-        {
-            m_assetbundleconfigPath = Load_assetbundleconfig(Path_assetbundleconfig.Inner);//演示加载内部ab
-            m_abCfg = LoadABCfg(ABEncryptType.None, m_assetbundleconfigPath);
-        }
-        else//加密
-        {
-            m_assetbundleconfigPath = Load_assetbundleconfig(Path_assetbundleconfig.Inner);  //加载内部加密
-            m_abCfg = LoadABCfg(ABEncryptType.AES, m_assetbundleconfigPath_Inner, Constants.PrivateKey);
-            
-        }
+
+
 
         //
 
+        LoadABCfg(ABLoadType.AES_Local_Origin, out m_abCfg);
 
         //
         for (int i = 0; i < m_abCfg.ABLst.Count; i++)
@@ -114,7 +106,6 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
             }
         }
     }
-
 
 
 
@@ -174,8 +165,21 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         {
             path = innerPath; //暂时用内部路径做本地路径
         }
+        path = DefinePath.LocalPath_Origin   + abName;
 
-        AssetBundle ab = AssetBundle.LoadFromFile(path);
+
+        AssetBundle ab;
+        if (false)
+        {
+             ab = AssetBundle.LoadFromFile(path);//有可能ab解析错误
+        }
+        else
+        {
+            byte[] bytes = AES.AESFileByteDecrypt(path, m_PrivateKey);
+             ab = AssetBundle.LoadFromMemory(bytes);
+        }
+       
+
 
         if (ab == null)
         {
@@ -322,34 +326,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
 
 
-    /// <summary>
-    /// 加载ABCfg
-    /// </summary>
-    /// <param name="abLoadType"></param>
-    /// <param name="m_abCfg"></param>
-    static ABCfg LoadABCfg(ABEncryptType abLoadType, string abPath, string privateKey = "")
 
-    {
-        ABCfg m_abCfg = null;
-        switch (abLoadType)
-        {
-            case ABEncryptType.None:
-                {
-                    m_abCfg = Bin2ABCfg(abPath);
-                }
-                break;
-            case ABEncryptType.AES:
-                {
-                    byte[] bytes = AES.AESFileByteDecrypt(abPath, privateKey);
-                   
-                    m_abCfg = Bin2ABCfg(bytes);
-                }
-                break;
-            default: break;
-        }
-
-        return m_abCfg;
-    }
 
     /// <summary>
     /// /反序列化存储的Cfg
@@ -409,63 +386,48 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     }
 
 
-    /// <summary>
-    /// 演示AES是，强制指定assetbundleconfig路径
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    static string Load_assetbundleconfig(Path_assetbundleconfig type)
+    void LoadABCfg(ABLoadType m_abLoadType, out ABCfg m_abCfg)
     {
-        string abPath = null;
-        switch (type)//强制指定
+        m_abCfg = new ABCfg();
+        if (String.IsNullOrEmpty(HotPatchMgr.Instance.Exist_assetbundleconfig_Hotfix(m_assetbundleconfigName)) == false)
         {
-            case Path_assetbundleconfig.Hotfix:
-                {
-                    abPath = DefinePath.assetbundleconfig_Hotfix;
-                }
-                break;
-            case Path_assetbundleconfig.Inner:
-                {
-                    abPath = DefinePath.assetbundleconfig_Inner;
-                }
-                break;
-            case Path_assetbundleconfig.Outter:
-                {
-                    abPath = DefinePath.assetbundleconfig_Outter;
-                }
-                break;
-            default: abPath = null; break;
+            //m_abLoadType = ABLoadType.Local_DownLoad;
         }
+        switch (m_abLoadType)
+        {
+            case ABLoadType.Inner:
+                {
+                    m_abCfg = Bin2ABCfg(m_assetbundleconfigPath_Inner);
+                }
+                break;
+            case ABLoadType.Local_DownLoad: //本地资源下载。不用AES
+                {
+                    m_abCfg = Bin2ABCfg(m_assetbundleconfigPath_Local_Download);
+                }
+                break;
+            case ABLoadType.AES_Inner:
+                {
+                    byte[] bytes = AES.AESFileByteDecrypt(m_assetbundleconfigPath_Inner, m_PrivateKey);
+                    m_abCfg = Bin2ABCfg(bytes);
+                }
+                break;
 
+            case ABLoadType.AES_Local_Origin: //安卓时使用 ,解压
+                {
+                    byte[] bytes = AES.AESFileByteDecrypt(m_assetbundleconfigPath_Local_Origin, m_PrivateKey);
+                    m_abCfg = Bin2ABCfg(bytes);
+                }
+                break;
+            default: break;
 
-
-        return abPath;
-
+        }
     }
 
 
-    /// <summary>
-    /// 演示热更时，判断资源走热更还是本地路径
-    /// </summary>
-    /// <param name="m_assetbundleconfigName"></param>
-    /// <returns></returns>
-    static string Load_assetbundleconfig(string m_assetbundleconfigName)
-    {
-        string abPath = null;
-        if (String.IsNullOrEmpty(HotPatchMgr.Instance.Exist_assetbundleconfig_Hotfix(m_assetbundleconfigName)) == false)  //根据实际指定
-        {
-            abPath = DefinePath.assetbundleconfig_Hotfix;
-        }
-        else
-        {
-            abPath = DefinePath.assetbundleconfig_Inner;
-            abPath = DefinePath.assetbundleconfig_Outter;
-        }
 
-        return abPath;
 
-    }
-    #endregion }
+    #endregion 
+
 
 }
 
@@ -602,12 +564,14 @@ public enum Path_assetbundleconfig
 
 
 /// <summary>
-/// ab加密方式
+/// ab加载方式
 /// </summary>
-public enum ABEncryptType
+public enum ABLoadType
 {
-    None,
-    AES,
+    Inner,
+    AES_Inner,
+    AES_Local_Origin,
+    Local_DownLoad,
      
 }
 
