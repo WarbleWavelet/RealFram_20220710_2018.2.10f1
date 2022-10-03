@@ -84,6 +84,7 @@ public class AssetBundleEditor
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "image", m_Path = path + "/GameData/Images" });
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "ugui", m_Path = path + "/GameData/UGUI" });
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "bytes", m_Path = path + "/GameData/Data/Bin" });
+        m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "hotfix", m_Path = path + "/GameData/Data/HotFix" });
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }

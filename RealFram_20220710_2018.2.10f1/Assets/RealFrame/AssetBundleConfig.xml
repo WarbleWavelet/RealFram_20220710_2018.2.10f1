@@ -49,6 +49,24 @@
     <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo14/Demo14MenuPanel.prefab</AssetName>
   </ABLst>
   <ABLst>
+    <Path>Assets/RealFrame/GameData/Data/HotFix/HoitFix.dll.mdb</Path>
+    <Crc>2027407996</Crc>
+    <ABName>hotfix</ABName>
+    <AssetName>Assets/RealFrame/GameData/Data/HotFix/HoitFix.dll.mdb</AssetName>
+  </ABLst>
+  <ABLst>
+    <Path>Assets/RealFrame/GameData/Data/HotFix/HoitFix.dll.txt</Path>
+    <Crc>3823805849</Crc>
+    <ABName>hotfix</ABName>
+    <AssetName>Assets/RealFrame/GameData/Data/HotFix/HoitFix.dll.txt</AssetName>
+  </ABLst>
+  <ABLst>
+    <Path>Assets/RealFrame/GameData/Data/HotFix/HoitFix.pdb.txt</Path>
+    <Crc>373542905</Crc>
+    <ABName>hotfix</ABName>
+    <AssetName>Assets/RealFrame/GameData/Data/HotFix/HoitFix.pdb.txt</AssetName>
+  </ABLst>
+  <ABLst>
     <Path>Assets/RealFrame/GameData/Images/fgBlue.png</Path>
     <Crc>1269563433</Crc>
     <ABName>image</ABName>

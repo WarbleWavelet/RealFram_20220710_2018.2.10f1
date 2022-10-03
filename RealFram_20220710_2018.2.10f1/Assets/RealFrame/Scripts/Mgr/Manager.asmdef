@@ -2,7 +2,8 @@
     "name": "Manager",
     "references": [
         "Common",
-        "Data"
+        "Data",
+        "ILRuntime"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
