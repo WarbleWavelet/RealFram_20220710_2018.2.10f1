@@ -138,7 +138,7 @@ namespace Demo15
         void Test_Unpack()
         {
 
-#if false//UNITY_EDITOR
+#if true//UNITY_EDITOR
             Hotfix_Update();
 #else
             if (HotPatchMgr.Instance.UnpackFile_Compute( m_LocalPath_Origin ))

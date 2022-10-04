@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+CRC: 2343513133
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 9688b9ec19d174c0ca736be3890f21ce
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: ea5a42e0fd8ea905efa7aa926a3b8944
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/RealFrame/GameData/Images/fgRed.png
+- Assets/RealFrame/GameData/Images/fgPurple.png
+- Assets/RealFrame/GameData/Images/fgBlue.png
+- Assets/RealFrame/GameData/Images/fgGreen.png
+- Assets/RealFrame/GameData/Images/fgGray.png
+- Assets/RealFrame/GameData/Images/fgYellow.png
+Dependencies: []

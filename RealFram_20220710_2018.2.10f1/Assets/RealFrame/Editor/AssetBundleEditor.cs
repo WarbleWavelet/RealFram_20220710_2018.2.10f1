@@ -64,7 +64,7 @@ public class AssetBundleEditor
     [MenuItem(DefinePath.MenuItem_AB + "定位标记数据的SO（除了配置表）", false, 0)] //Alt+R打开资源路径 ,Unity上的路径
     static void OpenResourcesUIPanel()
     {
-        Selection.activeObject = AssetDatabase.LoadAssetAtPath<ScriptableObject>(m_abCfgSOPath);
+        Common.Selection_ActiveObject( m_abCfgSOPath);
     }
 
 
@@ -237,6 +237,14 @@ public class AssetBundleEditor
         Debug.LogFormat("导出到内部成功：{0}", m_AB_InnerPath);
     }
 
+    [MenuItem(DefinePath.MenuItem_AB + "1234 一键打包和加密到内部", false, 80)]//按钮在菜单栏的位置
+    public static void MenuItem_BuildAndEncryptAB_InnerPath()
+    {
+        AssetBundleHotFixEditor.WriteABMD5();
+        BuildAndEncryptAB_RootInner();
+
+        Debug.LogFormat("导出到内部成功：{0}", m_AB_InnerPath);
+    }
 
     [MenuItem(DefinePath.MenuItem_AB + "12345 一键打包到外部", false, 80)]//按钮在菜单栏的位置
     public static void MenuItem_BuildAB_OutterPath()
@@ -336,13 +344,26 @@ public class AssetBundleEditor
         WriteBinAndXml();
         BuildAB(m_AB_InnerPath);
     }
-
-
-
     /// <summary>
     /// 一键打AB包到外部
     /// </summary>
-    public static void BuildAB_RootOutter()
+    public static void BuildAndEncryptAB_RootInner()
+    {
+        DataEditor.Xml2BinAll();    //Bin下需要的二进制
+        InitABCfgSO();
+        MarkAB();             //第一次跳过assetbundleconfig
+        WriteBin();         //生成assetbundleconfig
+        MarkAB();             //第二次包括assetbundleconfig
+        WriteBinAndXml();
+        BuildAB(m_AB_InnerPath);
+        EncryptEditor.EncryptAB(m_AB_InnerPath, EncryptEditor.m_PrivateKey);
+
+    }
+
+        /// <summary>
+        /// 一键打AB包到外部
+        /// </summary>
+        public static void BuildAB_RootOutter()
     {
         Common.Folder_Clear_Recursive(m_AB_OutterPath);
         Common.Folder_Clear_Recursive(m_AB_InnerPath);

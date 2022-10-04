@@ -52,7 +52,7 @@ public class Common
 
 
     #region FileStream
-  /// <summary>
+    /// <summary>
     /// 读取前length，byte[]转string
     /// </summary>
     /// <param name="fs"></param>
@@ -60,15 +60,15 @@ public class Common
     /// <returns></returns>
     public static string FileStream_Read(FileStream fs, int length)
     {
-        byte[] buffer = new byte[length]; 
+        byte[] buffer = new byte[length];
         fs.Read(buffer, 0, buffer.Length);
-        string str=  Encoding.UTF8.GetString(buffer);
-      
+        string str = Encoding.UTF8.GetString(buffer);
+
         return str;
     }
 
 
-    public static string FileStream_Read(FileStream fs,ref byte[] buffer)
+    public static string FileStream_Read(FileStream fs, ref byte[] buffer)
     {
         fs.Read(buffer, 0, buffer.Length);
         string str = Encoding.UTF8.GetString(buffer);
@@ -104,7 +104,7 @@ public class Common
     public static byte[] FileStream_Read(FileStream fs)
     {
         fs.Seek(0, SeekOrigin.Begin);       //读完 seek回去，保持原始状态
-        byte[] buffer= new byte[fs.Length];
+        byte[] buffer = new byte[fs.Length];
         fs.Read(buffer, 0, Convert.ToInt32(fs.Length));     //获取所有
         fs.Seek(0, SeekOrigin.Begin);                       //移动到开头
         fs.SetLength(0);                                    //清空
@@ -113,10 +113,10 @@ public class Common
 
 
     }
-     /// <summary>
+    /// <summary>
     /// fs写入 str  .fs会返回出去（）但因为是using，所以不能用返回值，ref out
     /// </summary>
-  public  static void FileStream_Write( FileStream fs, string str)
+    public static void FileStream_Write(FileStream fs, string str)
     {
         byte[] buffer = Encoding.UTF8.GetBytes(str);
         fs.Write(buffer, 0, buffer.Length);
@@ -133,15 +133,15 @@ public class Common
 
 
 
-    public static void FileStream_Write(FileStream fs, byte[] buffer, int start,int end)
+    public static void FileStream_Write(FileStream fs, byte[] buffer, int start, int end)
     {
-        fs.Write(buffer, start,end);
+        fs.Write(buffer, start, end);
 
     }
 
     public static void FileStream_Read(FileStream fs, byte[] buffer, int start, long end)
     {
-        fs.Read(buffer,  start,Convert.ToInt32(end) );
+        fs.Read(buffer, start, Convert.ToInt32(end));
 
     }
 
@@ -222,6 +222,17 @@ public class Common
     public static void File_Move(string from, string to)
     {
         File.Move(from, to);
+    }
+
+    /// <summary>
+    /// 移动+加后缀
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <param name="suffix"></param>
+    public static void File_Move_Suffix(string from, string suffix)
+    {
+        File.Move(from, from + suffix);
     }
 
 
@@ -344,7 +355,7 @@ public class Common
     /// </summary>
     /// <param name="abPath"></param>
     /// <param name="sufffix"></param>
-   public static void Folder_Delete(string path, string sufffix)//m_AB_OutterPath
+    public static void Folder_Delete(string path, string sufffix)//m_AB_OutterPath
     {
         FileInfo[] fis = Common.Folder_GetAllFileInfo(path);
         foreach (FileInfo item in fis)
@@ -367,12 +378,12 @@ public class Common
     }
 
 
-        /// <summary>
-        /// 存在文件夹（带/也可以）
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static bool Folder_Exits(string path)
+    /// <summary>
+    /// 存在文件夹（带/也可以）
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static bool Folder_Exits(string path)
     {
         return Directory.Exists(path);
     }
@@ -676,8 +687,10 @@ public class Common
     }
 
 
-    #endregion  
+    #endregion
 
+
+    #region BuildTarget
     public static string BuildTarget = "";
     public static void SetBuildTarget(string str)
     {
@@ -686,11 +699,30 @@ public class Common
 
     public static string GetBuildTarget()
     {
-       return BuildTarget;
+        return BuildTarget;
     }
+    #endregion
+
+
+
+    #region UnityEditor     
+    #if UNITY_EDITOR
+    public static void Refresh()
+    {
+        AssetDatabase.Refresh();
+    }
+
+
+    public static void Selection_ActiveObject(string path)
+    {
+        Selection.activeObject = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);//"Assets/Config/ABCfg.asset";
+    }
+
+#endif
+    #endregion
+
+
 }
-
-
 
 
 public enum TrimNameType

@@ -143,24 +143,28 @@ namespace Demo15
 		}
 
 
-		public IEnumerator StartGame(Image image, Text text)
+		public IEnumerator StartGame(Image image, Text text) //其它加载放在InitMgr
 		{
 			image.fillAmount = 0;
 			yield return null;
 
-			text.text = "加载本地数据... ...";
-			AssetBundleMgr.Instance.InitMgr();
-			image.fillAmount = 0.1f;
+			text.text = "加载AB数据... ...";
+			AssetBundleMgr.Instance.InitMgr(); 
+			image.fillAmount = 0.5f;
 			yield return null;
 
-			text.text = "加载dll... ...";
-			//ILRuntimeManager.Instance.Init();
-			image.fillAmount = 0.2f;
+ 			text.text = "加载ILRuntime... ...";
+			ILRuntimeMgr.Instance.InitMgr();
+			image.fillAmount = 0.7f;
 			yield return null;
+
+
+
+
 
 			text.text = "加载数据表... ...";
 			//LoadConfiger();
-			image.fillAmount = 0.7f;
+			image.fillAmount = 0.8f;
 			yield return null;
 
 			text.text = "加载配置... ...";

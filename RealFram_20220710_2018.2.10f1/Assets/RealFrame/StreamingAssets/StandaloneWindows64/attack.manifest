@@ -1,0 +1,56 @@
+ManifestFileVersion: 0
+CRC: 3756220752
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 9950b2a33e7d5c7e825ad8abdba707d5
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: e2380ef663f8f60a0cb9e68189671ed1
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 121eb9f9ba237ea48b6aea8f5dafe555, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+Assets:
+- Assets/RealFrame/GameData/Modle/benghuai/Avatar_Kiana_C2_Texture_Hair_Color_Common.png
+- Assets/RealFrame/GameData/Modle/benghuai/Materials/Avatar_Kiana_C1_Texture_Face_Color_Common.mat
+- Assets/RealFrame/GameData/Modle/benghuai/Attack.FBX
+- Assets/RealFrame/GameData/Modle/benghuai/Materials/Weapon_Pistol_K9_62_2.mat
+- Assets/RealFrame/GameData/Modle/benghuai/Materials/Avatar_Kiana_C2_Texture_Body_Color_RGB2048.mat
+- Assets/RealFrame/GameData/Modle/benghuai/Materials/Avatar_Kiana_C2_Texture_Hair_Color_Common.mat
+- Assets/RealFrame/GameData/Modle/benghuai/Weapon_Pistol_K9_62_2.png
+- Assets/RealFrame/GameData/Shaders/benghuai.shader
+- Assets/RealFrame/GameData/Modle/benghuai/ID_368.bmp
+- Assets/RealFrame/GameData/Modle/benghuai/Materials/No Name.mat
+- Assets/RealFrame/GameData/Modle/benghuai/ID_370.bmp
+- Assets/RealFrame/GameData/Modle/benghuai/Avatar_Kiana_C1_Texture_Face_Color_Common.png
+- Assets/RealFrame/GameData/Prefabs/Attack.prefab
+- Assets/RealFrame/GameData/Modle/benghuai/Avatar_Kiana_C2_Texture_Body_Color_RGB2048.png
+- Assets/RealFrame/GameData/Modle/benghuai/ID_362.bmp
+Dependencies: []

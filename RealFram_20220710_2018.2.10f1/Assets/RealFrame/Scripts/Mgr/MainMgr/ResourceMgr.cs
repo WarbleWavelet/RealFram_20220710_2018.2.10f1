@@ -200,7 +200,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         if (m_loadFromAB == false)
         {
-            resItem = assetBundleMgr.GetResItem(crc);//迷惑m_loadFromAB == false为什么还使用AssetBundleMgr
+            resItem = assetBundleMgr.ResItem_TryGetValue(crc);//迷惑m_loadFromAB == false为什么还使用AssetBundleMgr
             if (resItem != null && resItem.m_Obj != null)
             {
                 obj = resItem.m_Obj as Object;
@@ -214,7 +214,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
        
         if (obj == null) //Get不到就Load
         {
-            resItem = assetBundleMgr.LoadResItem(crc);
+            resItem = assetBundleMgr.ResItem_Load(crc);
             if (resItem != null && resItem.m_AB != null)
             {
                 if (resItem.m_Obj != null)
@@ -441,7 +441,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
         m_NoRefResItemLst.Remove(resItem);
         //上层Mgr
-        assetBundleMgr.UnloadAB(resItem);
+        assetBundleMgr.AB_Unload(resItem);
         ObjectMgr.Instance.ClearAllObjectsInPool(resItem.m_Crc);
             //下层引用，对象置空
         if (resItem.m_Obj != null)
@@ -688,7 +688,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
                     yield return new WaitForSeconds(0.5f);//模拟异步
 
-                    resItem = assetBundleMgr.GetResItem(para.m_Crc);
+                    resItem = assetBundleMgr.ResItem_TryGetValue(para.m_Crc);
 
                     NewResItem(ref resItem, para.m_Crc);
 
@@ -697,7 +697,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 #endif             
                 if (null == obj)   //m_loadFromAB==true
                 {
-                    resItem = assetBundleMgr.LoadResItem( para.m_Crc);
+                    resItem = assetBundleMgr.ResItem_Load( para.m_Crc);
 
                     if (null != resItem && null != resItem.m_AB)
                     {
@@ -806,8 +806,8 @@ public class ResourceMgr : Singleton<ResourceMgr>
         {
             return null;
         }
-        //同步加载
-        uint crc = CRC32.GetCRC32(path);
+        
+        uint crc = CRC32.GetCRC32(path); //同步加载
         ResItem resItem = GetResItem_Ref(crc);
 
         //
@@ -818,63 +818,49 @@ public class ResourceMgr : Singleton<ResourceMgr>
         }
 
         T obj = null;
-#if UNITY_EDITOR//测试从Editor加载            
-        if (m_loadFromAB == false)
+#if UNITY_EDITOR//测试从Editor加载
+        if (m_loadFromAB==false)
         {
-
-            resItem = assetBundleMgr.GetResItem(crc);  //StreamAsset ,实际打包位置要外迁移到AssetBundle
-            if (resItem != null && resItem.m_AB != null)
-            {
-                if (resItem.m_Obj != null)
-                {
-                    obj = resItem.m_Obj as T;
-                }
-                else
-                {
-                    obj = resItem.m_AB.LoadAsset<T>(resItem.m_AssetName);
-
-                }
-            }
-            else
-            {
-                NewResItemAndObj<T>(ref resItem, ref obj, path, crc);
-
-
-            }
-
+            LoadAssetsFromEditor(crc,ref resItem,ref obj,path);
         }
+      
+      
 #endif
-        if (obj == null)
+        if (obj == null && m_loadFromAB)//从AB加载
         {
-            resItem = assetBundleMgr.LoadResItem(crc);
-            if (resItem != null && resItem.m_AB != null)
-            {
-                if (resItem.m_Obj != null)
-                {
-                    obj = resItem.m_Obj as T;
-                }
-                else
-                {
-                    obj = resItem.m_AB.LoadAsset<T>(resItem.m_AssetName);
-                }
-            }
+            LoadAssetsFromAB(crc,ref resItem,ref obj, path);
         }
-        //缓存
-        CacheResItem(path, ref resItem, crc, obj);
 
+        if (resItem == null || obj == null)
+        {
+            Debug.LogErrorFormat("资源加载失败，路径{0}",path );
+            return null;
+        }
+        else
+        {
+            CacheResItem(path, ref resItem, crc, obj);  //缓存
+            return obj;
+        }
 
-        return obj;
     }
 
 
 
-
-
-
-
-
-
-
+    void LoadAssetsFromAB<T>(uint crc,ref ResItem resItem, ref T obj ,string path) where T : UnityEngine.Object
+    {
+        resItem = assetBundleMgr.ResItem_Load(crc);
+        if (resItem != null && resItem.m_AB != null)
+        {
+            if (resItem.m_Obj != null)
+            {
+                obj = resItem.m_Obj as T;
+            }
+            else
+            {
+                obj = resItem.m_AB.LoadAsset<T>(resItem.m_AssetName);
+            }
+        }
+    }
 
 
 
@@ -902,7 +888,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         if (m_loadFromAB == false)
         {
 
-            resItem = assetBundleMgr.GetResItem(crc);
+            resItem = assetBundleMgr.ResItem_TryGetValue(crc);
             if (resItem!=null && resItem.m_Obj != null)
             {
                 obj = resItem.m_Obj;
@@ -915,7 +901,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
 #endif
         if (obj == null)
         {
-            resItem = assetBundleMgr.LoadResItem(crc);
+            resItem = assetBundleMgr.ResItem_Load(crc);
             if (resItem != null && resItem.m_AB != null)
             {
                 if (resItem.m_Obj != null)
@@ -988,16 +974,41 @@ public class ResourceMgr : Singleton<ResourceMgr>
 
 
 #if UNITY_EDITOR
-    private void NewResItemAndObj<T>(ref ResItem resItem,
-        ref T _t,
-        string path, uint crc) where T : UnityEngine.Object
+
+    private void LoadAssetsFromEditor<T>(uint crc,ref ResItem resItem,ref T obj,string path) where T : UnityEngine.Object
+    {
+        resItem = assetBundleMgr.ResItem_TryGetValue(crc);  //StreamAsset ,实际打包位置要外迁移到AssetBundle
+        if (resItem != null && resItem.m_AB != null)
+        {
+            if (resItem.m_Obj != null)
+            {
+                obj = resItem.m_Obj as T;
+            }
+            else
+            {
+                obj = resItem.m_AB.LoadAsset<T>(resItem.m_AssetName);
+
+            }
+        }
+        else
+        {
+            NewResItemAndObj<T>(ref resItem, ref obj, path, crc);
+        }
+    }
+
+    private void NewResItemAndObj<T>(
+        ref ResItem resItem,
+        ref T t,
+        string path, 
+        uint crc
+    ) where T : UnityEngine.Object
     {
         if (resItem == null)
         {
             resItem = new ResItem(crc);
         }
 
-        _t = LoadAssetByEditor<T>(path);
+        t = LoadAssetByEditor<T>(path);
 
     }
 

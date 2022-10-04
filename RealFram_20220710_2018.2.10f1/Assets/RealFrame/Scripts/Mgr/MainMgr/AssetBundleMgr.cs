@@ -50,7 +50,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
 
 
-    #region ABCfg
+    #region 生命
 
 
 
@@ -73,8 +73,15 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
 
         //
-
-        LoadABCfg(ABLoadType.AES_Local_Origin, out m_abCfg);
+        try//报错跑到底层方法，找起来慢
+        {
+            LoadABCfg(ABLoadType.AES_Inner, out m_abCfg);
+        }
+        catch (Exception e)
+        {
+            Debug.LogErrorFormat("assetbundle解析错误，路径类型是{0}", ABLoadType.AES_Inner); 
+        }
+     
 
         //
         for (int i = 0; i < m_abCfg.ABLst.Count; i++)
@@ -102,7 +109,6 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
                 {
                     Debug.Log(resItem.ToString());
                 }
-
             }
         }
     }
@@ -114,7 +120,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     #region AB ABItem
 
-    ABItem GetABItem(uint crc)
+    ABItem ABItem_TryGetValue(uint crc)
     {
         ABItem abItem = null;
         m_abItemDic.TryGetValue(crc, out abItem);
@@ -126,10 +132,10 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// </summary>
     /// <param name="ABName"></param>
     /// <returns></returns>
-    public AssetBundle GetAB(string ABName)//Dic或Ab包
+    public AssetBundle AB_Get(string ABName)//Dic或Ab包
     {
         uint crc = CRC32.GetCRC32(ABName);
-        ABItem abItem = GetABItem(crc);
+        ABItem abItem = ABItem_TryGetValue(crc);
         if (abItem != null)//Get
         {
             abItem.m_RefCnt++;
@@ -137,7 +143,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         }
         else//Get不到就Load
         {
-            abItem = LoadABItem(ABName);
+            abItem = ABItem_Load(ABName);
         }
         return abItem.m_AB;
     }
@@ -148,24 +154,25 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// </summary>
     /// <param name="abName"></param>
     /// <returns></returns>
-    ABItem LoadABItem(string abName)
+    ABItem ABItem_Load(string abName)
     {
         uint crc = CRC32.GetCRC32(abName);
 
 
-        //string localPath = LoadABPath + abName;
-        string innerPath = DefinePath.ABPath_Inner + abName;
-        string hotfixPath = HotPatchMgr.Instance.Exist_assetbundleconfig_Hotfix(abName);
+      
         string path = "";
+        string hotfixPath = HotPatchMgr.Instance.Exist_assetbundleconfig_Hotfix(abName);
         if (String.IsNullOrEmpty(hotfixPath) == false)
         {
             path = hotfixPath;//热更路径
         }
         else
         {
-            path = innerPath; //暂时用内部路径做本地路径
-        }
+            path = DefinePath.Path_AB_Inner + abName;//暂时用内部路径做本地路径
+        }  
+        // path = LoadABPath + abName;
         path = DefinePath.LocalPath_Origin   + abName;
+        path = DefinePath.Path_AB_Inner + abName;
 
 
         AssetBundle ab;
@@ -186,7 +193,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
             Debug.LogErrorFormat("Load ab Error：path not exist:{0}", path);
 
         }
-        ABItem abItem = SpawnABItem(true);
+        ABItem abItem = ABItem_Spawn(true);
         abItem.m_AB = ab;
         abItem.m_RefCnt++;
         m_abItemDic.Add(crc, abItem);
@@ -194,7 +201,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         return abItem;
     }
 
-    ABItem SpawnABItem(bool createEmptyPool = true)
+    ABItem ABItem_Spawn(bool createEmptyPool = true)
     {
         return m_abItemPool.Spawn(createEmptyPool);
     }
@@ -203,7 +210,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// 卸载资源引用的AB
     /// </summary>
     /// <param name="name"></param>
-    void UnLoadAB(string name)
+    void AB_Unload(string name)
     {
         uint crc = CRC32.GetCRC32(name);
         ABItem abItem = null;
@@ -230,7 +237,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         {
             for (int i = 0; i < resItem.m_ABDepend.Count; i++)
             {
-                GetAB(resItem.m_ABDepend[i]);
+                AB_Get(resItem.m_ABDepend[i]);
             }
         }
 
@@ -244,17 +251,19 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// </summary>
     /// <param name="crc"></param>
     /// <returns></returns>
-    public ResItem GetResItem(uint crc)
+    public ResItem ResItem_TryGetValue(uint crc)
     {
         ResItem resItem = null;
-        if (m_resItemDic == null)
+        if (m_resItemDic == null || m_resItemDic.Count==0)
         {
-            Debug.LogErrorFormat("ABMgr字典为初始化");
+            //Debug.LogErrorFormat("ABMgr字典未初始化");
+            return null;
         }
         m_resItemDic.TryGetValue(crc, out resItem);
         if (resItem == null)
         {
-            Debug.LogErrorFormat("ABMgr字典中没找到resItem");
+            //Debug.LogErrorFormat("ABMgr字典中没找到resItem");
+            return null;
         }
         else
         {
@@ -271,9 +280,9 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// </summary>
     /// <param name="crc"></param>
     /// <returns></returns>
-    public ResItem LoadResItem(uint crc)
+    public ResItem ResItem_Load(uint crc)
     {
-        ResItem resItem = GetResItem(crc);
+        ResItem resItem = ResItem_TryGetValue(crc);
         if (resItem == null)
         {
             return null;
@@ -283,7 +292,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
             return resItem;
         }
         //未有
-        resItem.m_AB = GetAB(resItem.m_ABName);
+        resItem.m_AB = AB_Get(resItem.m_ABName);
         LoadDepend(resItem);
 
         return resItem;
@@ -299,7 +308,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// 卸载AB包
     /// </summary>
     /// <param name="resItem"></param>
-    public void UnloadAB(ResItem resItem)
+    public void AB_Unload(ResItem resItem)
     {
         if (resItem == null)
         {
@@ -311,17 +320,22 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         {
             for (int i = 0; i < lst.Count; i++)
             {
-                UnLoadAB(lst[i]);
+                AB_Unload(lst[i]);
             }
 
         }
-        UnLoadAB(resItem.m_ABName);
+        AB_Unload(resItem.m_ABName);
     }
 
 
 
 
     #endregion
+
+
+
+
+
     #region 辅助
 
 

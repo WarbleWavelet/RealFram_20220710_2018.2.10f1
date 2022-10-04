@@ -49,22 +49,16 @@
     <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo14/Demo14MenuPanel.prefab</AssetName>
   </ABLst>
   <ABLst>
-    <Path>Assets/RealFrame/GameData/Data/HotFix/HoitFix.dll.mdb</Path>
-    <Crc>2027407996</Crc>
+    <Path>Assets/RealFrame/GameData/Data/HotFix/HotFix.dll.txt</Path>
+    <Crc>1244938649</Crc>
     <ABName>hotfix</ABName>
-    <AssetName>Assets/RealFrame/GameData/Data/HotFix/HoitFix.dll.mdb</AssetName>
+    <AssetName>Assets/RealFrame/GameData/Data/HotFix/HotFix.dll.txt</AssetName>
   </ABLst>
   <ABLst>
-    <Path>Assets/RealFrame/GameData/Data/HotFix/HoitFix.dll.txt</Path>
-    <Crc>3823805849</Crc>
+    <Path>Assets/RealFrame/GameData/Data/HotFix/HotFix.pdb.txt</Path>
+    <Crc>3214748665</Crc>
     <ABName>hotfix</ABName>
-    <AssetName>Assets/RealFrame/GameData/Data/HotFix/HoitFix.dll.txt</AssetName>
-  </ABLst>
-  <ABLst>
-    <Path>Assets/RealFrame/GameData/Data/HotFix/HoitFix.pdb.txt</Path>
-    <Crc>373542905</Crc>
-    <ABName>hotfix</ABName>
-    <AssetName>Assets/RealFrame/GameData/Data/HotFix/HoitFix.pdb.txt</AssetName>
+    <AssetName>Assets/RealFrame/GameData/Data/HotFix/HotFix.pdb.txt</AssetName>
   </ABLst>
   <ABLst>
     <Path>Assets/RealFrame/GameData/Images/fgBlue.png</Path>

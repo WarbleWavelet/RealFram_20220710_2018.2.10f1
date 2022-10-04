@@ -14,6 +14,7 @@ public class DefinePath
 
     #region Demo
     public static string Demo01_Bytes_Attack = "Assets/" + DefinePath.RealFrameName + "/StreamingAssets/attack";
+
     public const string Demo01_Prefab_Attack = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/Attack.prefab";
     public static string Demo02_Xml = RealFramePath + "Scenes/02 Class2Xml/Demo02_test.xml";
     public static string Demo03_WriteBytes = RealFramePath + "Scenes/03 Class2Bin/Demo03_test.bytes";
@@ -40,6 +41,7 @@ public class DefinePath
     
     public const int MenuItem_Index_AB_Encrypt = 120;
     public const int MenuItem_Index_AB_ABHotfix = 100;
+    public const int MenuItem_Index_AB_ILRuntime = 140;
     #endregion
 
 
@@ -78,7 +80,7 @@ public class DefinePath
     public static string OutputBytes = RealFramePath + "AssetBundleConfig.bytes";//bytes，与下面简单的路径不同
     //public static string OutputAB = RealFramePath + "StreamingAssets/assetbundleconfig"; //bytes路径的AB包路径
     public static string assetbundleconfig_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/assetbundleconfig"; //bytes路径的AB包路径
-    public static string ABPath_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/"; 
+    public static string Path_AB_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/"; 
     public static string assetbundleconfig_Outter = ProjectPath+"AssetBundle/assetbundleconfig"; //bytes路径的AB包路径
     public static string assetbundleconfig_Hotfix = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad\assetbundleconfig"; //bytes路径的AB包路径
 
@@ -124,6 +126,17 @@ public class DefinePath
     public static string Hot_OutterPath = Application.dataPath + "/../Hot/" ;
     public static string LocalPath_DownLoad = Application.persistentDataPath + "/DownLoad/" ;
     public static string LocalPath_Origin = Application.persistentDataPath + "/Origin/" ;
+    #endregion
+
+
+
+    #region ILRuntime
+    public const string Path_HotFixDll_Txt = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/HotFix.dll.txt";
+    public const string Path_HotFixDll = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/HotFix.dll";
+    public const string Path_HotFixPdb_Txt = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/HotFix.pdb.txt";
+    public const string Path_HotFixPdb = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/HotFix.pdb";
+    public const string Path_HotFix = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/";
+
     #endregion
 }
 

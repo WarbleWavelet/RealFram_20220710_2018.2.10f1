@@ -1,0 +1,17 @@
+ManifestFileVersion: 0
+CRC: 344280700
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 0532d6c05c77dcecb826d4dfce1b3888
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/RealFrame/GameData/Data/HotFix/HotFix.pdb.txt
+- Assets/RealFrame/GameData/Data/HotFix/HotFix.dll.txt
+Dependencies: []
