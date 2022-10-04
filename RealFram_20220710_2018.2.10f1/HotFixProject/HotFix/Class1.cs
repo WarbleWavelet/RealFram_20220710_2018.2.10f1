@@ -9,10 +9,16 @@ namespace HotFix
 {
     public class Class1
     {
-        public static void Test_StaticFunction()
+        static string m_NameSpaceClass = "HotFix.Class1.Test_StaticFunction";
+        public static  void Test_StaticFunction()
         {
+                       
+            Debug.Log(m_NameSpaceClass);
+        }
 
-            UnityEngine.Debug.Log("gsdkh");
+        public static void Test_StaticFunction(int a)
+        {
+            Debug.Log(m_NameSpaceClass+"，参数："+a);
         }
     }
 }
