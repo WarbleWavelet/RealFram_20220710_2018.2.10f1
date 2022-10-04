@@ -37,10 +37,12 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     }
     private void OnHotFixLoaded()
     {
-       // OnHotFixLoaded_Test1();
-       // OnHotFixLoaded_Test2();
-        //OnHotFixLoaded_Test3();
-        OnHotFixLoaded_Test4();
+        // OnHotFixLoaded_Test1();
+        // OnHotFixLoaded_Test2();
+        // OnHotFixLoaded_Test3();
+        // OnHotFixLoaded_Test4();
+         OnHotFixLoaded_Test5();
+         OnHotFixLoaded_Test6();
     }
     #endregion
 
@@ -143,6 +145,25 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         m_AppDomain.Invoke(method, null, 5);
     }
 
+    /// <summary>
+    /// 实例化热更工程里的类
+    ///  第一种实例化(可以带参数)
+    /// </summary>
+    private void OnHotFixLoaded_Test5()
+    {
+        object obj = m_AppDomain.Instantiate(m_NameSpaceClass, new object[] { 15 });
+    }
+
+    /// <summary>
+    /// 第二种实例化（不带参数）
+    /// </summary>
+    private void OnHotFixLoaded_Test6()
+    {
+        IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass];
+
+        object obj = ((ILType)type).Instantiate();
+        int id = (int)m_AppDomain.Invoke(m_NameSpaceClass, "get_ID", obj, null);//实例
+    }
 
 
     private void InitializeILRuntime()
