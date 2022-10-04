@@ -21,7 +21,8 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     AppDomain m_AppDomain;
 
  const string m_NameSpaceClass = "HotFix.Class1";
- const string m_Method = "Test_StaticFunction";
+ const string m_Method1 = "Test_StaticFunction";
+ const string m_Method2 = "Test_GenericFunction";
 
     #region 生命
     public void InitMgr()
@@ -41,8 +42,10 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         // OnHotFixLoaded_Test2();
         // OnHotFixLoaded_Test3();
         // OnHotFixLoaded_Test4();
-         OnHotFixLoaded_Test5();
-         OnHotFixLoaded_Test6();
+         //OnHotFixLoaded_Test5();
+         //OnHotFixLoaded_Test6();
+         OnHotFixLoaded_Test7();
+         OnHotFixLoaded_Test8();
     }
     #endregion
 
@@ -104,7 +107,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
       }
       */
         //m_AppDomain.Invoke( m_NameSpaceClass, m_Method,null,null);//
-        AppDomain_Invoke(m_AppDomain, m_NameSpaceClass, m_Method, null,null);
+        AppDomain_Invoke(m_AppDomain, m_NameSpaceClass, m_Method1, null,null);
     }
 
 
@@ -114,7 +117,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     {
         IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass]; //先单独获取类，之后一直使用这个类来调用
 
-        IMethod method = type.GetMethod(m_Method, 0);//根据方法名称和参数个数获取方法(学习获取函数进行调用)
+        IMethod method = type.GetMethod(m_Method1, 0);//根据方法名称和参数个数获取方法(学习获取函数进行调用)
         m_AppDomain.Invoke(method, null, null);
     }
 
@@ -126,7 +129,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     {
         IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass]; //先单独获取类，之后一直使用这个类来调用
 
-        IMethod method = type.GetMethod(m_Method, 1); //根据获取函数来调用有参的函数
+        IMethod method = type.GetMethod(m_Method1, 1); //根据获取函数来调用有参的函数
         m_AppDomain.Invoke(method, null, 5);
         //m_AppDomain.Invoke(method, null, null); //Err 参数不匹配，写了1个，结果为null
     }
@@ -141,7 +144,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         IType intType = m_AppDomain.GetType(typeof(int));
         List<IType> paraList = new List<IType>();
         paraList.Add(intType);
-        IMethod method = type.GetMethod(m_Method, paraList, null); 
+        IMethod method = type.GetMethod(m_Method1, paraList, null); 
         m_AppDomain.Invoke(method, null, 5);
     }
 
@@ -164,9 +167,34 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         object obj = ((ILType)type).Instantiate();
         int id = (int)m_AppDomain.Invoke(m_NameSpaceClass, "get_ID", obj, null);//实例
     }
+   /// <summary>
+   /// 第一种泛型方法调用
+   /// </summary>
+    private void OnHotFixLoaded_Test7()
+    {
+        IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass];
 
+        IType stringType = m_AppDomain.GetType(typeof(string));
+        IType[] genericArguments = new IType[] { stringType };
+        m_AppDomain.InvokeGenericMethod(m_NameSpaceClass, m_Method2, genericArguments, null, "Demasia");
+    }
 
-    private void InitializeILRuntime()
+    /// <summary>
+    /// 第二种泛型方法调用
+    /// </summary>
+    private void OnHotFixLoaded_Test8()
+    {
+        IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass];
+
+        IType stringType = m_AppDomain.GetType(typeof(string));
+        IType[] genericArguments = new IType[] { stringType };
+        List<IType> paraList = new List<IType>();
+        paraList.Add(stringType);
+        IMethod method = type.GetMethod(m_Method2, paraList, genericArguments);
+        m_AppDomain.Invoke(method, null, "Demasia");
+
+    }
+        private void InitializeILRuntime()
     {
         
     }

@@ -50,5 +50,10 @@ namespace HotFix
         {
             Debug.Log(m_NameSpaceClass+ ".Test_StaticFunction" + "，参数："+a);
         }
+
+        public static void Test_GenericFunction<T>(T a)
+        {
+            Debug.Log(m_NameSpaceClass + ".Test_GenericFunction" + "，参数：" + a);
+        }
     }
 }
