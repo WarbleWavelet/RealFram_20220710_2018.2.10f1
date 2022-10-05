@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 public class Common
 {
@@ -462,13 +464,126 @@ public class Common
 
 
 
-
+    #region Log
     public static void Log(object obj)
     {
-        UnityEngine.Debug.Log(obj.GetType().ToString() + "." + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
+        Debug.Log(obj.GetType().ToString() + "." + new System.Diagnostics.StackTrace().GetFrame(0).GetMethod().ToString());//类名.方法名
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="frame"> 1:第一层，也就是当前类；2:第二层，也就是调用类；3:第三层，多层调用类；n：以此类推</param>
+    /// <returns></returns>
+    public static string Log_ClassFunction(int frame = 1)
+    {
+        StackTrace trace = new StackTrace();
+        var sb = new StringBuilder();
 
+        Type type = trace.GetFrame(frame).GetMethod().DeclaringType;// GetFrame()获取是哪个类来调用的
+        string method = trace.GetFrame(frame).GetMethod().ToString();// 获取是类中的那个方法调用的
+
+        if (type != null)
+        {
+            sb.Append(type);
+        }
+
+        if (method != null)
+        {
+            sb.Append(".");
+            sb.Append(method);
+        }
+
+        Debug.LogFormat("{0}（命名空间.类.方法，frame={1}）", sb, frame);
+
+        return sb.ToString();
+    }
+
+    public static string Log_ClassFunction(string content,int frame = 1)
+    {
+        StackTrace trace = new StackTrace();
+        var sb = new StringBuilder();
+
+        Type type = trace.GetFrame(frame).GetMethod().DeclaringType;// GetFrame()获取是哪个类来调用的
+        string method = trace.GetFrame(frame).GetMethod().ToString();// 获取是类中的那个方法调用的
+
+        if (type != null)
+        {
+            sb.Append(type);
+        }
+
+        if (method != null)
+        {
+            sb.Append(".");
+            sb.Append(method);
+        }
+
+        Debug.LogFormat("{0}{1}（命名空间.类.方法，frame={1}）", sb,content, frame);
+
+        return sb.ToString();
+    }
+
+    public static string Log_NamespaceClassFunction(string content,int frame = 1)
+    {
+        StackTrace trace = new StackTrace();
+        var sb = new StringBuilder();
+
+        Type type = trace.GetFrame(frame).GetMethod().DeclaringType;// GetFrame()获取是哪个类来调用的
+        string nameSpace = trace.GetFrame(frame).GetMethod().DeclaringType.Namespace;// GetFrame()获取是哪个类来调用的
+        string method = trace.GetFrame(frame).GetMethod().ToString();// 获取是类中的那个方法调用的
+
+        if (nameSpace != null)
+        {
+            sb.Append(nameSpace);
+        }
+        if (type != null)
+        {
+            sb.Append(".");
+            sb.Append(type);
+        }
+
+        if (method != null)
+        {
+            sb.Append(".");
+            sb.Append(method);
+        }
+
+        Debug.LogFormat("{0}{1}（命名空间.类.方法，frame={1}）", sb,content, frame);
+
+        return sb.ToString();
+    }
+    public static string Log_NamespaceClassFunction(int frame = 1)
+    {
+        StackTrace trace = new StackTrace();
+        var sb = new StringBuilder();
+
+        Type type = trace.GetFrame(frame).GetMethod().DeclaringType;// GetFrame()获取是哪个类来调用的
+        string nameSpace = trace.GetFrame(frame).GetMethod().DeclaringType.Namespace;// GetFrame()获取是哪个类来调用的
+        string method = trace.GetFrame(frame).GetMethod().ToString();// 获取是类中的那个方法调用的
+
+         if(nameSpace!=null)
+{
+            sb.Append(nameSpace);
+        }
+        if (type != null)
+        {
+            sb.Append(".");
+            sb.Append(type);
+        }
+
+        if (method != null)
+        {
+            sb.Append(".");
+            sb.Append(method);
+        }
+
+        Debug.LogFormat("{0}（命名空间.类.方法，frame={1}）",sb,  frame);
+
+        return sb.ToString();
+    }
+    #endregion
+
+   
 
     #region 字符串处理
 
