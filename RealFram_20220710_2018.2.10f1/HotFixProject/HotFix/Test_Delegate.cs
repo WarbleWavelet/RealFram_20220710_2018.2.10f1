@@ -45,21 +45,21 @@ namespace HotFix
 
         public static void Awake2()//主程域定义，热更域使用
         {
-            //ILRuntimeMgr.Instance.delegate_Void = Test_VoidFunction;
-            //ILRuntimeMgr.Instance.delegate_String = Test_StringFunction;
+            ILRuntimeMgr.Instance.delegate_Void = Test_VoidFunction;
+            ILRuntimeMgr.Instance.delegate_String = Test_StringFunction;
             ILRuntimeMgr.Instance.action_String = Test_VoidFunction;
         }
 
         public static void Start2()
         {
-            //if (ILRuntimeMgr.Instance.delegate_Void != null)
-            //{
-            //    ILRuntimeMgr.Instance.delegate_Void(64);
-            //}
-            //if (ILRuntimeMgr.Instance.delegate_String != null)
-            //{
-            //    ILRuntimeMgr.Instance.delegate_String(64);
-            //}
+            if (ILRuntimeMgr.Instance.delegate_Void != null)
+            {
+                ILRuntimeMgr.Instance.delegate_Void(64);
+            }
+            if (ILRuntimeMgr.Instance.delegate_String != null)
+            {
+                ILRuntimeMgr.Instance.delegate_String(64);
+            }
             if (ILRuntimeMgr.Instance.action_String != null)
             {
                 ILRuntimeMgr.Instance.action_String("64");

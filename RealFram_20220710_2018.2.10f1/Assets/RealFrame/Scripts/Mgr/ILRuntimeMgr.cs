@@ -79,15 +79,15 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     }
     private void OnHotFixLoaded()
     {
-        // OnHotFixLoaded_Test1();
-        // OnHotFixLoaded_Test2();
-        // OnHotFixLoaded_Test3();
-        // OnHotFixLoaded_Test4();
-         //OnHotFixLoaded_Test5();
-         //OnHotFixLoaded_Test6();
-         //OnHotFixLoaded_Test7();
-        // OnHotFixLoaded_Test8();
-         //OnHotFixLoaded_Test9();
+        // OnHotFixLoaded_Test01();
+        // OnHotFixLoaded_Test02();
+        // OnHotFixLoaded_Test03();
+        // OnHotFixLoaded_Test04();
+         //OnHotFixLoaded_Test05();
+         //OnHotFixLoaded_Test06();
+         //OnHotFixLoaded_Test07();
+        // OnHotFixLoaded_Test08();
+         //OnHotFixLoaded_Test09();
          OnHotFixLoaded_Test10();
     }
     #endregion
@@ -139,20 +139,52 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         RegisterAdapter();
     }
 
-
     /// <summary>
-    /// 注册适配器
+    /// IL2CPP的AOT技术无法在运行时生成新的类型，所以要注册适配器
+    /// 同参（数量，类型）定义一次即可
     /// </summary>
-   public void RegisterAdapter()
+    void RegisterAdapter()
     {
-        //默认委托注册仅仅支持系统自带的Action以及Function
-        
-        //m_AppDomain.DelegateManager.RegisterFunctionDelegate<int, string>(); //不被允许
-        //m_AppDomain.DelegateManager.RegisterMethodDelegate<int>();   //不被允许
-        m_AppDomain.DelegateManager.RegisterMethodDelegate<string>();
+        RegisterAdapter_Action();
+        RegisterAdapter_Delegate();
     }
 
-    private void OnHotFixLoaded_Test1()
+
+    /// <summary>
+    /// 注册适配器：默认委托注册仅仅支持系统自带的Action以及Function
+    /// </summary>
+    public void RegisterAdapter_Action()
+    {
+        m_AppDomain.DelegateManager.RegisterMethodDelegate<string>();//本身是Action<string>,不需要适配
+        
+    }
+
+
+    /// <summary>
+    /// 注册适配器：自定义委托或Unity委托注册
+    /// </summary>
+    public void RegisterAdapter_Delegate()
+    {   
+        m_AppDomain.DelegateManager.RegisterMethodDelegate<int>(); //配套的
+        m_AppDomain.DelegateManager.RegisterDelegateConvertor<Delegate_Void>((action) =>
+        {
+            return new Delegate_Void((a) =>  //转换器
+            {
+                ((System.Action<int>)action)(a); //<参数>
+            });
+        });
+
+        m_AppDomain.DelegateManager.RegisterFunctionDelegate<int, string>();
+        m_AppDomain.DelegateManager.RegisterDelegateConvertor<Delegate_String>((action) =>
+        {
+            return new Delegate_String((a) =>  
+            {
+                return ((System.Func<int, string>)action)(a);//<参数,返回值>
+            });
+        });
+    }
+
+    private void OnHotFixLoaded_Test01()
     {
         /*  源程序
       namespace HoitFix
@@ -173,7 +205,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 
 
 
-    private void OnHotFixLoaded_Test2()
+    private void OnHotFixLoaded_Test02()
     {
         IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass1]; //先单独获取类，之后一直使用这个类来调用
 
@@ -185,7 +217,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     /// <summary>
     ///  第一种含参调用
     /// </summary>
-    private void OnHotFixLoaded_Test3()
+    private void OnHotFixLoaded_Test03()
     {
         IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass1]; //先单独获取类，之后一直使用这个类来调用
 
@@ -197,7 +229,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     /// <summary>
     /// 第二种含参调用
     /// </summary>
-    private void OnHotFixLoaded_Test4()
+    private void OnHotFixLoaded_Test04()
     {
         IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass1]; //先单独获取类，之后一直使用这个类来调用
 
@@ -212,7 +244,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     /// 实例化热更工程里的类
     ///  第一种实例化(可以带参数)
     /// </summary>
-    private void OnHotFixLoaded_Test5()
+    private void OnHotFixLoaded_Test05()
     {
         object obj = m_AppDomain.Instantiate(m_NameSpaceClass1, new object[] { 15 });
     }
@@ -220,7 +252,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     /// <summary>
     /// 第二种实例化（不带参数）
     /// </summary>
-    private void OnHotFixLoaded_Test6()
+    private void OnHotFixLoaded_Test06()
     {
         IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass1];
 
@@ -230,7 +262,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
    /// <summary>
    /// 第一种泛型方法调用
    /// </summary>
-    private void OnHotFixLoaded_Test7()
+    private void OnHotFixLoaded_Test07()
     {
         IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass1];
 
@@ -242,7 +274,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     /// <summary>
     /// 第二种泛型方法调用
     /// </summary>
-    private void OnHotFixLoaded_Test8()
+    private void OnHotFixLoaded_Test08()
     {
         IType type = m_AppDomain.LoadedTypes[m_NameSpaceClass1];
 
@@ -258,7 +290,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     /// <summary>
     /// 委托调用之一：热更内部(热更域定义，热更域使用)
     /// </summary>
-    private void OnHotFixLoaded_Test9()
+    private void OnHotFixLoaded_Test09()
     {
         AppDomain_Invoke(m_NameSpaceClass2,m_Method_211,null,null);
         AppDomain_Invoke(m_NameSpaceClass2,m_Method_221,null,null);
