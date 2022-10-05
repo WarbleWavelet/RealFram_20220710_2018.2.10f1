@@ -19,6 +19,7 @@ using ILRuntime.CLR.Method;
 
 public delegate void Delegate_Void(int a);
 public delegate string Delegate_String(int a);
+
 #endregion
 
 public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
@@ -28,17 +29,32 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
    static AppDomain m_AppDomain;
 
 
+    #region 委托 
+
+
+    public Delegate_Void delegate_Void; //主程定义，ILRunTime调用
+    public Delegate_String delegate_String;
+    public System.Action<string> action_String;
+    #endregion  
+
 
     #region 类.方法
+
+
     const string m_NameSpaceClass1 = "HotFix.Class1";
      const string m_Method_11 = "Test_StaticFunction"; //第一个1是命名空间的.类名的最后数字
      const string m_Method_12 = "Test_GenericFunction";
     #endregion
 
+
     #region 类.方法
+
+
      const string m_NameSpaceClass2 = "HotFix.Test_Delegate";
-     const string m_Method_21 = "Awake";
-     const string m_Method_22 = "Start";
+     const string m_Method_211 = "Awake1";
+     const string m_Method_212 = "Awake2";
+     const string m_Method_221 = "Start1";
+     const string m_Method_222 = "Start2";
     #endregion
 
 
@@ -71,7 +87,8 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
          //OnHotFixLoaded_Test6();
          //OnHotFixLoaded_Test7();
         // OnHotFixLoaded_Test8();
-         OnHotFixLoaded_Test9();
+         //OnHotFixLoaded_Test9();
+         OnHotFixLoaded_Test10();
     }
     #endregion
 
@@ -119,9 +136,21 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 
     private void InitializeILRuntime()
     {
-
+        RegisterAdapter();
     }
 
+
+    /// <summary>
+    /// 注册适配器
+    /// </summary>
+   public void RegisterAdapter()
+    {
+        //默认委托注册仅仅支持系统自带的Action以及Function
+        
+        //m_AppDomain.DelegateManager.RegisterFunctionDelegate<int, string>(); //不被允许
+        //m_AppDomain.DelegateManager.RegisterMethodDelegate<int>();   //不被允许
+        m_AppDomain.DelegateManager.RegisterMethodDelegate<string>();
+    }
 
     private void OnHotFixLoaded_Test1()
     {
@@ -226,11 +255,23 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 
     }
 
-
+    /// <summary>
+    /// 委托调用之一：热更内部(热更域定义，热更域使用)
+    /// </summary>
     private void OnHotFixLoaded_Test9()
     {
-        AppDomain_Invoke(m_NameSpaceClass2,m_Method_21,null,null);
-        AppDomain_Invoke(m_NameSpaceClass2,m_Method_22,null,null);
+        AppDomain_Invoke(m_NameSpaceClass2,m_Method_211,null,null);
+        AppDomain_Invoke(m_NameSpaceClass2,m_Method_221,null,null);
+
+    }
+
+    /// <summary>
+    /// /委托调用之二：主程域定义，热更域使用
+    /// </summary>
+    private void OnHotFixLoaded_Test10()
+    {
+        AppDomain_Invoke(m_NameSpaceClass2, m_Method_212, null, null);
+        AppDomain_Invoke(m_NameSpaceClass2, m_Method_222, null, null);
 
     }
 
