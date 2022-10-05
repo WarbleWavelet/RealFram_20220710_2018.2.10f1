@@ -13,6 +13,7 @@ using ILRuntime.Runtime.Enviorment;
 using System.IO;
 using ILRuntime.CLR.TypeSystem;
 using ILRuntime.CLR.Method;
+//using UnityAction=UnityEngine.Events.UnityAction;//没用，适配的时候
 
 #region 委托
 
@@ -24,6 +25,11 @@ public delegate string Delegate_String(int a);
 
 public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 {
+
+
+    #region 字属
+
+
     string m_path_HotFixDll = DefinePath.Path_HotFixDll_Txt;            //读取热更资源的dll
     string m_path_HotFixPdb = DefinePath.Path_HotFixPdb_Txt;            //读取热更资源的pdb
    static AppDomain m_AppDomain;
@@ -56,12 +62,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
      const string m_Method_221 = "Start1";
      const string m_Method_222 = "Start2";
     #endregion
-
-
-
-
-
-
+    #endregion  
 
 
 
@@ -83,12 +84,13 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         // OnHotFixLoaded_Test02();
         // OnHotFixLoaded_Test03();
         // OnHotFixLoaded_Test04();
-         //OnHotFixLoaded_Test05();
-         //OnHotFixLoaded_Test06();
-         //OnHotFixLoaded_Test07();
+        // OnHotFixLoaded_Test05();
+        // OnHotFixLoaded_Test06();
+        // OnHotFixLoaded_Test07();
         // OnHotFixLoaded_Test08();
-         //OnHotFixLoaded_Test09();
-         OnHotFixLoaded_Test10();
+        // OnHotFixLoaded_Test09();
+        // OnHotFixLoaded_Test10();
+         OnHotFixLoaded_Test11();
     }
     #endregion
 
@@ -147,6 +149,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     {
         RegisterAdapter_Action();
         RegisterAdapter_Delegate();
+        RegisterAdapter_UnityAction();
     }
 
 
@@ -156,7 +159,6 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     public void RegisterAdapter_Action()
     {
         m_AppDomain.DelegateManager.RegisterMethodDelegate<string>();//本身是Action<string>,不需要适配
-        
     }
 
 
@@ -184,20 +186,43 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         });
     }
 
+    public void RegisterAdapter_UnityAction()
+    {
+        m_AppDomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<bool>>((action) =>
+        {
+            return new UnityEngine.Events.UnityAction<bool>((a) =>
+            {
+                ((System.Action<bool>)action)(a);
+            });
+        });
+
+        m_AppDomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction>((action) =>
+        {
+            return new UnityEngine.Events.UnityAction(() =>
+            {
+                ((System.Action)action)();
+            });
+        });
+    }
+
     private void OnHotFixLoaded_Test01()
     {
-        /*  源程序
-      namespace HoitFix
-      {
-          public class Class1
-          {
-              public static void Test_StaticFunction()
-              {
-                 UnityEngine.Debug.Log("gsdkh");
-              }
-          }
-      }
-      */
+
+        #region 源程序
+        /*  
+        namespace HoitFix
+        {
+            public class Class1
+            {
+                public static void Test_StaticFunction()
+                {
+                    UnityEngine.Debug.Log("gsdkh");
+                }
+            }
+        }
+        */
+        #endregion
+
         //m_AppDomain.Invoke( m_NameSpaceClass, m_Method1,null,null);//
         AppDomain_Invoke(m_AppDomain, m_NameSpaceClass1, m_Method_11, null,null);
     }
@@ -305,6 +330,29 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         AppDomain_Invoke(m_NameSpaceClass2, m_Method_212, null, null);
         AppDomain_Invoke(m_NameSpaceClass2, m_Method_222, null, null);
 
+    }
+
+    /// <summary>
+    /// 热更域定义，主程调用
+    /// </summary>
+    private void OnHotFixLoaded_Test11()
+    {
+        AppDomain_Invoke(m_NameSpaceClass2, m_Method_212, null, null);//热更域定义
+
+        if (delegate_Void != null)
+        {
+            delegate_Void(64);
+        }
+
+        if (delegate_String != null)
+        {
+            delegate_String(64);
+        }
+
+        if (action_String != null)
+        {
+            action_String("64");
+        }
     }
 
 
