@@ -471,7 +471,7 @@ public class Common
     }
 
     /// <summary>
-    /// 
+    ///  本来想在ILRunTime案例中使用，但是跨域时打印不满意，都是系统函数
     /// </summary>
     /// <param name="frame"> 1:第一层，也就是当前类；2:第二层，也就是调用类；3:第三层，多层调用类；n：以此类推</param>
     /// <returns></returns>
