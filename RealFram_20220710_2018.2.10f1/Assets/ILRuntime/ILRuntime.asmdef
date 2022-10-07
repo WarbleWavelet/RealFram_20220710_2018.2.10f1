@@ -1,8 +1,12 @@
 {
     "name": "ILRuntime",
-    "references": [],
+    "references": [
+        "Common",
+        "Data",
+        "Manager"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": true
+    "allowUnsafeCode": false
 }

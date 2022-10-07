@@ -7,8 +7,24 @@ using System.Collections.Generic;
 [System.Reflection.Obfuscation(Exclude = true)]
 public class ILRuntimeCLRBinding
 {
-    [MenuItem("ILRuntime/Generate CLR Binding Code")]
-    static void GenerateCLRBinding()
+    static string m_path_HotFixDll = DefinePath.Path_HotFixDll_Txt;            //读取热更资源的dll 。原本用.dll，Ocean用.dll.txt
+    static string m_Path_Generated = DefinePath.Path_Generated;
+    static string m_Path_ILRuntimeCLRBinding = DefinePath.m_Path_ILRuntimeCLRBinding;
+
+
+    [MenuItem(DefinePath.MenuItem_ILR + "定位到输出脚本", false, 0)]
+    static void MenuItem_ShootScript()
+    {
+        Common.Selection_ActiveObject(m_Path_ILRuntimeCLRBinding);
+    }
+    [MenuItem(DefinePath.MenuItem_ILR + "定位到输出路径", false, 0)]
+    static void MenuItem_ShootPath()
+    {
+        Common.Selection_ActiveObject(m_Path_Generated);
+    }
+
+    [MenuItem(DefinePath.MenuItem_ILR +"Generate CLR Binding Code", false, 0)]
+    static void MenuItem_GenerateCLRBinding()
     {
         List<Type> types = new List<Type>();
         types.Add(typeof(int));
@@ -24,36 +40,38 @@ public class ILRuntimeCLRBinding
         types.Add(typeof(UnityEngine.Object));
         types.Add(typeof(Transform));
         types.Add(typeof(RectTransform));
-        //types.Add(typeof(CLRBindingTestClass));
+        //types.Add(typeof(CLRBindingTestClass)); //Ocean命名的类
+        types.Add(typeof(Test_CLRBindingClass));  //我要处理的类
         types.Add(typeof(Time));
         types.Add(typeof(Debug));
-        //所有DLL内的类型的真实C#类型都是ILTypeInstance
-        types.Add(typeof(List<ILRuntime.Runtime.Intepreter.ILTypeInstance>));
+        types.Add(typeof(List<ILRuntime.Runtime.Intepreter.ILTypeInstance>));//所有DLL内的类型的真实C#类型都是ILTypeInstance
 
-        ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(types, "Assets/ILRuntime/Generated");
+        ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(types, m_Path_Generated);
 
     }
 
-    [MenuItem("ILRuntime/Generate CLR Binding Code by Analysis")]
-    static void GenerateCLRBindingByAnalysis()
+    [MenuItem(DefinePath.MenuItem_ILR + "Generate CLR Binding Code by Analysis", false, 0)]
+    static void MenuItem_GenerateCLRBindingByAnalysis()//用新的分析热更dll调用引用来生成绑定代码
     {
-        //用新的分析热更dll调用引用来生成绑定代码
+        Common.Folder_Clear_Recursive(m_Path_Generated);
         ILRuntime.Runtime.Enviorment.AppDomain domain = new ILRuntime.Runtime.Enviorment.AppDomain();
-        using (System.IO.FileStream fs = new System.IO.FileStream("Assets/StreamingAssets/HotFix_Project.dll", System.IO.FileMode.Open, System.IO.FileAccess.Read))
+        using (System.IO.FileStream fs = new System.IO.FileStream(m_path_HotFixDll, System.IO.FileMode.Open, System.IO.FileAccess.Read))
         {
             domain.LoadAssembly(fs);
         }
         //Crossbind Adapter is needed to generate the correct binding code
         InitILRuntime(domain);
-        ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(domain, "Assets/ILRuntime/Generated");
+        ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(domain, m_Path_Generated);
+
+        Common.Refresh();
     }
 
     static void InitILRuntime(ILRuntime.Runtime.Enviorment.AppDomain domain)
     {
         //这里需要注册所有热更DLL中用到的跨域继承Adapter，否则无法正确抓取引用
-        //domain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter());
-        //domain.RegisterCrossBindingAdaptor(new CoroutineAdapter());
-        //domain.RegisterCrossBindingAdaptor(new InheritanceAdapter());
+        domain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter());
+        domain.RegisterCrossBindingAdaptor(new CoroutineAdapter());
+        domain.RegisterCrossBindingAdaptor(new InheritanceAdapter());
     }
 }
 #endif

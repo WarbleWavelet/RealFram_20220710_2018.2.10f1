@@ -16,13 +16,6 @@ using ILRuntime.CLR.Method;
 using ILRuntime.Runtime.Intepreter;
 //using UnityAction=UnityEngine.Events.UnityAction;//没用，适配的时候
 
-#region 委托
-
-
-public delegate void Delegate_Void(int a);
-public delegate string Delegate_String(int a);
-
-#endregion
 
 public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 {
@@ -63,12 +56,23 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     const string m_Method_212 = "Awake2";
     const string m_Method_221 = "Start1";
     const string m_Method_222 = "Start2";
-  
+
     #endregion
+
+    #region 类.方法
 
     const string m_NameSpaceClass3 = "HotFix.Test_Inheritance";
     const string m_Method_31 = "NewObj";
-    #endregion  
+    #endregion
+
+    #region 类.方法
+
+
+    const string m_NameSpaceClass4 = "HotFix.Test_CLRBinding";
+    const string m_Method_41 = "Start";
+
+    #endregion
+    #endregion
 
 
 
@@ -97,8 +101,9 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         // OnHotFixLoaded_Test09();
         // OnHotFixLoaded_Test10();
         // OnHotFixLoaded_Test11();
-        OnHotFixLoaded_Test12();
-        OnHotFixLoaded_Test13();
+        //OnHotFixLoaded_Test12();
+        //OnHotFixLoaded_Test13();
+        OnHotFixLoaded_Test14();
     }
     #endregion
 
@@ -159,6 +164,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         RegisterAdapter_Delegate();
         RegisterAdapter_UnityAction();
         RegisterAdapter_Inheritance();
+        RegisterAdapter_CLRBinding();
     }
 
 
@@ -221,7 +227,17 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         m_AppDomain.RegisterCrossBindingAdaptor(new InheritanceAdapter());
     }
 
-    private void OnHotFixLoaded_Test01()
+    /// <summary>
+    /// CLRBinding
+    /// </summary>
+    public void RegisterAdapter_CLRBinding()
+    {
+        //类是自动生成的，默认不是public，有时需要改
+        ILRuntime.Runtime.Generated.CLRBindings.Initialize(m_AppDomain);
+    }
+
+
+        private void OnHotFixLoaded_Test01()
     {
 
         #region 源程序
@@ -391,15 +407,28 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         obj.TestVirtual("Ocean123");
     }
 
+
     /// <summary>
-    /// 
+    /// 测试绑定前后的时间差
     /// </summary>
-    /// <param name="appDomain"></param>
-    /// <param name="type"></param>
-    /// <param name="method"></param>
-    /// <param name="instance">是否实例</param>                                   
-    /// <param name="p">参数</param>
-    public static void AppDomain_Invoke(AppDomain appDomain, string type, string method,object instance,params object[] p)
+    private void OnHotFixLoaded_Test14()
+    {
+        Common.Time_During(() => { 
+                m_AppDomain.Invoke(m_NameSpaceClass4,m_Method_41,null,null);
+            }, 
+            TimeUnit.mSeconds
+        );
+    }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="appDomain"></param>
+        /// <param name="type"></param>
+        /// <param name="method"></param>
+        /// <param name="instance">是否实例</param>                                   
+        /// <param name="p">参数</param>
+        public static void AppDomain_Invoke(AppDomain appDomain, string type, string method,object instance,params object[] p)
     {
         appDomain.Invoke(type,method, instance, p); //m_AppDomain.Invoke(m_NameSpaceClass, m_Method, null, null);
     }
@@ -414,12 +443,25 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 
 
 
-#region 类
+//**
+#region 委托
 
 
-/// <summary>
-/// 跨域继承的一个抽象类
-/// </summary>
+public delegate void Delegate_Void(int a);
+public delegate string Delegate_String(int a);
+
+#endregion
+
+
+#region 类 Test_CLRBindingClass
+
+//因引用顺序，在Data程序集内
+
+#endregion
+
+#region 类 Test_ClassBase
+
+
 public abstract class Test_ClassBase
 {
     public virtual int Value
@@ -429,18 +471,15 @@ public abstract class Test_ClassBase
 
     public virtual void TestVirtual(string str)
     {
-        Debug.LogFormat("Test_ClassBase.TestVirtual(str:{0}) " ,str);
+        Debug.LogFormat("Test_ClassBase.TestVirtual(str:{0}) ", str);
     }
 
     public abstract void TestAbstract(int a);
 }
-
-
-
 #endregion
 
 
-#region 类 配置器
+#region 类 InheritanceAdapter
 
 
 public class InheritanceAdapter : CrossBindingAdaptor
@@ -466,9 +505,9 @@ public class InheritanceAdapter : CrossBindingAdaptor
         return new Adapter(appdomain, instance);
     }
 
-   /// <summary>
-   /// 适配器类
-   /// </summary>
+    /// <summary>
+    /// 适配器类
+    /// </summary>
     class Adapter : Test_ClassBase, CrossBindingAdaptorType
     {
         #region 字属  构造
@@ -511,7 +550,7 @@ public class InheritanceAdapter : CrossBindingAdaptor
         #region 类的两个方法
 
 
-    //在适配器中重写所有需要在热更脚本重写的方法，并且将控制权转移到脚本里去（主程=>热更域）
+        //在适配器中重写所有需要在热更脚本重写的方法，并且将控制权转移到脚本里去（主程=>热更域）
         public override void TestAbstract(int a)
         {
             if (m_TestAbstract == null)
@@ -533,8 +572,8 @@ public class InheritanceAdapter : CrossBindingAdaptor
                 m_TestVirtual = m_Instance.Type.GetMethod("TestVirtual", 1);
             }
 
-            
-            if (m_TestVirtual != null && !m_TestVirtualInvoking)  
+
+            if (m_TestVirtual != null && !m_TestVirtualInvoking)
             {
                 m_TestVirtualInvoking = true;
                 param1[0] = str;
@@ -547,7 +586,7 @@ public class InheritanceAdapter : CrossBindingAdaptor
             }
         }
         #endregion
-      
+
 
         public override int Value
         {
@@ -593,14 +632,13 @@ public class InheritanceAdapter : CrossBindingAdaptor
             }
         }
         #endregion
-       
+
     }
 }
 #endregion
 
 
-
-#region 说明
+#region 类 CoroutineAdapter
 public class CoroutineAdapter : CrossBindingAdaptor
 {
     public override System.Type BaseCLRType
@@ -753,3 +791,129 @@ public class CoroutineAdapter : CrossBindingAdaptor
     }
 }
 #endregion
+
+
+#region 类 MonoBehaviourAdapter
+
+public class MonoBehaviourAdapter : CrossBindingAdaptor
+{
+    public override System.Type BaseCLRType
+    {
+        get
+        {
+            return typeof(MonoBehaviour);
+        }
+    }
+
+    public override System.Type AdaptorType
+    {
+        get { return typeof(Adaptor); }
+    }
+
+    public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
+    {
+        return new Adaptor(appdomain, instance);
+    }
+
+    public class Adaptor : MonoBehaviour, CrossBindingAdaptorType
+    {
+        private ILRuntime.Runtime.Enviorment.AppDomain m_Appdomain;
+        private ILTypeInstance m_Instance;
+        private IMethod m_AwakeMethod;
+        private IMethod m_StartMethod;
+        private IMethod m_UpdateMethod;
+        private IMethod m_ToString;
+
+        public Adaptor() { }
+
+        public Adaptor(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
+        {
+            m_Appdomain = appdomain;
+            m_Instance = instance;
+        }
+
+        public ILTypeInstance ILInstance
+        {
+            get
+            {
+                return m_Instance;
+            }
+            set
+            {
+                m_Instance = value;
+                m_AwakeMethod = null;
+                m_StartMethod = null;
+                m_UpdateMethod = null;
+            }
+        }
+
+        public ILRuntime.Runtime.Enviorment.AppDomain AppDomain
+        {
+            get { return m_Appdomain; }
+            set { m_Appdomain = value; }
+        }
+
+        public void Awake()
+        {
+            if (m_Instance != null)
+            {
+                if (m_AwakeMethod == null)
+                {
+                    m_AwakeMethod = m_Instance.Type.GetMethod("Awake", 0);
+                }
+
+                if (m_AwakeMethod != null)
+                {
+                    m_Appdomain.Invoke(m_AwakeMethod, m_Instance, null);
+                }
+            }
+        }
+
+        void Start()
+        {
+            if (m_StartMethod == null)
+            {
+                m_StartMethod = m_Instance.Type.GetMethod("Start", 0);
+            }
+
+            if (m_StartMethod != null)
+            {
+                m_Appdomain.Invoke(m_StartMethod, m_Instance, null);
+            }
+        }
+
+
+        void Update()
+        {
+            if (m_UpdateMethod == null)
+            {
+                m_UpdateMethod = m_Instance.Type.GetMethod("Update", 0);
+            }
+
+            if (m_UpdateMethod != null)
+            {
+                m_Appdomain.Invoke(m_UpdateMethod, m_Instance, null);
+            }
+        }
+
+        public override string ToString()
+        {
+            if (m_ToString == null)
+            {
+                m_ToString = m_Appdomain.ObjectType.GetMethod("ToString", 0);
+            }
+            IMethod m = m_Instance.Type.GetVirtualMethod(m_ToString);
+            if (m == null || m is ILMethod)
+            {
+                return m_Instance.ToString();
+            }
+            else
+            {
+                return m_Instance.Type.FullName;
+            }
+        }
+    }
+}
+#endregion
+
+//**/

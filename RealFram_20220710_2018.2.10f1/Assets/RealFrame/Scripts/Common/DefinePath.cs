@@ -28,6 +28,7 @@ public class DefinePath
 
     #region 拓展
     public const string MenuItem_AB = "AB/";
+    public const string MenuItem_ILR = "ILR/"; //ILRuntime
 
     public const string MenuItem_App = "App/";
     public const string MenuItem_Offline = "离线数据/";
@@ -136,6 +137,9 @@ public class DefinePath
     public const string Path_HotFixPdb_Txt = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/HotFix.pdb.txt";
     public const string Path_HotFixPdb = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/HotFix.pdb";
     public const string Path_HotFix = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/";
+    public const string Path_Generated = "Assets/ILRuntime/ILRuntime/Generated";//最后不加/
+    public const string m_Path_ILRuntimeCLRBinding = "Assets/ILRuntime/ILRuntime/Adapters/Editor/ILRuntimeCLRBinding.cs";
+
 
     #endregion
 }

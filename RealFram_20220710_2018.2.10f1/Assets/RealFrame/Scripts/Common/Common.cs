@@ -830,10 +830,47 @@ public class Common
 
     public static void Selection_ActiveObject(string path)
     {
-        Selection.activeObject = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);//"Assets/Config/ABCfg.asset";
+        Selection.activeObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);//"Assets/Config/ABCfg.asset";
+    }
+
+    public static void Selection_OpenPath(string path)
+    {
+        Selection.activeObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);//"Assets/Config/ABCfg.asset";
     }
 
 #endif
+    #endregion
+
+
+
+    #region Time DateTime
+
+
+    public static long Time_Now()
+    {
+        return System.DateTime.Now.Ticks; 
+    }
+
+        /// <summary>
+        /// action执行的时间。秒 毫微 纳
+        /// </summary>
+        /// <param name="action"></param>
+    public static void Time_During(Action action,TimeUnit timeUnit=TimeUnit.nSeconds)
+    {
+        long curTime = System.DateTime.Now.Ticks;
+        action();
+        long during = System.DateTime.Now.Ticks - curTime;
+
+        switch (timeUnit)
+        {
+            case TimeUnit.Seconds: Debug.LogFormat("运行时间：{0}秒", (during / 1000000000.0f).ToString("0.00")); break;
+            case TimeUnit.mSeconds: Debug.LogFormat("运行时间：{0}毫秒", (during / 1000000.0f).ToString("0.00")); break;
+            case TimeUnit.uSeconds: Debug.LogFormat("运行时间：{0}微秒", (during / 1000.0f).ToString("0.00")); break;
+            case TimeUnit.nSeconds: Debug.LogFormat("运行时间：{0}纳秒", (during).ToString("0.00")); break;
+            case TimeUnit.pSeconds: Debug.LogFormat("运行时间：{0}皮秒", (during * 1000.0f).ToString("0.00")); break;
+            default:  break;
+        }
+    }
     #endregion
 
 
@@ -865,7 +902,22 @@ public enum NetworkStatusType
 
 }
 
-
+/// <summary>
+/// 时间单位 s(秒),ms(毫秒),μs(微秒),ns(纳秒),ps(皮秒) 
+/// </summary>
+public enum TimeUnit
+{
+    /// <summary> 秒 </summary>
+    Seconds,
+    /// <summary> 毫秒 </summary>
+    mSeconds,
+    /// <summary> 微秒 </summary>
+    uSeconds,
+    /// <summary> 纳秒 </summary>
+    nSeconds,
+    /// <summary> 皮秒 </summary>
+    pSeconds
+}
 
 
 
