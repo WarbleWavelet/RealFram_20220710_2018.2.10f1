@@ -72,6 +72,15 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     const string m_Method_41 = "Start";
 
     #endregion
+
+
+    #region 类.方法
+
+
+    const string m_NameSpaceClass5 = "HotFix.Test_Coroutine";
+    const string m_Method_51 = "Start";
+
+    #endregion
     #endregion
 
 
@@ -101,9 +110,10 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         // OnHotFixLoaded_Test09();
         // OnHotFixLoaded_Test10();
         // OnHotFixLoaded_Test11();
-        //OnHotFixLoaded_Test12();
-        //OnHotFixLoaded_Test13();
-        OnHotFixLoaded_Test14();
+        // OnHotFixLoaded_Test12();
+        // OnHotFixLoaded_Test13();
+        // OnHotFixLoaded_Test14();
+        OnHotFixLoaded_Test15();
     }
     #endregion
 
@@ -165,6 +175,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         RegisterAdapter_UnityAction();
         RegisterAdapter_Inheritance();
         RegisterAdapter_CLRBinding();
+        RegisterAdapter_Coroutine();
     }
 
 
@@ -237,7 +248,13 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     }
 
 
-        private void OnHotFixLoaded_Test01()
+    public void RegisterAdapter_Coroutine()
+    {
+        m_AppDomain.RegisterCrossBindingAdaptor(new CoroutineAdapter());
+    }
+
+
+    private void OnHotFixLoaded_Test01()
     {
 
         #region 源程序
@@ -420,15 +437,24 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         );
     }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="appDomain"></param>
-        /// <param name="type"></param>
-        /// <param name="method"></param>
-        /// <param name="instance">是否实例</param>                                   
-        /// <param name="p">参数</param>
-        public static void AppDomain_Invoke(AppDomain appDomain, string type, string method,object instance,params object[] p)
+
+    /// <summary>
+    /// 测试协程
+    /// </summary>
+    private void OnHotFixLoaded_Test15()
+    {
+        m_AppDomain.Invoke(m_NameSpaceClass5, m_Method_51, null, null);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="appDomain"></param>
+    /// <param name="type"></param>
+    /// <param name="method"></param>
+    /// <param name="instance">是否实例</param>                                   
+    /// <param name="p">参数</param>
+    public static void AppDomain_Invoke(AppDomain appDomain, string type, string method,object instance,params object[] p)
     {
         appDomain.Invoke(type,method, instance, p); //m_AppDomain.Invoke(m_NameSpaceClass, m_Method, null, null);
     }
@@ -638,7 +664,12 @@ public class InheritanceAdapter : CrossBindingAdaptor
 #endregion
 
 
-#region 类 CoroutineAdapter
+#region 类 CoroutineAdapter 协程适配器
+
+
+/// <summary>
+/// 协程适配器
+/// </summary>
 public class CoroutineAdapter : CrossBindingAdaptor
 {
     public override System.Type BaseCLRType
@@ -670,10 +701,11 @@ public class CoroutineAdapter : CrossBindingAdaptor
         return new Adaptor(appdomain, instance);
     }
 
+    /// <summary>适配器</summary>
     public class Adaptor : IEnumerator<System.Object>, IEnumerator, System.IDisposable, CrossBindingAdaptorType
     {
         private ILTypeInstance m_Instance;
-        private ILRuntime.Runtime.Enviorment.AppDomain m_Appdamain;
+        private ILRuntime.Runtime.Enviorment.AppDomain m_Appdomain;
         private IMethod m_CurMethod;
         private IMethod m_DisposeMethod;
         private IMethod m_MoveNextMethod;
@@ -688,7 +720,7 @@ public class CoroutineAdapter : CrossBindingAdaptor
         public Adaptor(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
         {
             m_Instance = instance;
-            m_Appdamain = appdomain;
+            m_Appdomain = appdomain;
         }
 
 
@@ -699,7 +731,7 @@ public class CoroutineAdapter : CrossBindingAdaptor
                 if (m_CurMethod == null)
                 {
                     m_CurMethod = m_Instance.Type.GetMethod("get_Current", 0);
-                    if (m_CurMethod == null)
+                    if (m_CurMethod == null)//可能取不到
                     {
                         m_CurMethod = m_Instance.Type.GetMethod("System.Collections.IEnumerator.get_Current", 0);
                     }
@@ -707,7 +739,7 @@ public class CoroutineAdapter : CrossBindingAdaptor
 
                 if (m_CurMethod != null)
                 {
-                    var res = m_Appdamain.Invoke(m_CurMethod, m_Instance, null);
+                    var res = m_Appdomain.Invoke(m_CurMethod, m_Instance, null);
                     return res;
                 }
                 else
@@ -738,7 +770,7 @@ public class CoroutineAdapter : CrossBindingAdaptor
 
             if (m_DisposeMethod != null)
             {
-                m_Appdamain.Invoke(m_DisposeMethod, m_Instance, null);
+                m_Appdomain.Invoke(m_DisposeMethod, m_Instance, null);
             }
         }
 
@@ -751,7 +783,7 @@ public class CoroutineAdapter : CrossBindingAdaptor
 
             if (m_MoveNextMethod != null)
             {
-                return (bool)m_Appdamain.Invoke(m_MoveNextMethod, m_Instance, null);
+                return (bool)m_Appdomain.Invoke(m_MoveNextMethod, m_Instance, null);
             }
             else
             {
@@ -768,7 +800,7 @@ public class CoroutineAdapter : CrossBindingAdaptor
 
             if (m_ResetMethod != null)
             {
-                m_Appdamain.Invoke(m_ResetMethod, m_Instance, null);
+                m_Appdomain.Invoke(m_ResetMethod, m_Instance, null);
             }
         }
 
@@ -776,7 +808,7 @@ public class CoroutineAdapter : CrossBindingAdaptor
         {
             if (m_ToString == null)
             {
-                m_ToString = m_Appdamain.ObjectType.GetMethod("ToString", 0);
+                m_ToString = m_Appdomain.ObjectType.GetMethod("ToString", 0);
             }
             IMethod m = m_Instance.Type.GetVirtualMethod(m_ToString);
             if (m == null || m is ILMethod)

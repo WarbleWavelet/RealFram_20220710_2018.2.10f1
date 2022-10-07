@@ -19,7 +19,7 @@ namespace Demo15
 	public class GameStart : MonoSingleton<GameStart>
 	{
 		#region 字属
-
+		 
 
 		public Transform m_RecyclePoolTrans;
 		public Transform m_SceneTrans;
@@ -91,11 +91,6 @@ namespace Demo15
 
 		void BindUI()
 		{
-
-
-
-
-
 		}
 
 

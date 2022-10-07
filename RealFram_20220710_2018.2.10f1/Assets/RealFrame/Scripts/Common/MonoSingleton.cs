@@ -42,6 +42,9 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
         {
             Debug.LogError("绝对不可能有两个单例："+this.GetType());
         }
+
+
+
     }
 
 
