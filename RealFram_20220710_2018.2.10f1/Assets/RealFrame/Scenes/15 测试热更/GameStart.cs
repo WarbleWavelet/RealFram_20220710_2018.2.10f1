@@ -149,7 +149,7 @@ namespace Demo15
 			yield return null;
 
  			text.text = "加载ILRuntime... ...";
-			ILRuntimeMgr.Instance.InitMgr();
+			ILRuntimeMgr.Instance.InitMgr(gameObject);
 			image.fillAmount = 0.7f;
 			yield return null;
 
