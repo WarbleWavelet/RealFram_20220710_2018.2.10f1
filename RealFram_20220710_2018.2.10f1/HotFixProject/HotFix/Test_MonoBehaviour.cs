@@ -9,9 +9,17 @@ namespace HotFix
 {
     class Test_MonoBehaviour
     {
-        public static void Start(GameObject go)
+        public static void Start1(GameObject go)
         {
              go.AddComponent<Test_MonoBehaviourClass>();
+        }
+
+        public static void Start2(GameObject go)
+        {
+            go.AddComponent<Test_MonoBehaviourClass>();
+            Test_MonoBehaviourClass test_CLRBindingClass = go.GetComponent<Test_MonoBehaviourClass>();
+            test_CLRBindingClass.Test();
+
         }
     }
 

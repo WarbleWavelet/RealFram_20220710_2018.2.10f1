@@ -87,7 +87,8 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 
 
     const string m_NameSpaceClas6 = "HotFix.Test_MonoBehaviour";
-    const string m_Method_61 = "Start";
+    const string m_Method_61 = "Start1";
+    const string m_Method_62 = "Start2";
 
     #endregion
     #endregion
@@ -124,7 +125,8 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         // OnHotFixLoaded_Test13();
         // OnHotFixLoaded_Test14();
         // OnHotFixLoaded_Test15();
-        OnHotFixLoaded_Test16();
+        // OnHotFixLoaded_Test16();
+         OnHotFixLoaded_Test17();
     }
     #endregion
 
@@ -195,7 +197,11 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     }
 
 
-    /// <summary>
+
+    #region RegisterAdapter
+
+
+  /// <summary>
     /// 注册适配器：默认委托注册仅仅支持系统自带的Action以及Function
     /// </summary>
     public void RegisterAdapter_Action()
@@ -274,11 +280,12 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     {
         m_AppDomain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter());
     }
-
-
+    #endregion
 
 
     #region CLR重定向
+
+
     unsafe void RegisterAdapter_CLRAddCompontent()
     {
         var arr = typeof(GameObject).GetMethods();
@@ -383,25 +390,25 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     {
         ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;//获取程序集
 
-        var ptr = __esp - 1;
+        var ptr = __esp - 1; //第一个参数
         GameObject instance = StackObject.ToObject(ptr, __domain, __mStack) as GameObject;//获取值
         if (instance == null)
+        { 
             throw new System.NullReferenceException();
-
+        }
         __intp.Free(ptr);//释放
 
-        var genericArgument = __method.GenericArguments; //获取泛型变量
-        if (genericArgument != null && genericArgument.Length == 1) //参数只有一个
+        var genericArgument = __method.GenericArguments; //获取所有泛型参数
+        if (genericArgument != null && genericArgument.Length == 1) //参数有且只有一个
         {
             var type = genericArgument[0]; //取参数
             object res = null;
             //是Unity主工程的东西，不需要做处理；
-            //CLRType表示这个类型是Unity工程里的类型，ILType表示是热更dll里面的类型
-            if (type is CLRType)
+            if (type is CLRType)//Unity工程里的类型
             {
-                res = instance.GetComponent(type.TypeForCLR);//获取组件，
+                res = instance.GetComponent(type.TypeForCLR);//获取组件
             }
-            else
+            else //热更dll里面的类型
             {
                 var clrInstances = instance.GetComponents<MonoBehaviourAdapter.Adaptor>();
                 foreach (var clrInstance in clrInstances)
@@ -417,21 +424,18 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
                 }
             }
 
-            return ILIntepreter.PushObject(ptr, __mStack, res);
+            return ILIntepreter.PushObject(ptr, __mStack, res);//放回栈
         }
 
         return __esp;
     }
-
-
-
-
-   
     #endregion
 
 
+    #region OnHotFixLoaded
 
-    private void OnHotFixLoaded_Test01()
+
+  private void OnHotFixLoaded_Test01()
     {
 
         #region 源程序
@@ -628,27 +632,35 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
     }
 
     /// <summary>
-    /// 测试MonoBehaviour
+    /// ILRunTime之重定向（AddCompontent）
     /// </summary>
     private void OnHotFixLoaded_Test16()
     {
         m_AppDomain.Invoke(m_NameSpaceClas6,m_Method_61,null,m_GameStart); //我用dll来调用，挺麻烦的
     }
 
+    /// <summary>
+    /// ILRunTime之重定向（GetCompontent）
+    /// </summary>
+    private void OnHotFixLoaded_Test17()
+    {
+        m_AppDomain.Invoke(m_NameSpaceClas6, m_Method_62, null, m_GameStart); //我用dll来调用，挺麻烦的
+    }
+    #endregion
 
 
     #region AppDomain_Invoke
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="appDomain"></param>
-        /// <param name="type"></param>
-        /// <param name="method"></param>
-        /// <param name="instance">是否实例</param>                                   
-        /// <param name="p">参数</param>
-        public static void AppDomain_Invoke(AppDomain appDomain, string type, string method,object instance,params object[] p)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="appDomain"></param>
+    /// <param name="type"></param>
+    /// <param name="method"></param>
+    /// <param name="instance">是否实例</param>                                   
+    /// <param name="p">参数</param>
+    public static void AppDomain_Invoke(AppDomain appDomain, string type, string method,object instance,params object[] p)
     {
         appDomain.Invoke(type,method, instance, p); //m_AppDomain.Invoke(m_NameSpaceClass, m_Method, null, null);
     }
@@ -658,6 +670,7 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
         m_AppDomain.Invoke(type, method, instance, p); //m_AppDomain.Invoke(m_NameSpaceClass, m_Method, null, null);
     }
     #endregion
+
 
     #endregion
 
