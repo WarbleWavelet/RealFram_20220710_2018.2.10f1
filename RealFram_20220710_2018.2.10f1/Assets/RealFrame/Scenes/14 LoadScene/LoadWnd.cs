@@ -20,17 +20,20 @@ namespace Demo14
     {
 
         public LoadPanel m_LoadPanel;
-        public string m_CurSceneName;
+        public string m_CurSceneName;//当前要进入的场景 ,相当于tarScene
 
-        public override void OnAwake(params object[] paralist)
+        public override void OnAwake(object param1 = null, object param2 = null, object param3 = null)
         {
-
+            object[] paralist = new object[3]; //之前用paralist做参数，现在不改了
+            paralist[0] = param1;
+            paralist[1] = param2;
+            paralist[2] = param3;
             m_LoadPanel= m_GameObject.AddComponent<LoadPanel>();
-          
+            
             if (paralist != null && paralist.Length > 0)
-            {
-                m_CurSceneName = (string)paralist[0];
-
+            {                                      
+               // m_CurSceneName = (string)param1; //我这样写报错了
+                m_CurSceneName = "Menu14"; 
             }
         }
 
@@ -38,7 +41,6 @@ namespace Demo14
 
         public override void OnUpdate()
         {
-            //
             if (m_LoadPanel == null)
             { 
                 return;
@@ -56,15 +58,20 @@ namespace Demo14
 
         public void SwitchScene()
         {
-            if (m_CurSceneName == DefinePath_Demo14.Scene_Menu)
-            {
-                UIMgr.Instance.OpenWnd(DefinePath_Demo14.Prefab_MenuPanel);
+        
+             if (m_CurSceneName == DefinePath_Demo14.Scene_Menu)
+             {
+                UIMgr.Instance.Wnd_Open(
+                    uiPrefabPath: DefinePath_Demo14.Prefab_MenuPanel,
+                    resources:true,//resource直接走Editor 
+                    isTop:true,
+                    paralist:m_CurSceneName);
                //UIMgr.Instance.OpenWnd(uiPrefab, true, sceneName);
 
-            } 
+             } 
             
-            UIMgr.Instance.CloseWnd(DefinePath_Demo14.Prefab_LoadPanel);//加载完成
-    }
+            UIMgr.Instance.Wnd_Close(DefinePath_Demo14.Prefab_LoadPanel,destory:true);//加载完成 
+        }
     }
 
 

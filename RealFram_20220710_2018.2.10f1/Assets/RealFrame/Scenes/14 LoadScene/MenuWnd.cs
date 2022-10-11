@@ -22,7 +22,7 @@ namespace Demo14
         public MenuPanel m_MenuPanel;
         AudioSource m_audioSource;
         AudioClip m_audioClip;
-        public override void OnShow(params object[] paralist)
+        public override void OnShow(object param1 = null, object param2 = null, object param3 = null)
         {
             BindUI();
             //      

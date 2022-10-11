@@ -32,6 +32,15 @@ public class Window
     public bool Resources { get; set; } = false;                                    //从Resourves加载
 
 
+
+    public bool IsHotFix { get; set; } = false; //热更资源？
+    public string HotFix_NamespaceClassName { get; set; }//命名空间.类名 的形式
+
+    public const string m_OnAwake = "OnAwake";             //加强对使用方法名字的控制
+    public const string m_OnShow = "OnShow";             
+    public const string m_OnUpdate = "OnUpdate";         
+    public const string m_OnDisable = "OnDisable";       
+    public const string m_OnClose = "OnClose";           
     #endregion
 
 
@@ -43,12 +52,19 @@ public class Window
 
 
     #region 生命
-    public virtual void OnAwake(params object[] paralist) { }
+    /// <summary>
+    /// ILR不允许数组
+    /// </summary>
+    /// <param name="param1"></param>
+    /// <param name="param2"></param>
+    /// <param name="param3"></param>
+    public virtual void OnAwake(object param1 = null, object param2 = null, object param3 = null) { }
 
-    /// <summary>窗口显示</summary>
-    public virtual void OnShow(params object[] paralist) { }
+     /// <summary>窗口显示</summary>
+    public virtual void OnShow(object param1 = null, object param2 = null, object param3 = null) { }
+
     /// <summary>隐藏</summary>
-    public virtual void Disable() { }
+    public virtual void OnDisable() { }
 
     public virtual void OnUpdate() { }
     /// <summary>关闭</summary> 

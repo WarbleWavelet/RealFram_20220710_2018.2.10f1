@@ -28,7 +28,7 @@ public class SceneMgr : Singleton<SceneMgr>
     private bool m_isDone { get; set; }
 
 
-    const string m_targetScene=DefinePath_Demo14.Scene_Empty ;
+    const string m_targetScene=DefinePath.Scene_Empty ;
     #endregion
 
 
@@ -41,20 +41,54 @@ public class SceneMgr : Singleton<SceneMgr>
     /// <summary>
     /// loadPanelFullPath跑到100%，就显示tarSceneName
     /// </summary>
-    /// <param name="wnd"></param>
-    /// <param name="scene"></param>
-    public void LoadScene(string  wnd, string scene)
+    /// <param name="loadingUi">Ui预制体，不是逻辑的那个</param>
+    /// <param name="tarScene"></param>
+    public void LoadScene(string loadingUI, string tarScene)
     {
-        if ( null == SceneManager.GetSceneByName(scene) 
-          || null == scene)
+        if ( null == SceneManager.GetSceneByName(tarScene) 
+          || null == tarScene)
         {
-            Debug.LogFormat("场景{0}不存在", scene==null ?"NULL":scene);
+            Debug.LogFormat("场景{0}不存在", tarScene==null ?"NULL":tarScene);
             return;
         }
         m_CurPrg = 0;
-        m_mono.StartCoroutine(  LoadSceneAsync(scene)  );
-        UIMgr.Instance.OpenWnd(wnd,false,true, scene); //loadPanel跑完了，去sceneName
+        m_mono.StartCoroutine(  LoadSceneAsync(tarScene)  );
+        UIMgr.Instance.Wnd_Open(loadingUI,resources: false,isTop: true,para1: tarScene); //loadPanel跑完了，去sceneName
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="loadingUI"></param>
+    /// <param name="tarScene"></param>
+    /// <param name="resource">resource还是AB包</param>
+    /// <param name="isTop"></param>
+    public void LoadScene(string loadingUI, string tarScene, bool resource,bool isTop=true)
+    {
+        if (null == SceneManager.GetSceneByName(tarScene)
+          || null == tarScene)
+        {
+            Debug.LogFormat("场景{0}不存在", tarScene == null ? "NULL" : tarScene);
+            return;
+        }
+        m_CurPrg = 0;
+        m_mono.StartCoroutine(LoadSceneAsync(tarScene));
+        UIMgr.Instance.Wnd_Open(uiPrefabPath: loadingUI,resources: resource, isTop:isTop,para1: tarScene); //loadPanel跑完了，去sceneName
+    }
+
+    //public void LoadScene(string loadingUI, string tarScene, bool resource, bool isTop = true)
+    //{
+    //    if (null == SceneManager.GetSceneByName(tarScene)
+    //      || null == tarScene)
+    //    {
+    //        Debug.LogFormat("场景{0}不存在", tarScene == null ? "NULL" : tarScene);
+    //        return;
+    //    }
+    //    m_CurPrg = 0;
+    //    m_mono.StartCoroutine(LoadSceneAsync(tarScene));
+    //    UIMgr.Instance.Wnd_Open(uiPrefabPath: loadingUI, resources: resource, isTop: isTop, paralist: tarScene); //loadPanel跑完了，去sceneName
+    //}
+
 
     public void LoadScene(string tarSceneName)
     {

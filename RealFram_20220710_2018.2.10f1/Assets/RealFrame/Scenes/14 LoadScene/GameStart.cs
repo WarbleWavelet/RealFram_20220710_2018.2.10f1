@@ -50,11 +50,8 @@ namespace Demo14
 
 			ResourceMgr.Instance.SetLoadFromAB(LoadFromAB);
 			InitMgr();
-			RegisterUI();
+			UIMgr_RegisterUI();
 			BindUI();
-
-
-
 		}
 
         void Start()
@@ -128,7 +125,11 @@ namespace Demo14
 
 			Common.BindBtn(btnLoadScene, () =>
 			{
-				SceneMgr.Instance.LoadScene(DefinePath_Demo14.Prefab_LoadPanel, DefinePath_Demo14.Scene_Menu);
+				SceneMgr.Instance.LoadScene(
+					loadingUI: DefinePath_Demo14.Prefab_LoadPanel,
+					tarScene: DefinePath_Demo14.Scene_Menu ,
+					resource:true
+				);
 				btnLoadScene.interactable = false;
 			});
 			#endregion
@@ -191,7 +192,7 @@ namespace Demo14
 		{
 			curSceneAction();
 			SceneMgr.Instance.LoadScene(DefinePath_Demo14.Prefab_LoadPanel, DefinePath_Demo14.Scene_Menu);
-			MenuWnd menuWnd = UIMgr.Instance.GetWnd<MenuWnd>(Common.TrimName(DefinePath_Demo14.Prefab_MenuPanel, TrimNameType.SlashAfter));
+			MenuWnd menuWnd = UIMgr.Instance.Wnd_Get<MenuWnd>(Common.TrimName(DefinePath_Demo14.Prefab_MenuPanel, TrimNameType.SlashAfter));
 			menuWnd.OnShow(tarSceneAction);
 		}
 		void A()
@@ -218,16 +219,12 @@ namespace Demo14
 				transform.Find("UIRoot/UICamera").GetComponent<Camera>(),
 				transform.Find("UIRoot/EventSystem").GetComponent<EventSystem>()
 				);
-			RegisterUI();
 			AssetBundleMgr.Instance.InitMgr(log);
 			ResourceMgr.Instance.InitMgr(this);
-
-
-
 			SceneMgr.Instance.InitMgr(this);
 		}
 
-		void RegisterUI()
+		void UIMgr_RegisterUI()
 		{
 			UIMgr.Instance.Register<MenuWnd>(Common.TrimName(DefinePath_Demo14.Prefab_MenuPanel, TrimNameType.SlashAfter));
 			UIMgr.Instance.Register<LoadWnd>(Common.TrimName(DefinePath_Demo14.Prefab_LoadPanel, TrimNameType.SlashAfter));

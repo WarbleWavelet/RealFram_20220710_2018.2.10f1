@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml.Serialization;
@@ -588,7 +589,12 @@ public class Common
     #region 字符串处理
 
 
-
+     /// <summary>
+     ///  取枚举表述的值
+     /// </summary>
+     /// <param name="path"></param>
+     /// <param name="type"></param>
+     /// <returns></returns>
     public static string TrimName(string path, TrimNameType type)
     {
         switch (type)
@@ -609,7 +615,7 @@ public class Common
                     name = name.Substring(0, name.LastIndexOf('.'));// plane
                     return name;
                 }
-            case TrimNameType.PointAfter:
+            case TrimNameType.PointPre:
                 {
                     string name = path.Substring(0, path.LastIndexOf('.'));// plane.unity3d=> plane
                     return name;
@@ -874,7 +880,67 @@ public class Common
     #endregion
 
 
-}
+
+    #region Reflection
+
+
+    /// <summary>
+    /// 获取程序集下的类
+    /// 热更DLL
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="classPath"></param>
+    /// <returns></returns>
+    public static Type Reflection_Class_Get(string typeName)
+    {
+        return Type.GetType(typeName);
+    }
+
+    /// <summary>
+    /// 热更DLL
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static Type Reflection_Class_Get<T>()
+    {
+        return typeof(T);
+    }
+
+    /// <summary>
+    /// 热更DLL当中，可以直接通过Activator来创建实例
+    /// </summary>
+    /// <param name="typeName"></param>
+    /// <returns></returns>
+    public static object Reflection_Object_Get(string typeName)
+    {
+        Type t = Type.GetType(typeName);//或者typeof(TypeName)
+
+        return Activator.CreateInstance(t);
+       // return Activator.CreateInstance<TypeName>();//也行
+    }
+
+
+    /// <summary>
+    /// 通过反射调用方法
+    /// 在热更DLL当中，通过反射调用方法跟通常C#用法没有任何区别
+    /// </summary>
+    /// <param name="typeName"></param>
+    /// <returns></returns>
+    public static void Reflection_Invoke<T>(string methodName)
+    {
+        Type type = typeof(T);
+
+        object instance = Activator.CreateInstance(type);
+        MethodInfo mi = type.GetMethod(methodName);
+
+        mi.Invoke(instance, null);
+    }
+
+
+        #endregion
+
+
+    }
 
 
 public enum TrimNameType
@@ -887,7 +953,7 @@ public enum TrimNameType
     /// <summary>A/B/C.prefab => C</summary>
     SlashAndPoint,
     /// <summary>C.prefab => C</summary>
-    PointAfter
+    PointPre
 }
 
 

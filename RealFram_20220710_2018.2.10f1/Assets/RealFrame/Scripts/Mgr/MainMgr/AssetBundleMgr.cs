@@ -287,10 +287,10 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         {
             return null;
         }
-        if (resItem.m_AB != null)//已有
-        {
-            return resItem;
-        }
+        //if (resItem.m_AB != null)//这里引用了，直接返回进行不了计数
+        //{
+        //    return resItem;
+        //}
         //未有
         resItem.m_AB = AB_Get(resItem.m_ABName);
         LoadDepend(resItem);

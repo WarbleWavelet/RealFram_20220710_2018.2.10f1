@@ -78,7 +78,7 @@ public class ResourceMgr : Singleton<ResourceMgr>
         m_startMono = mono;
         m_startMono.StartCoroutine(AsyncLoadObject());
 
-
+         
     }
     #endregion
 
@@ -604,7 +604,6 @@ public class ResourceMgr : Singleton<ResourceMgr>
         if (crc == 0)
         {
             crc = CRC32.GetCRC32(path);
-
         }
 
         ResItem resItem = GetResItem_Ref(crc);

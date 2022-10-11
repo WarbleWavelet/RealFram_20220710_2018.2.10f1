@@ -14,10 +14,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/RealFrame/Scenes/14 LoadScene/Menu14.unity
     guid: ed5f9a7b86fb8cc47b71374e36cea1c8
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: "Assets/RealFrame/Scenes/15 \u6D4B\u8BD5\u70ED\u66F4/Menu15.unity"
     guid: 862a15b07cc563f418430a99976031fa
+  - enabled: 1
+    path: "Assets/RealFrame/Scenes/16 ILR\u70ED\u66F4UI/Empty16.unity"
+    guid: 20778d4fcbbfe2344bf6701be88a262f
+  - enabled: 1
+    path: "Assets/RealFrame/Scenes/16 ILR\u70ED\u66F4UI/Menu16.unity"
+    guid: 6d0a1b355fde9804c8ec999da11560fa
   m_configObjects: {}

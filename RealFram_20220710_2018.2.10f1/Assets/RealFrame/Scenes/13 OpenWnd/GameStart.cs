@@ -37,7 +37,7 @@ namespace Demo13
 			});
 			btn3.onClick.AddListener(() => {
 				UIMgr.Instance.Register<MenuWnd>(Common.TrimName(DefinePath_Demo13.MenuPanel, TrimNameType.SlashAfter));//xx/xx/a.prefab +> a.prefab
-				UIMgr.Instance.OpenWnd(DefinePath_Demo13.MenuPanel);
+				UIMgr.Instance.Wnd_Open(DefinePath_Demo13.MenuPanel);
 				btn3.interactable = false;
 			});
 		}

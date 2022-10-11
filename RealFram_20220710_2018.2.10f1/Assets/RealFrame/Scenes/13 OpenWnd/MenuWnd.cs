@@ -19,7 +19,7 @@ namespace Demo13
     {
 
         public MenuPanel m_MenuPanel;
-        public override void OnShow(params object[] paralist)
+        public override void OnShow(object param1 = null, object param2 = null, object param3 = null)
         {
             m_MenuPanel= m_GameObject.GetComponent<MenuPanel>();
             if (m_MenuPanel == null)

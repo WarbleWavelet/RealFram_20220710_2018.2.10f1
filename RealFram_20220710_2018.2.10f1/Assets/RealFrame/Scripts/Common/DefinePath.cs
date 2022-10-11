@@ -61,6 +61,7 @@ public class DefinePath
     public const string Demo11_Prefab_Attack = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/Attack.prefab";
     public const string Demo14_MP3_SenLin = "Assets/" + DefinePath.RealFrameName + "/GameData/Sounds/senlin.mp3";
     public const string Demo14_Images_PathPreFixed = "Assets/" + DefinePath.RealFrameName + "/GameData/Images/";
+    public const string Demo16_Images_PathPreFixed = "Assets/" + DefinePath.RealFrameName + "/GameData/Images/";
     #endregion  
 
 
@@ -137,11 +138,15 @@ public class DefinePath
     public const string Path_HotFixPdb_Txt = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/HotFix.pdb.txt";
     public const string Path_HotFixPdb = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/HotFix.pdb";
     public const string Path_HotFix = "Assets/" + DefinePath.RealFrameName + "/GameData/Data/HotFix/";
-    public const string Path_Generated = "Assets/ILRuntime/ILRuntime/Generated";//最后不加/
-    public const string m_Path_ILRuntimeCLRBinding = "Assets/ILRuntime/ILRuntime/Adapters/Editor/ILRuntimeCLRBinding.cs";
+    public const string Path_Generated = "Assets/" + DefinePath.RealFrameName + "/Scripts/Mgr/ILRuntimeMgr/ILRuntime/ILRuntime/Generated";//最后不加/
+    public const string Path_Generated_CLRBindings = "Assets/" + DefinePath.RealFrameName + "/Scripts/Mgr/ILRuntimeMgr/ILRuntime/ILRuntime/Generated/CLRBindings.cs";//最后不加/
+    public const string m_Path_ILRuntimeCLRBinding = "Assets/" + DefinePath.RealFrameName + "/Scripts/Mgr/ILRuntimeMgr/ILRuntime/ILRuntime/Adapters/Editor/ILRuntimeCLRBinding.cs";
+    public const string m_HotFix_NamespaceClass = "Demo16";
 
 
     #endregion
+
+    public const string Scene_Empty = "Empty14";
 }
 
 
@@ -156,7 +161,7 @@ public class DefinePath_Demo14
 {
     public const string Scene_Menu = "Menu14";
     public const string Scene_Start = "Start14";
-    public const string Scene_Empty = "Empty14";
+
     //
     private const string PanelPath = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/UGUI/Panel/Demo14/";
     private const string PanelPath1 = "Assets/" + DefinePath.RealFrameName + "/GameData/UGUI/";
@@ -175,7 +180,6 @@ public class DefinePath_Demo15
     //场景名称
     public const string Scene_Menu = "Menu15";
     public const string Scene_Start = "Start15";
-    public const string Scene_Empty = "Empty15";
 
    
 
@@ -189,8 +193,23 @@ public class DefinePath_Demo15
     public const string CommonConfirm =  "CommonConfirm";
     public const string Prefab_HotfixPanel = PanelPath + "HotfixPanel.prefab";
     public const string Prefab_LoadPanel = PanelPath + "LoadPanel.prefab";
+    public const string Prefab_MenuPanel = PanelPath + "MenuPanel.prefab";
     public const string Hotfix = "HotfixPanel.prefab";
     public const string Images_PathPreFixed = "Assets/" + DefinePath.RealFrameName + "/GameData/Images/";
+}
+
+public class DefinePath_Demo16
+{
+    public const string Scene_Menu = "Menu16";
+    public const string Scene_Start = "Start16";
+    //
+    private const string PanelPath = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/UGUI/Panel/Demo16/";
+    private const string PanelPath1 = "Assets/" + DefinePath.RealFrameName + "/GameData/UGUI/";
+    public const string Prefab_LoadPanel = PanelPath + "Demo16LoadPanel.prefab";
+    public const string Prefab_MenuPanel = PanelPath + "Demo16MenuPanel.prefab";
+    public const string Prefab_Attack = "Assets/" + DefinePath.RealFrameName + "/GameData/Prefabs/Attack.prefab";
+    public const string MP3_SenLin = "Assets/" + DefinePath.RealFrameName + "/GameData/Sounds/senlin.mp3";
+
 }
 #endregion
 

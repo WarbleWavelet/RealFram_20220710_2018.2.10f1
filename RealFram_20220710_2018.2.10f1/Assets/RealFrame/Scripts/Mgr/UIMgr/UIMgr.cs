@@ -40,10 +40,9 @@ public class UIMgr : Singleton<UIMgr> {
     private List<Window> m_wndLst = new List<Window>();
     #endregion
 
-    public void SetUIPrefabPath(string path)
-    {
-        m_uiPrefabPath = path;
-    }
+
+
+    public static string m_HotFix_NamespaceClass = DefinePath.m_HotFix_NamespaceClass;
 
 
     #region 生命
@@ -75,9 +74,18 @@ public class UIMgr : Singleton<UIMgr> {
         }
         for (int i = 0; i < m_wndLst.Count; i++)
         {
-            if (m_wndLst[i] != null)
+            Window wnd = m_wndLst[i];
+            if (wnd != null)
             {
-                m_wndLst[i].OnUpdate();
+                if (wnd.IsHotFix)
+                {
+                    AppDomain_Invoke_Window(wnd, Window.m_OnUpdate,null);
+                }
+                else
+                {
+                    wnd.OnUpdate();
+                }
+                
             }
         }
     }
@@ -89,7 +97,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <summary>
     /// 显示或者隐藏所有Wnd
     /// </summary>
-    public void ShowOrHideUI(bool show)
+    public void Wnd_ShowAll(bool show)
     {
         if (m_UiRoot != null)
         {
@@ -116,10 +124,10 @@ public class UIMgr : Singleton<UIMgr> {
     /// 窗口注册方法
     /// </summary>
     /// <typeparam name="T">窗口泛型类</typeparam>
-    /// <param name="name">窗口名</param>
+    /// <param name="name">窗口名xxx.prefab</param>
    public  void Register<T>(string prefabName) where T : Window
     {
-        m_registerDic[prefabName] = typeof(T);
+        m_registerDic[prefabName] = typeof(T); //xxui.prefab,xxWnd
     }
 
     /// <summary>
@@ -131,7 +139,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <returns></returns>
     public bool SendMsgToWnd(string name, UIMsgID msgID = 0, params object[] paralist)
     {
-        Window wnd = GetWnd<Window>(name);
+        Window wnd = Wnd_Get<Window>(name);
         if (wnd != null)
         {
             return wnd.OnReceivevMessage(msgID, paralist);
@@ -148,7 +156,7 @@ public class UIMgr : Singleton<UIMgr> {
     /// <typeparam name="T"></typeparam>
     /// <param name="name"></param>
     /// <returns></returns>
-    public T GetWnd<T>(string name) where T : Window
+    public T Wnd_Get<T>(string name) where T : Window
     {
         Window wnd = null;
         if ( m_wndDic.TryGetValue(name, out wnd))
@@ -168,34 +176,45 @@ public class UIMgr : Singleton<UIMgr> {
     /// <param name="para2"></param>
     /// <param name="para3"></param>
     /// <returns></returns>
-    public Window OpenWnd(
-        string endPrefabName, 
+    public Window Wnd_Open(
+        string uiPrefabPath, 
         bool resources=false,
         bool isTop = true,
         params object[] paralist
         )
     {
-        string wndName= endPrefabName;
-        if (resources) //.prefab
-        {
-            // wndName = Common.TrimName(wndName, TrimNameType.PointAfter);
-            wndName = endPrefabName;
-        }
-        else
-        { 
-             wndName = Common.TrimName(wndName, TrimNameType.SlashAfter);
-        }
-        Window wnd = GetWnd<Window>(wndName);
+        string uiName= Common.TrimName(uiPrefabPath, TrimNameType.SlashAfter);//  /xxx.prefab
+        Window wnd = Wnd_Get<Window>(uiName);
         if (null == wnd)
         {
-            System.Type type = null;
-            if (m_registerDic.TryGetValue(wndName, out type) == true)
+            System.Type wndName = null;
+            if (m_registerDic.TryGetValue(uiName, out wndName) == true) 
             {
-                wnd = System.Activator.CreateInstance(type) as Window;
+                if ( resources )//ources) //编辑器加载
+                {
+                    wnd = System.Activator.CreateInstance(wndName) as Window;      
+                }
+                else //ILR热更  Demo16xxxPanel.prefab => xxxWnd
+                {
+                    string hotwndName = uiName.Replace("Panel.prefab", "Wnd").Substring(6); //写死了Demo16, length=6
+                    
+                    try
+                    {
+                         wnd = ILRuntimeMgr.Instance.ILRunAppDomain.Instantiate<Window>(m_HotFix_NamespaceClass + "." +hotwndName);
+                    }
+                    catch (System.Exception e)
+                    {
+                         Debug.LogErrorFormat("ILR未能生成实例：{0}", hotwndName);
+                    }
+                  
+
+                    wnd.IsHotFix = true;
+                    wnd.HotFix_NamespaceClassName = uiName;
+                }
             }
             else
             {
-                Debug.LogError("找不到窗口对应的脚本，窗口名是：" + wndName);
+                Debug.LogError("找不到窗口对应的脚本，窗口名是：" + uiName);
                 return null;
             }
 
@@ -203,60 +222,192 @@ public class UIMgr : Singleton<UIMgr> {
             GameObject go = null;
             if (resources)
             {
-                string nameWithoutSuffix = Common.TrimName(wndName, TrimNameType.PointAfter);
-                go = GameObject.Instantiate(Resources.Load<GameObject>(nameWithoutSuffix)); 
+                string panelNameNoFix = Common.TrimName(uiName, TrimNameType.PointPre);
+                go = GameObject.Instantiate(Resources.Load<GameObject>(panelNameNoFix)); 
             }
             else
             {
-               go = ObjectMgr.Instance.InstantiateObject(endPrefabName, false, false);             
+               go = ObjectMgr.Instance.InstantiateObject(uiPrefabPath, false, false);             
             }
 
           
             if (null == go)
             {
-                Debug.Log("创建窗口Prefab失败：" + wndName);
+                Debug.Log("创建窗口Prefab失败：" + uiName);
                 return null;
             }
 
-            if (m_wndDic.ContainsKey(wndName) == false)
+            if (m_wndDic.ContainsKey(uiName) == false)
             {
                 m_wndLst.Add(wnd);
-                m_wndDic.Add(wndName, wnd);
+                m_wndDic.Add(uiName, wnd);
             }
 
             wnd.m_GameObject = go;
             wnd.m_Transform = go.transform;
-            wnd.m_Name = wndName;
+            wnd.m_Name = uiName;
             //
-            wnd.OnAwake(paralist);
+            if (wnd.IsHotFix)
+            {
+                //目前paralist无法作为参数传递
+                AppDomain_Invoke_Window(wnd,Window.m_OnAwake,wnd,paralist);
+            }
+            else
+            { 
+                 wnd.OnAwake(paralist);
+            }
+          
             //
             wnd.Resources = resources;
             go.transform.SetParent(m_wndRoot, false);
 
             if (isTop)
             {
-                SetWndTop(go);
+                Wnd_SetTop(go);
             }
 
-            wnd.OnShow(paralist);
+            if (wnd.IsHotFix)
+            {
+                //目前paralist无法作为参数传递
+                AppDomain_Invoke_Window(wnd, Window.m_OnShow, wnd, paralist);
+            }
+            else
+            {
+                wnd.OnShow(paralist);
+            }
         }
         else
         {
-            ShowWnd(wndName, isTop, paralist);
+            Wnd_Show(uiName, isTop, paralist);
         }
 
         return wnd;
     }
 
 
+    public Window Wnd_Open(
+   string uiPrefabPath,
+   bool resources = false,
+   bool isTop = true,
+    object para1=null,
+    object para2=null,
+    object para3=null
+   )
+    {
+        string uiName = Common.TrimName(uiPrefabPath, TrimNameType.SlashAfter);//  /xxx.prefab
+        Window wnd = Wnd_Get<Window>(uiName);
+        if (null == wnd)
+        {
+            System.Type wndName = null;
+            if (m_registerDic.TryGetValue(uiName, out wndName) == true)
+            {
+                if (resources)//ources) //编辑器加载
+                {
+                    wnd = System.Activator.CreateInstance(wndName) as Window;
+                }
+                else //ILR热更  Demo16xxxPanel.prefab => xxxWnd
+                {
+                    string hotwndName = m_HotFix_NamespaceClass + "." +uiName.Replace("Panel.prefab", "Wnd").Substring(6); //写死了Demo16, length=6
+
+                    try
+                    {
+                        wnd = ILRuntimeMgr.Instance.ILRunAppDomain.Instantiate<Window>( hotwndName);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogErrorFormat("ILR未能生成实例：{0}", hotwndName);
+                    }
 
 
+                    wnd.IsHotFix = true;
+                    wnd.HotFix_NamespaceClassName = hotwndName;
+                }
+            }
+            else
+            {
+                Debug.LogError("找不到窗口对应的脚本，窗口名是：" + uiName);
+                return null;
+            }
+
+
+            GameObject go = null;
+            if (resources)
+            {
+                string panelNameNoFix = Common.TrimName(uiName, TrimNameType.PointPre);
+                go = GameObject.Instantiate(Resources.Load<GameObject>(panelNameNoFix));
+            }
+            else
+            {
+                go = ObjectMgr.Instance.InstantiateObject(uiPrefabPath, false, false);
+            }
+
+
+            if (null == go)
+            {
+                Debug.Log("创建窗口Prefab失败：" + uiName);
+                return null;
+            }
+
+            if (m_wndDic.ContainsKey(uiName) == false)
+            {
+                m_wndLst.Add(wnd);
+                m_wndDic.Add(uiName, wnd);
+            }
+
+            wnd.m_GameObject = go;
+            wnd.m_Transform = go.transform;
+            wnd.m_Name = uiName;
+            //
+            if (wnd.IsHotFix)
+            {
+                //目前paralist无法作为参数传递
+                AppDomain_Invoke_Window(wnd.HotFix_NamespaceClassName, Window.m_OnAwake,wnd, para1,para2,para3);
+            }
+            else
+            {
+                wnd.OnAwake( para1, para2, para3);
+            }
+
+            //
+            wnd.Resources = resources;
+            go.transform.SetParent(m_wndRoot, false);
+
+            if (isTop)
+            {
+                Wnd_SetTop(go);
+            }
+
+            if (wnd.IsHotFix)
+            {
+                //目前paralist无法作为参数传递
+                AppDomain_Invoke_Window(wnd, Window.m_OnShow, wnd, para1, para2, para3);
+            }
+            else
+            {
+                wnd.OnShow(param1:para1,param2: para2,param3: para3);
+            }
+        }
+        else
+        {
+            if (wnd.IsHotFix)
+            {
+                //目前paralist无法作为参数传递
+                AppDomain_Invoke_Window(wnd, Window.m_OnShow, wnd, para1, para2, para3);
+            }
+            else
+            {
+                Wnd_Show(name:uiName,bTop: isTop,para1: para1, para2: para2, para3: para3);
+            }
+        }
+
+        return wnd;
+    }
 
     /// <summary>
     /// 最上面
     /// </summary>
     /// <param name="go"></param>
-    void SetWndTop( GameObject go)
+    void Wnd_SetTop( GameObject go)
     {
         go.transform.SetAsLastSibling();
     }
@@ -268,22 +419,22 @@ public class UIMgr : Singleton<UIMgr> {
     /// <summary>
     /// 全部关闭，只打开唯一窗口
     /// </summary>
-    public void OpenOnlyOneWnd(string name,bool resources = false, bool isTop = true, params object[] paralist)
+    public void Wnd_OpenOnlyOne(string name,bool resources = false, bool isTop = true, params object[] paralist)
     {
         name = Common.TrimName(name, TrimNameType.SlashAfter);
-        CloseAllWnd();
-        OpenWnd(name, isTop, resources,   paralist);
+        Wnd_CloseAll();
+        Wnd_Open(name, isTop, resources,   paralist);
     }
     /// <summary>
     /// 根据窗口名关闭窗口
     /// </summary>
     /// <param name="name"></param>
     /// <param name="destory"></param>
-    public void CloseWnd(string name, bool destory = false)
+    public void Wnd_Close(string name, bool destory = false)
     {
         name = Common.TrimName(name, TrimNameType.SlashAfter);
-        Window wnd = GetWnd<Window>(name);
-        CloseWnd(wnd, destory);
+        Window wnd = Wnd_Get<Window>(name);
+        Wnd_Close(wnd, destory);
     }
 
     /// <summary>
@@ -291,12 +442,21 @@ public class UIMgr : Singleton<UIMgr> {
     /// </summary>
     /// <param name="wnd"></param>
     /// <param name="destory"></param>
-    public void CloseWnd(Window wnd, bool destory = false)
+    public void Wnd_Close(Window wnd, bool destory = false)
     {
         if (wnd != null)
         {
-            wnd.Disable();
-            wnd.OnClose();
+            if (wnd.IsHotFix)
+            {
+                AppDomain_Invoke_Window(wnd, Window.m_OnDisable, null);
+                AppDomain_Invoke_Window(wnd, Window.m_OnAwake, null);
+            }
+            else
+            { 
+                wnd.OnDisable();
+                wnd.OnClose();            
+            }
+
             if (m_wndDic.ContainsKey(wnd.m_Name))
             {
                 m_wndDic.Remove(wnd.m_Name);
@@ -314,11 +474,11 @@ public class UIMgr : Singleton<UIMgr> {
                 {
                     ObjectMgr.Instance.UnloadGameObject(wnd.m_GameObject, recycleParent: false);
                 }
-
             }
-
-
-
+            else
+            {
+                GameObject.Destroy(wnd.m_GameObject);
+            }
             wnd.m_GameObject = null;
             wnd = null;
         }
@@ -330,11 +490,12 @@ public class UIMgr : Singleton<UIMgr> {
     /// <summary>
     /// 关闭所有窗口
     /// </summary>
-    public void CloseAllWnd()
+
+    public void Wnd_CloseAll()
     {
         for (int i = m_wndLst.Count - 1; i >= 0; i--)
         {
-            CloseWnd(m_wndLst[i]);
+            Wnd_Close(m_wndLst[i]);
         }
     }
 
@@ -344,11 +505,11 @@ public class UIMgr : Singleton<UIMgr> {
     /// 根据名字隐藏窗口
     /// </summary>
     /// <param name="name"></param>
-    public void HideWnd(string name)
+    public void Wnd_Hide(string name)
     {
         name = Common.TrimName(name, TrimNameType.SlashAfter);
-        Window wnd = GetWnd<Window>(name);
-        HideWnd(wnd);
+        Window wnd = Wnd_Get<Window>(name);
+        Wnd_Hide(wnd);
     }
 
     /// <summary>
@@ -356,13 +517,21 @@ public class UIMgr : Singleton<UIMgr> {
     /// </summary>
     /// <param name="wnd"></param>
 
-    public void HideWnd(Window wnd)
+    public void Wnd_Hide(Window wnd)
     {
         if (wnd != null)
         {
             wnd.m_GameObject.SetActive(false);
-            wnd.Disable();
+            wnd.OnDisable();
         }
+    }
+
+    public void Wnd_Show(string name, bool bTop = true,  object para1=null,object para2=null,object para3=null)
+    {
+        object[] paralist = new object[3] { para1,para2,para3};
+        name = Common.TrimName(name, TrimNameType.SlashAfter);
+        Window wnd = Wnd_Get<Window>(name);
+        Wnd_Show(wnd, bTop, paralist);
     }
 
     /// <summary>
@@ -370,11 +539,11 @@ public class UIMgr : Singleton<UIMgr> {
     /// </summary>
     /// <param name="name"></param>
     /// <param name="paralist"></param>
-    public void ShowWnd(string name, bool bTop = true, params object[] paralist)
+    public void Wnd_Show(string name, bool bTop = true, params object[] paralist)
     {
         name = Common.TrimName(name, TrimNameType.SlashAfter);
-        Window wnd = GetWnd<Window>(name);
-        ShowWnd(wnd, bTop, paralist);
+        Window wnd = Wnd_Get<Window>(name);
+        Wnd_Show(wnd, bTop, paralist);
     }
 
     /// <summary>
@@ -382,20 +551,64 @@ public class UIMgr : Singleton<UIMgr> {
     /// </summary>
     /// <param name="wnd"></param>
     /// <param name="paralist"></param>
-    public void ShowWnd(Window wnd, bool bTop = true, params object[] paralist)
+    public void Wnd_Show(Window wnd, bool bTop = true, params object[] paralist)
     {
         if (wnd != null)
         {
             if (wnd.m_GameObject != null && !wnd.m_GameObject.activeSelf) wnd.m_GameObject.SetActive(true);
             if (bTop) wnd.m_Transform.SetAsLastSibling();
-            wnd.OnShow(paralist);
+
+            if (wnd.IsHotFix)
+            {
+                ILRuntimeMgr.Instance.ILRunAppDomain.Invoke(wnd.HotFix_NamespaceClassName, Window.m_OnShow, wnd, paralist);
+            }
+            else
+            { 
+                wnd.OnShow(paralist);
+            }
+            
         }
     }
     #endregion
 
 
-    #region Slider
+    #region ILR热更
+    /// <summary>
+    /// Window,IsHotFix==true时，调用自身方法的方式
+    /// </summary>
+    /// <param name="wnd"></param>
+    /// <param name="method"></param>
+    /// <param name="paralist"></param>
+    static void AppDomain_Invoke_Window(Window wnd,string method,  params object[] paralist)
+    {
+        string namespaceClass = wnd.HotFix_NamespaceClassName;
+        try
+        {
+             ILRuntimeMgr.Instance.ILRunAppDomain.Invoke(namespaceClass, method, wnd, paralist);
+        }
+        catch (System.Exception)
+        {
 
+
+            throw new System.Exception("AppDomain_Invoke异常");
+        }
+       
+    }
+
+    static void AppDomain_Invoke_Window(string namespaceClass ,string method,Window wnd,object para1, object para2, object para3)
+    {
+        try
+        {
+            ILRuntimeMgr.Instance.ILRunAppDomain.Invoke(namespaceClass, method, wnd,  para1,  para2,  para3);
+        }
+        catch (System.Exception)
+        {
+
+
+            throw new System.Exception("AppDomain_Invoke异常");
+        }
+
+    }
     #endregion
 
 }
