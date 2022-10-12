@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3570524359
+CRC: 2103777948
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 101fb77de4b42dd2bd13228e5b20ccb8
+    Hash: fe9d9006123f46f2aef64282458b3b67
   TypeTreeHash:
     serializedVersion: 2
     Hash: 2ac1378bad493d7ae8e1f5a031af5f46
@@ -39,4 +39,5 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo14/Demo14MenuPanel.prefab
+- Assets/RealFrame/Scenes/14 LoadScene/Resources/Demo14MenuPanel.prefab
 Dependencies: []

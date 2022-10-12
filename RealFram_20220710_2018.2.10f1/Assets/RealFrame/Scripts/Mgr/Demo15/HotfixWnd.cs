@@ -251,7 +251,7 @@ namespace Demo15
             yield return GameStart.Instance.StartCoroutine(GameStart.Instance.StartGame(m_hotfixPanel.m_ProgressPg, m_hotfixPanel.m_ProgressText) );
             UIMgr.Instance.Wnd_Close(this); 
             //
-            Test_AsyncLoadSprite();
+            //Test_AsyncLoadSprite();
             Test_Instaniate();
         }
         #endregion

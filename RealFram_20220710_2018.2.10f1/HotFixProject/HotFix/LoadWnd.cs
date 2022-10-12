@@ -54,7 +54,8 @@ namespace Demo16
         {
             if (m_CurSceneName == DefinePath_Demo16.Scene_Menu)
             {
-                UIMgr.Instance.Wnd_Open(uiPrefabPath: DefinePath_Demo16.Prefab_MenuPanel, resources: false);
+                UIMgr.Instance.Wnd_Open(uiPrefabPath: DefinePath_Demo16.Prefab_MenuPanel, resources: false,para1:null,para2: null,para3: null);
+                //UIMgr.Instance.Wnd_Open(uiPrefabPath: DefinePath_Demo16.Prefab_MenuPanel, resources: false,paralist:null);//这种跑不起来
             } 
             
             UIMgr.Instance.Wnd_Close(DefinePath_Demo16.Prefab_LoadPanel);//加载完成
@@ -62,3 +63,4 @@ namespace Demo16
     }
 }
 
+                                                                                                                               

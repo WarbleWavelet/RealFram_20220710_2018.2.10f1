@@ -10,10 +10,11 @@ public class ILRuntimeCLRBinding
     static string m_path_HotFixDll = DefinePath.Path_HotFixDll_Txt;            //读取热更资源的dll 。原本用.dll，Ocean用.dll.txt
     static string m_Path_Generated = DefinePath.Path_Generated;
     static string m_Path_ILRuntimeCLRBinding = DefinePath.m_Path_ILRuntimeCLRBinding;
+    static string m_Path_ILRuntimeMgr = DefinePath.m_Path_ILRuntimeMgr;
 
 
     [MenuItem(DefinePath.MenuItem_ILR + "定位到输出脚本", false, 0)]
-    static void MenuItem_ShootScript()
+    static void MenuItem_ShootScript_01()
     {
         Common.Selection_ActiveObject(m_Path_ILRuntimeCLRBinding);
     }
@@ -21,6 +22,12 @@ public class ILRuntimeCLRBinding
     static void MenuItem_ShootPath()
     {
         Common.Selection_ActiveObject(m_Path_Generated);
+    }
+
+    [MenuItem(DefinePath.MenuItem_ILR + "定位到ILRuntimeMgr", false, 0)]
+    static void MenuItem_ShootScript_02()
+    {
+        Common.Selection_ActiveObject(m_Path_ILRuntimeMgr);
     }
 
     [MenuItem(DefinePath.MenuItem_ILR +"Generate CLR Binding Code", false, 0)]
@@ -50,7 +57,7 @@ public class ILRuntimeCLRBinding
 
     }
 
-    [MenuItem(DefinePath.MenuItem_ILR + "Generate CLR Binding Code by Analysis", false, 0)]
+    [MenuItem(DefinePath.MenuItem_ILR + "Generate CLR Binding Code by Analysis(推荐)", false, 0)]
     static void MenuItem_GenerateCLRBindingByAnalysis()//用新的分析热更dll调用引用来生成绑定代码
     {
         Common.Folder_Clear_Recursive(m_Path_Generated);

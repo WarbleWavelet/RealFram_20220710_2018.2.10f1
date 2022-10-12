@@ -812,15 +812,10 @@ public class Common
 
 
     #region BuildTarget
-    public static string BuildTarget = "";
+    public static string BuildTarget = "StandaloneWindows64";
     public static void SetBuildTarget(string str)
     {
         BuildTarget = str;
-    }
-
-    public static string GetBuildTarget()
-    {
-        return BuildTarget;
     }
     #endregion
 

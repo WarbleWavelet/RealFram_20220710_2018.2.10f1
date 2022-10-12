@@ -142,23 +142,30 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 
 
     #region 辅助
+
     void LoadHotFixAssembly_Test1(string m_path_HotFixDll, string m_path_HotFixPdb)
     {      
         m_AppDomain = new AppDomain(); //全局唯一
         TextAsset ta_dll = ResourceMgr.Instance.LoadResource<TextAsset>(m_path_HotFixDll);
         TextAsset ta_pdb = ResourceMgr.Instance.LoadResource<TextAsset>(m_path_HotFixPdb); //PBD文件，调试数据可，日志报错
 
-        using (MemoryStream ms_dll = new MemoryStream(ta_dll.bytes))
-        {
-            using (MemoryStream ms_pdb = new MemoryStream(ta_pdb.bytes))
-            {
-                m_AppDomain.LoadAssembly(ms_dll, ms_pdb, new Mono.Cecil.Pdb.PdbReaderProvider()); //载入程序集
-            }
-        }
+        LoadDll(ta_dll, ta_pdb);
 
         InitializeILRuntime();
         OnHotFixLoaded();
     }
+
+
+
+
+    void LoadDll(TextAsset ta_dll, TextAsset ta_pdb)
+    {
+        LoadDll_01(ta_dll, ta_pdb);
+        //LoadDll_02(ta_dll);
+    }
+
+
+
 
 
     void LoadHotFixAssembly_Test2(ref AppDomain m_AppDomain, string m_path_HotFixDll, string m_path_HotFixPdb)
@@ -726,7 +733,37 @@ public class ILRuntimeMgr : Singleton<ILRuntimeMgr>
 
     #region 委托获取上游类
 
-    #endregion  
+    #endregion
+
+
+    #region 辅助
+    void LoadDll_01(TextAsset ta_dll, TextAsset ta_pdb)
+    {
+        using (MemoryStream ms_dll = new MemoryStream(ta_dll.bytes))
+        {
+            using (MemoryStream ms_pdb = new MemoryStream(ta_pdb.bytes))  //说提高效率不开启
+            {
+                m_AppDomain.LoadAssembly(ms_dll, ms_pdb, new Mono.Cecil.Pdb.PdbReaderProvider()); //载入程序集
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Jenkins打包时快点
+    /// </summary>
+    /// <param name="ta_dll"></param>
+    void LoadDll_02(TextAsset ta_dll)
+    {
+        using (MemoryStream ms_dll = new MemoryStream(ta_dll.bytes))
+        {
+            m_AppDomain.LoadAssembly(ms_dll, null, new Mono.Cecil.Pdb.PdbReaderProvider()); //载入程序集
+        }
+    }
+
+
+
+    #endregion
 
 }
 

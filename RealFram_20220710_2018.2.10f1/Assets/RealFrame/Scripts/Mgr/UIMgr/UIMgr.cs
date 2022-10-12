@@ -380,7 +380,7 @@ public class UIMgr : Singleton<UIMgr> {
             if (wnd.IsHotFix)
             {
                 //目前paralist无法作为参数传递
-                AppDomain_Invoke_Window(wnd, Window.m_OnShow, wnd, para1, para2, para3);
+                AppDomain_Invoke_Window(wnd.HotFix_NamespaceClassName, Window.m_OnShow, wnd, para1, para2, para3);
             }
             else
             {
@@ -584,12 +584,12 @@ public class UIMgr : Singleton<UIMgr> {
         string namespaceClass = wnd.HotFix_NamespaceClassName;
         try
         {
-             ILRuntimeMgr.Instance.ILRunAppDomain.Invoke(namespaceClass, method, wnd, paralist);
+             ILRuntimeMgr.Instance.ILRunAppDomain.Invoke(namespaceClass, method, wnd,  paralist);
+            //ILRuntimeMgr.Instance.ILRunAppDomain.Invoke(namespaceClass, method, wnd, paralist[0], paralist[1], paralist[2]);
+            //AppDomain_Invoke_Window(namespaceClass, method, wnd, paralist[0], paralist[1], paralist[2]);
         }
         catch (System.Exception)
         {
-
-
             throw new System.Exception("AppDomain_Invoke异常");
         }
        
@@ -603,8 +603,6 @@ public class UIMgr : Singleton<UIMgr> {
         }
         catch (System.Exception)
         {
-
-
             throw new System.Exception("AppDomain_Invoke异常");
         }
 

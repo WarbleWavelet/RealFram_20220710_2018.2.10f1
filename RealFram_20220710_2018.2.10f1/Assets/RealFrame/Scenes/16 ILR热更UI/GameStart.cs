@@ -47,6 +47,7 @@ namespace Demo16
 		{
 			base.Awake();
 			GameObject.DontDestroyOnLoad(gameObject);
+
 			//
 
 			ResourceMgr.Instance.SetLoadFromAB(LoadFromAB);
@@ -129,7 +130,7 @@ namespace Demo16
 
 			Common.BindBtn(btnLoadScene, () =>
 			{
-				bool allResources = true; //一次控制两个Wnd
+				bool allResources = false; //一次控制两个Wnd
 				Demo16.LoadWnd.m_resources = allResources;//控制LoadWnd的下一个WndMenuWnd
 				SceneMgr.Instance.LoadScene(
 					loadingUI: DefinePath_Demo16.Prefab_LoadPanel,

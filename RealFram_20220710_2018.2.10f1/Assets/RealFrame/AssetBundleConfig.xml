@@ -49,6 +49,18 @@
     <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo14/Demo14MenuPanel.prefab</AssetName>
   </ABLst>
   <ABLst>
+    <Path>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo16/Demo16LoadPanel.prefab</Path>
+    <Crc>3846759878</Crc>
+    <ABName>demo16loadpanel</ABName>
+    <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo16/Demo16LoadPanel.prefab</AssetName>
+  </ABLst>
+  <ABLst>
+    <Path>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo16/Demo16MenuPanel.prefab</Path>
+    <Crc>1032678724</Crc>
+    <ABName>demo16menupanel</ABName>
+    <AssetName>Assets/RealFrame/GameData/Prefabs/UGUI/Panel/Demo16/Demo16MenuPanel.prefab</AssetName>
+  </ABLst>
+  <ABLst>
     <Path>Assets/RealFrame/GameData/Data/HotFix/HotFix.dll.txt</Path>
     <Crc>1244938649</Crc>
     <ABName>hotfix</ABName>

@@ -81,8 +81,8 @@ public class DefinePath
     public static string OutputXml = RealFramePath + "AssetBundleConfig.xml";//XML可视化，随便删
     public static string OutputBytes = RealFramePath + "AssetBundleConfig.bytes";//bytes，与下面简单的路径不同
     //public static string OutputAB = RealFramePath + "StreamingAssets/assetbundleconfig"; //bytes路径的AB包路径
-    public static string assetbundleconfig_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/assetbundleconfig"; //bytes路径的AB包路径
-    public static string Path_AB_Inner = RealFramePath + "StreamingAssets/"+Common.BuildTarget+"/"; 
+    public static string assetbundleconfig_Inner = RealFramePath + "StreamingAssets/"+ Common.BuildTarget + "/assetbundleconfig"; //bytes路径的AB包路径
+    public static string Path_AB_Inner = RealFramePath + "StreamingAssets/"+ Common.BuildTarget + "/"; 
     public static string assetbundleconfig_Outter = ProjectPath+"AssetBundle/assetbundleconfig"; //bytes路径的AB包路径
     public static string assetbundleconfig_Hotfix = @"C:\Users\lenovo\AppData\LocalLow\DefaultCompany\RealFrame_Test\DownLoad\assetbundleconfig"; //bytes路径的AB包路径
 
@@ -141,6 +141,7 @@ public class DefinePath
     public const string Path_Generated = "Assets/" + DefinePath.RealFrameName + "/Scripts/Mgr/ILRuntimeMgr/ILRuntime/ILRuntime/Generated";//最后不加/
     public const string Path_Generated_CLRBindings = "Assets/" + DefinePath.RealFrameName + "/Scripts/Mgr/ILRuntimeMgr/ILRuntime/ILRuntime/Generated/CLRBindings.cs";//最后不加/
     public const string m_Path_ILRuntimeCLRBinding = "Assets/" + DefinePath.RealFrameName + "/Scripts/Mgr/ILRuntimeMgr/ILRuntime/ILRuntime/Adapters/Editor/ILRuntimeCLRBinding.cs";
+    public const string m_Path_ILRuntimeMgr = "Assets/" + DefinePath.RealFrameName + "/Scripts/Mgr/ILRuntimeMgr/ILRuntimeMgr.cs";
     public const string m_HotFix_NamespaceClass = "Demo16";
 
 

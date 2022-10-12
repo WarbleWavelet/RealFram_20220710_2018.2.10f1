@@ -22,6 +22,12 @@ namespace Demo16
         public MenuPanel m_MenuPanel;
         //AudioSource m_audioSource;
         //AudioClip m_audioClip;
+
+        public override void OnAwake(object param1 = null, object param2 = null, object param3 = null)
+        {
+            UnityEngine.Debug.Log("本地_MenuWnd.MenuWnd.OnAwake()");
+
+        }
         public override void OnShow(object param1 = null, object param2 = null, object param3 = null)
         {
             BindUI();

@@ -86,7 +86,7 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
      //
 
 
-    private string m_AB_InnerPath=DefinePath.OutputAB_InnerPath + Common.GetBuildTarget() ;
+    private string m_AB_InnerPath=DefinePath.OutputAB_InnerPath + Common.BuildTarget ;
 
 
 
@@ -473,15 +473,15 @@ public class HotPatchMgr : Singleton<HotPatchMgr>
             {
                 foreach (Patch patch in m_CurrentPatches.Files)
                 {
-                    if (   IsPlatform( patch, RuntimePlatform.WindowsPlayer,"StandaloneWindows64") )
+                    if (   IsPlatform( patch, RuntimePlatform.WindowsPlayer,Common.BuildTarget) )
                     {
                         AddDownLoadList(patch, m_DownLoadPath_Local, m_DownLoadList, m_DownLoadDic, m_DownLoadMD5Dic);
                     }
-                    else if (IsPlatform(patch, RuntimePlatform.Android, "StandaloneWindows64"))
+                    else if (IsPlatform(patch, RuntimePlatform.Android, Common.BuildTarget))
                     {
                         AddDownLoadList(patch, m_DownLoadPath_Local, m_DownLoadList, m_DownLoadDic, m_DownLoadMD5Dic);
                     }
-                    else if (IsPlatform(patch, RuntimePlatform.IPhonePlayer, "StandaloneWindows64"))
+                    else if (IsPlatform(patch, RuntimePlatform.IPhonePlayer, Common.BuildTarget))
                     {
                         AddDownLoadList(patch, m_DownLoadPath_Local, m_DownLoadList, m_DownLoadDic, m_DownLoadMD5Dic);
                     }

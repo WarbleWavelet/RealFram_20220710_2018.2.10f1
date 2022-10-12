@@ -231,7 +231,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
     /// 加载依赖,load依赖AB包
     /// </summary>
     /// <param name="resItem"></param>
-    void LoadDepend(ResItem resItem)
+    void LoadDepend(ref ResItem resItem)
     {
         if (resItem.m_ABDepend != null)
         {
@@ -293,7 +293,7 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
         //}
         //未有
         resItem.m_AB = AB_Get(resItem.m_ABName);
-        LoadDepend(resItem);
+        LoadDepend(ref resItem);
 
         return resItem;
     }
@@ -402,6 +402,10 @@ public class AssetBundleMgr : Singleton<AssetBundleMgr>
 
     void LoadABCfg(ABLoadType m_abLoadType, out ABCfg m_abCfg)
     {
+
+
+            
+
         m_abCfg = new ABCfg();
         if (String.IsNullOrEmpty(HotPatchMgr.Instance.Exist_assetbundleconfig_Hotfix(m_assetbundleconfigName)) == false)
         {

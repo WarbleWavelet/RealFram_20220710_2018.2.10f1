@@ -29,6 +29,8 @@ namespace ILRuntime.Runtime.Generated
             Singleton_1_ResourceMgr_Binding.Register(app);
             Demo16_MenuPanel_Binding.Register(app);
             ResourceMgr_Binding.Register(app);
+            UnityEngine_UI_Image_Binding.Register(app);
+            UnityEngine_UI_Graphic_Binding.Register(app);
             System_Diagnostics_StackTrace_Binding.Register(app);
             System_Diagnostics_StackFrame_Binding.Register(app);
             Singleton_1_CfgMgr_Binding.Register(app);
@@ -36,6 +38,10 @@ namespace ILRuntime.Runtime.Generated
             System_Object_Binding.Register(app);
             MonsterData_Binding.Register(app);
             System_Collections_Generic_List_1_MonsterBase_Binding.Register(app);
+            Common_Binding.Register(app);
+            UnityEngine_UI_Button_Binding.Register(app);
+            UnityEngine_Events_UnityEvent_Binding.Register(app);
+            UnityEngine_AudioSource_Binding.Register(app);
             Test_CLRBindingClass_Binding.Register(app);
             MonoSingleton_1_GameStart_Binding.Register(app);
             UnityEngine_MonoBehaviour_Binding.Register(app);

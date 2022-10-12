@@ -69,21 +69,7 @@ namespace Demo16
             } 
             
             UIMgr.Instance.Wnd_Close(DefinePath_Demo16.Prefab_LoadPanel);//加载完成
+        }
     }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 

@@ -50,6 +50,9 @@ namespace ILRuntime.Runtime.Generated
             field = type.GetField("m_BtnExit", flag);
             app.RegisterCLRFieldGetter(field, get_m_BtnExit_8);
             app.RegisterCLRFieldSetter(field, set_m_BtnExit_8);
+            field = type.GetField("m_BtnStopAndUnload", flag);
+            app.RegisterCLRFieldGetter(field, get_m_BtnStopAndUnload_9);
+            app.RegisterCLRFieldSetter(field, set_m_BtnStopAndUnload_9);
 
 
         }
@@ -127,6 +130,14 @@ namespace ILRuntime.Runtime.Generated
         static void set_m_BtnExit_8(ref object o, object v)
         {
             ((Demo16.MenuPanel)o).m_BtnExit = (UnityEngine.UI.Button)v;
+        }
+        static object get_m_BtnStopAndUnload_9(ref object o)
+        {
+            return ((Demo16.MenuPanel)o).m_BtnStopAndUnload;
+        }
+        static void set_m_BtnStopAndUnload_9(ref object o, object v)
+        {
+            ((Demo16.MenuPanel)o).m_BtnStopAndUnload = (UnityEngine.UI.Button)v;
         }
 
 

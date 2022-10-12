@@ -20,13 +20,22 @@ namespace Demo16
     {
 
         public MenuPanel m_MenuPanel;
-        //AudioSource m_audioSource;
-        //AudioClip m_audioClip;
+        AudioSource m_audioSource;
+        AudioClip m_audioClip;
+
+
+
         public override void OnAwake(object param1 = null, object param2 = null, object param3 = null)
         {
             UnityEngine.Debug.Log("ILR_Demo16.MenuWnd.OnAwake()");
+        }
+
+
+        public override void OnShow(object param1 = null, object param2 = null, object param3 = null)
+        {
+            UnityEngine.Debug.Log("ILR_Demo16.MenuWnd.OnShow()");
             m_MenuPanel = m_GameObject.AddComponent<MenuPanel>();
-            //BindUI();
+            BindUI();
             //      
 
 
@@ -38,11 +47,9 @@ namespace Demo16
         }
 
 
-
-
-
-
         #region 使用预加载的可实例资源
+
+
         void Test_PreloadAndInstaniate()
         {
             GameObject go = ObjectMgr.Instance.InstantiateObject(DefinePath_Demo16.Prefab_Attack, true); //
@@ -53,6 +60,8 @@ namespace Demo16
 
 
         #region 异步加载图片
+
+
         void Test_AsyncLoadSprite()
         {
             UnityEngine.Debug.Log("ILR_Demo16.MenuWnd.Test_AsyncLoadSprite()");
@@ -70,22 +79,22 @@ namespace Demo16
 
         void OnLoadSpriteFinished(string path, UnityEngine.Object obj, object para1, object para2, object para3)
         {
-            //if (obj != null)
-            //{
-            //    Sprite sprite = obj as Sprite;
+            if (obj != null)
+            {
+                Sprite sprite = obj as Sprite;
 
-            //    Image image = para1 as Image;
-            //    if (para1 != null)
-            //    {
-            //        image.sprite = sprite;
-            //    }
+                Image image = para1 as Image;
+                if (para1 != null)
+                {
+                    image.sprite = sprite;
+                }
 
-            //    bool setNativeSize = (bool)para2;
-            //    if (para2 != null && setNativeSize == true)
-            //    {
-            //        image.SetNativeSize();
-            //    }
-            //}
+                bool setNativeSize = (bool)para2;
+                if (para2 != null && setNativeSize == true)
+                {
+                    image.SetNativeSize();
+                }
+            }
         }
         #endregion
 
@@ -136,20 +145,20 @@ namespace Demo16
         /// </summary>
         private void Test_UseResWhickIsPreload()
         {
-            //m_audioClip = ResourceMgr.Instance.LoadResource<AudioClip>(DefinePath_Demo16.MP3_SenLin);
-            //Common.PlayBGMusic(m_audioSource, m_audioClip);
+            m_audioClip = ResourceMgr.Instance.LoadResource<AudioClip>(DefinePath_Demo16.MP3_SenLin);
+            Common.PlayBGMusic(m_audioSource, m_audioClip);
         }
 
         private void Test_UnloadResWhichIsPrelaod()
         {
-            //m_MenuPanel.m_BtnStopAndUnload.onClick.AddListener(() =>
-            //{
-            //    m_audioSource.Stop();
-            //    m_audioSource.clip = null;
-            //    ResourceMgr.Instance.UnloadResItemByObject(m_audioClip, true);
-            //    //
-            //    m_audioClip = null;    //删引用
-            //});
+            m_MenuPanel.m_BtnStopAndUnload.onClick.AddListener(() =>
+            {
+                m_audioSource.Stop();
+                m_audioSource.clip = null;
+                ResourceMgr.Instance.UnloadResItemByObject(m_audioClip, true);
+                //
+                m_audioClip = null;    //删引用
+            });
         }
         #endregion
 

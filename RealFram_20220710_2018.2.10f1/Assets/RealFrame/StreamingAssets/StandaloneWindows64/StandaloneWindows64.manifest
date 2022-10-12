@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3793394175
+CRC: 760842299
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -37,4 +37,10 @@ AssetBundleManifest:
       Dependencies: {}
     Info_11:
       Name: hotfix
+      Dependencies: {}
+    Info_12:
+      Name: demo16loadpanel
+      Dependencies: {}
+    Info_13:
+      Name: demo16menupanel
       Dependencies: {}
