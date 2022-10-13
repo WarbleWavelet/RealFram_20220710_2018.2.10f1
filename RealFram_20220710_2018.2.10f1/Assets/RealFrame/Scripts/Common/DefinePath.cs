@@ -9,6 +9,7 @@ public class DefinePath
     //public static string ProjectPath = Common.TrimName(Application.dataPath, TrimNameType.SlashAfter) ;
     public static string RealFramePath = Application.dataPath + "/" + DefinePath.RealFrameName + "/";
     public const string RealFrameName = "RealFrame"; //Top文件夹
+    public const string m_RealFrameEditor = "Assets/RealFrame/Editor/RealFrameEditor.cs";
 
     //   /"+DefinePath.RealFrame+"
 

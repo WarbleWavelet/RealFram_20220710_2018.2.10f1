@@ -6,6 +6,7 @@
 	功能： 格式转换
 *****************************************************/
 
+using ProtoBuf;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -185,6 +186,89 @@ public class FormatTool
         return false;
     }
 
+    #endregion
+
+
+
+
+
+    #region protobuf
+
+
+
+    public static bool Protobuf2Bin(string path,System.Object obj)
+    {
+        try
+        {
+            using (Stream file = File.Create(path))
+            {
+                Serializer.Serialize(file,obj);
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogErrorFormat("Protobuf2Bin失败：{0}", e); ;
+            return false;
+        }
+    }
+
+
+    public static T Bin2Protobuf<T>(string path) where T:class
+    {
+        try
+        {
+            using (Stream file = File.OpenRead(path))
+            {
+               return Serializer.Deserialize<T>(file);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogErrorFormat("Bin2Protobuf失败：{0}", e); ;
+            return null;
+        }
+    }
+
+
+    public static byte[] Protobuf2Bin( System.Object obj)
+    {
+        try
+        {
+            using (MemoryStream ms =new MemoryStream())
+            {
+                Serializer.Serialize(ms, obj);
+                byte[] bytes = new byte[ms.Length];
+                ms.Position = 0;
+                ms.Read(bytes,0,bytes.Length);
+                return bytes ;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogErrorFormat("Protobuf2Bin失败：{0}", e); ;
+            return null;
+        }
+    }
+
+
+    public static T Bin2Protobuf<T>(byte[] bytes) where T : class
+    {
+        try
+        {
+            using (MemoryStream ms =new MemoryStream())
+            {
+                ms.Write(bytes,0,bytes.Length);
+                ms.Position = 0;
+                return Serializer.Deserialize<T>(ms);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogErrorFormat("Bin2Protobuf失败：{0}", e); ;
+            return null;
+        }
+    }
     #endregion
 }
 

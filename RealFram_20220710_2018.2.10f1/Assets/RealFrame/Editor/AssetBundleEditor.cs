@@ -85,6 +85,8 @@ public class AssetBundleEditor
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "ugui", m_Path = path + "/GameData/UGUI" });
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "bytes", m_Path = path + "/GameData/Data/Bin" });
         m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "hotfix", m_Path = path + "/GameData/Data/HotFix" });
+        m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "protobuf", m_Path = path + "/GameData/Data/Protobuf" });
+        //m_abCfgSO.m_FolderPathLst.Add(new ABCfgSO.AB2Path { m_ABName = "data", m_Path = path + "/GameData/Data/ProtobufData" }); //作者命名
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
@@ -336,7 +338,7 @@ public class AssetBundleEditor
     /// </summary>
     public static void BuildAB_RootInner()
     {
-        DataEditor.Xml2BinAll();    //Bin下需要的二进制
+        DataEditor.MenuItem_Xml2BinAll();    //Bin下需要的二进制
         InitABCfgSO();
         MarkAB();             //第一次跳过assetbundleconfig
         WriteBin();         //生成assetbundleconfig
@@ -349,7 +351,7 @@ public class AssetBundleEditor
     /// </summary>
     public static void BuildAndEncryptAB_RootInner()
     {
-        DataEditor.Xml2BinAll();    //Bin下需要的二进制
+        DataEditor.MenuItem_Xml2BinAll();    //Bin下需要的二进制
         InitABCfgSO();
         MarkAB();             //第一次跳过assetbundleconfig
         WriteBin();         //生成assetbundleconfig

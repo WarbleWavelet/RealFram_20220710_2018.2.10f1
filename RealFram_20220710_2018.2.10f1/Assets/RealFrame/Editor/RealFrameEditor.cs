@@ -19,9 +19,15 @@ public class RealFrameEditor : Editor
     public static string m_realFrameCfgSOPath = DefinePath.RealFrameCfgSOPath;
     static RealFrameCfgSO m_realFrameCfgSO;
     const string m_realFrame = DefinePath.RealFrameName;
+    const string m_RealFrameEditor = DefinePath.m_RealFrameEditor;
     #endregion
 
 
+    [MenuItem(DefinePath.MenuItem_RealFrame + "定位到输出脚本", false, 0)]
+    static void MenuItem_ShootScript_01()
+    {
+        Common.Selection_ActiveObject(m_RealFrameEditor);
+    }
 
     [MenuItem(DefinePath.MenuItem_RealFrame + "/定位配置表", false, 0)] //Alt+R打开资源路径 ,Unity上的路径
     static void MenuItem_ShootRealFrameCfg()
@@ -39,6 +45,7 @@ public class RealFrameEditor : Editor
         m_realFrameCfgSO.m_BinPath = "Assets/" + m_realFrame + "/GameData/Data/Bin";//不用加/
         m_realFrameCfgSO.m_ScriptsPath = "Assets/" + m_realFrame + "/Editor/SO";//不用加/
         m_realFrameCfgSO.m_XmlPath = "Assets/" + m_realFrame + "/GameData/Data/Xml";//不用加/
+        m_realFrameCfgSO.m_ProtobufPath = "Assets/" + m_realFrame + "/GameData/Data/Protobuf";//不用加/
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }

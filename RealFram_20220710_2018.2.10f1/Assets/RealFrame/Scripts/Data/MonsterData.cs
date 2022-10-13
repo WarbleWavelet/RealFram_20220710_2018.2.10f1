@@ -9,7 +9,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml.Serialization;
+using ProtoBuf;
 
+[ProtoContract]
 [System.Serializable]
 public class MonsterData : ExcelBase
 {
@@ -19,7 +21,8 @@ public class MonsterData : ExcelBase
     [XmlIgnore] //不序列化
     public Dictionary<int, MonsterBase> m_MonsterDic = new Dictionary<int, MonsterBase>();
 
-    /// <summary>所有的怪物</summary>                 
+    /// <summary>所有的怪物</summary> 
+    [ProtoMember(2)]
     [XmlElement("AllMonster")] //与xml相关，不改 //这个属性后来要对接Xml，所以统一
     public List<MonsterBase> m_MonsterLst { get; set; }  //反序列时填充，new会叠加
     #endregion
@@ -82,17 +85,17 @@ public class MonsterData : ExcelBase
 }
 
 
-
+[ProtoContract]
 [System.Serializable]
 public class MonsterBase
 {
     
-    [XmlAttribute("Id")] public int Id { get; set; }                    //ID
-    [XmlAttribute("Name")] public string Name { get; set; }             //Name
-    [XmlAttribute("OutLook")] public string OutLook { get; set; }       //预知路径
-    [XmlAttribute("Level")] public int Level { get; set; }              //怪物等级
-    [XmlAttribute("Rare")] public int Rare { get; set; }                //怪物稀有度
-    [XmlAttribute("Height")]  public float Height { get; set; }         //怪物高度
+    [ProtoMember(1)]   [XmlAttribute("Id")] public int Id { get; set; }                    //ID
+    [ProtoMember(2)]   [XmlAttribute("Name")] public string Name { get; set; }             //Name
+    [ProtoMember(3)]   [XmlAttribute("OutLook")] public string OutLook { get; set; }       //预知路径
+    [ProtoMember(4)]   [XmlAttribute("Level")] public int Level { get; set; }              //怪物等级
+    [ProtoMember(5)]   [XmlAttribute("Rare")] public int Rare { get; set; }                //怪物稀有度
+    [ProtoMember(6)][XmlAttribute("Height")]  public float Height { get; set; }         //怪物高度
 
 
     public override string ToString()

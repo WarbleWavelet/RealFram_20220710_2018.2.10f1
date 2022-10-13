@@ -24,6 +24,7 @@ public class DataEditor
     static string m_Excel_OutetrPath = DefinePath.ProjectPath + "Data/Excel/";//excel数据
     //
     const string m_Bin_InnerPath = "Assets/RealFrame/GameData/Data/Bin/";
+    const string m_Protobuf_InnerPath = "Assets/RealFrame/GameData/Data/Protobuf/";
     const int m_startIdx = DefinePath.MenuItem_FormatTool_StartIdx;//调顺序，但因为二级难调
 
     #region MenuItem
@@ -62,7 +63,7 @@ public class DataEditor
 
 
     [MenuItem(DefinePath.MenuItem_FormatTool + "Xml/Xml2Bin", false, 1 + m_startIdx)]//按钮在菜单栏的位置
-    static void Xml2Bin()
+    static void MenuItem_Xml2Bin()
     {
 
         UnityEngine.Object[] objArr = Selection.objects;
@@ -87,7 +88,7 @@ public class DataEditor
   
     
     [MenuItem(DefinePath.MenuItem_FormatTool + "Xml/Xml2BinAll", false, 1 + m_startIdx)]//按钮在菜单栏的位置
-   public static void Xml2BinAll() ///xml转Bin
+   public static void MenuItem_Xml2BinAll() ///xml转Bin
     {
 
 
@@ -141,7 +142,7 @@ public class DataEditor
 
 
     [MenuItem(DefinePath.MenuItem_FormatTool + "Xml/Test_ReadXml", false, 1+ m_startIdx)]//按钮在菜单栏的位置
-    static void Test_ReadXml() //读取工程下xmlPath的xml
+    static void MenuItem_Test_ReadXml() //读取工程下xmlPath的xml
     {
 
         #region MonsterData.xml
@@ -217,6 +218,8 @@ public class DataEditor
 
 
     #region Excel
+
+
     [MenuItem(DefinePath.MenuItem_FormatTool + "Excel/Excel2Xml", false, 5 + m_startIdx)]//按钮在菜单栏的位置
     static void MenuItem_Excel2Xml() //读取工程下xmlPath的xml
     {
@@ -297,7 +300,7 @@ public class DataEditor
     }
 
     [MenuItem(DefinePath.MenuItem_FormatTool + "Excel/Test_WriteExcel", false, 5 + m_startIdx)]//按钮在菜单栏的位置
-    static void Test_WriteExcel() //读取工程下xmlPath的xml
+    static void MenuItem_Test_WriteExcel() //读取工程下xmlPath的xml
     {
         string xlsxPath = m_Excel_OutetrPath + "G怪物.xlsx";
 
@@ -349,8 +352,10 @@ public class DataEditor
 
 
     #region Reflection
+
+
     [MenuItem(DefinePath.MenuItem_FormatTool + "Reflection/Test_根据反射读取类的属性值", false, 99 + m_startIdx)]//按钮在菜单栏的位置
-    static void Test_Reflection() //读取工程下xmlPath的xml
+    static void MenuItem_Test_Reflection() //读取工程下xmlPath的xml
     {
         TestReflection testRef = new TestReflection
         {
@@ -389,7 +394,7 @@ public class DataEditor
 
 
     [MenuItem(DefinePath.MenuItem_FormatTool + "Reflection/Test_数据反射成类", false, 99 + m_startIdx)]//按钮在菜单栏的位置
-    static void Test_ReflectionByData() //读取工程下xmlPath的xml
+    static void MenuItem_Test_ReflectionByData() //读取工程下xmlPath的xml
     {
         object obj = Ref_Class_New("TestReflection01");
         Ref_Class_Member_SetValue(obj, "m_Name", "刘备");
@@ -406,7 +411,7 @@ public class DataEditor
 
 
     [MenuItem(DefinePath.MenuItem_FormatTool + "Reflection/Test_数据反射成类(浮点，枚举)", false, 99 + m_startIdx)]//按钮在菜单栏的位置
-    static void Test_ReflectionByData_Float_Enum() //读取工程下xmlPath的xml
+    static void MenuItem_Test_ReflectionByData_Float_Enum() //读取工程下xmlPath的xml
     {
         object obj = Ref_Class_New("TestReflection02");
         Ref_Class_Member_SetValue(obj, "m_Name", "刘备", "string");
@@ -423,7 +428,7 @@ public class DataEditor
     }
 
     [MenuItem(DefinePath.MenuItem_FormatTool + "Reflection/Test_数据反射成类(列表)", false, 99 + m_startIdx)]//按钮在菜单栏的位置
-    static void Test_ReflectionByData_Lst() //读取工程下xmlPath的xml
+    static void MenuItem_Test_ReflectionByData_Lst() //读取工程下xmlPath的xml
     {
         object _classObj = Ref_Class_New("TestReflection02");
         Ref_Class_Member_SetValue(_classObj, "m_Name", "刘备", "string");
@@ -464,6 +469,59 @@ public class DataEditor
         }
 
     }
+    #endregion
+
+
+    #region Protobuf
+
+
+    [MenuItem(DefinePath.MenuItem_FormatTool + "Protobuf/Xml2Protobuf", false, 6 + m_startIdx)]//按钮在菜单栏的位置
+    static void MenuItem_Xml2Protobuf()
+    {
+
+        UnityEngine.Object[] objArr = Selection.objects;
+
+        for (int i = 0; i < objArr.Length; i++)
+        {
+            UnityEngine.Object obj = objArr[i];
+            string title = "正在转成Protobuf";
+            string info = "";
+            info += "正在转化" + obj.name + "....";
+            float prg = (1.0f * i) / objArr.Length; ;
+            EditorUtility.DisplayCancelableProgressBar(title, info, prg);
+            Xml2Protobuf(obj.name);
+        }
+
+
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+    }
+
+
+
+    [MenuItem(DefinePath.MenuItem_FormatTool + "Protobuf/Protobuf2Xml", false, 6 + m_startIdx)]//按钮在菜单栏的位置
+    static void MenuItem_Protobuf2Xml()
+    {
+
+        UnityEngine.Object[] objArr = Selection.objects;
+
+        for (int i = 0; i < objArr.Length; i++)
+        {
+            UnityEngine.Object obj = objArr[i];
+            string title = "正在转成Xml";
+            string info = "";
+            info += "正在转化" + obj.name + "....";
+            float prg = (1.0f * i) / objArr.Length; ;
+            EditorUtility.DisplayCancelableProgressBar(title, info, prg);
+            Protobuf2Xml(obj.name);
+        }
+
+
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+    }
+
+
     #endregion
 
 
@@ -1809,6 +1867,53 @@ public class DataEditor
     {
         return BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
     }
+
+
+    private static void Xml2Protobuf(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return;
+        }
+
+        try
+        {
+            Type type = GetClassByClassName(name);
+
+            if (type != null)
+            {
+                string xmlPath = m_Xml_InnerPath + name + ".xml";
+                string protobufPath = m_Protobuf_InnerPath + name + ".bytes";
+                object obj = FormatTool.Xml2Class(xmlPath, type);
+                FormatTool.Protobuf2Bin(protobufPath, obj);
+                Debug.LogFormat("{0}：Xml2Protobuf成功，Protobuf路径为:{1}", name, protobufPath);
+            }
+        }
+        catch
+        {
+            Debug.LogErrorFormat( "{0}：Xml2Protobuf失败！", name);
+        }
+    }
+
+
+
+    static void Protobuf2Xml(string name)
+    {
+        Type type = GetClassByClassName(name);
+
+        if (type != null)
+        {
+            var temp = Activator.CreateInstance(type);
+            if (temp is ExcelBase)
+            {
+                (temp as ExcelBase).Construction();
+            }
+            string xmlPath = m_Xml_InnerPath + name + ".xml";
+           // FormatTool.Protobuf2Xml(xmlPath, temp);
+            Debug.Log(name + "Protobuf转xml成功，xml路径为:" + xmlPath);
+        }
+    }
+
     #endregion
 
 
