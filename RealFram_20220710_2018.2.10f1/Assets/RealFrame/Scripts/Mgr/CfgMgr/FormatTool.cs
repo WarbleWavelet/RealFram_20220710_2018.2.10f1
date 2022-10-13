@@ -196,7 +196,7 @@ public class FormatTool
 
 
 
-    public static bool Protobuf2Bin(string path,System.Object obj)
+    public static bool Class2Protobuf(string path,System.Object obj)
     {
         try
         {
@@ -214,7 +214,7 @@ public class FormatTool
     }
 
 
-    public static T Bin2Protobuf<T>(string path) where T:class
+    public static T Protobuf2Class<T>(string path) where T:class
     {
         try
         {
@@ -231,7 +231,7 @@ public class FormatTool
     }
 
 
-    public static byte[] Protobuf2Bin( System.Object obj)
+    public static byte[] Class2Protobuf( System.Object obj)
     {
         try
         {
@@ -252,7 +252,7 @@ public class FormatTool
     }
 
 
-    public static T Bin2Protobuf<T>(byte[] bytes) where T : class
+    public static T Protobuf2Class<T>(byte[] bytes) where T : class
     {
         try
         {

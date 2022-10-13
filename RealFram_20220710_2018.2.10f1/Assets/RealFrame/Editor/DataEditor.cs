@@ -3,7 +3,7 @@
 	作者：lenovo
     邮箱: 
     日期：2022/7/28 22:57:57
-	功能：Bin Xml Class Excel各种转来转去
+	功能：Bin Xml Class Excel Protobuf各种转来转去
 *****************************************************/
 
 using OfficeOpenXml;
@@ -521,11 +521,27 @@ public class DataEditor
         EditorUtility.ClearProgressBar();
     }
 
+    [MenuItem(DefinePath.MenuItem_FormatTool + "Protobuf/Test_Protobuf2Class（MonsterData）", false, 6 + m_startIdx)]//按钮在菜单栏的位置
+    static void MenuItem_Test_Protobuf2Class()
+    {
+        string protobufPath = m_Protobuf_InnerPath +"MonsterData.bytes";
+        MonsterData md = FormatTool.Protobuf2Class<MonsterData>(protobufPath);
+        foreach (MonsterBase  mb in md.m_MonsterLst)
+        {
+            Debug.LogFormat("MonsterBase\tName:{0}\tOutLook:{1}", mb.Name,mb.OutLook  );
+        }
 
-    #endregion
+        foreach (KingBase mb in md.m_KingLst)
+        {
+            Debug.LogFormat("KingBase\tName:{0}\tOutLook:{1}", mb.Name, mb.OutLook);
+        }
+    }
 
 
-    #endregion
+        #endregion
+
+
+        #endregion
 
 
 
@@ -535,8 +551,8 @@ public class DataEditor
 
 
 
-    #region 辅助
-    static void Excel2Xml(string regName, bool toBin=false)
+        #region 辅助
+        static void Excel2Xml(string regName, bool toBin=false)
     {
         string className = "";
         string xmlName = "";
@@ -1885,7 +1901,7 @@ public class DataEditor
                 string xmlPath = m_Xml_InnerPath + name + ".xml";
                 string protobufPath = m_Protobuf_InnerPath + name + ".bytes";
                 object obj = FormatTool.Xml2Class(xmlPath, type);
-                FormatTool.Protobuf2Bin(protobufPath, obj);
+                FormatTool.Class2Protobuf(protobufPath, obj);
                 Debug.LogFormat("{0}：Xml2Protobuf成功，Protobuf路径为:{1}", name, protobufPath);
             }
         }

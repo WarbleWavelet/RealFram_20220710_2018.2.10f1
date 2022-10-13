@@ -25,6 +25,11 @@ public class MonsterData : ExcelBase
     [ProtoMember(2)]
     [XmlElement("AllMonster")] //与xml相关，不改 //这个属性后来要对接Xml，所以统一
     public List<MonsterBase> m_MonsterLst { get; set; }  //反序列时填充，new会叠加
+
+
+    [ProtoMember(3)]
+    [XmlElement("AllKing")] //与xml相关，不改 //这个属性后来要对接Xml，所以统一
+    public List<KingBase> m_KingLst { get; set; }  //反序列时填充，new会叠加
     #endregion
 
 
@@ -86,6 +91,7 @@ public class MonsterData : ExcelBase
 
 
 [ProtoContract]
+[ProtoInclude(20,typeof(KingBase))] //(不包括类中ProtoMember中的数字，子类)
 [System.Serializable]
 public class MonsterBase
 {
@@ -110,4 +116,11 @@ public class MonsterBase
 
         return str;
     }
+}
+
+
+public class  KingBase:MonsterBase
+
+{ 
+
 }
